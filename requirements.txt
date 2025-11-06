@@ -1,0 +1,28 @@
+# llm
+openai
+google-genai>=0.2.0
+
+# fastapi
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+itsdangerous~=2.1.2
+passlib==1.7.4
+python-jose
+pydantic~=2.7.0
+pydantic_core~=2.18.1
+pydantic-settings==2.3.4
+bcrypt==4.0.1
+
+# database
+sqlalchemy
+psycopg2-binary
+
+# image processing
+Pillow
+opencv-python-headless
+
+# others
+tqdm
+pytz
