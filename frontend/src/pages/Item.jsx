@@ -1,52 +1,168 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import apiService from '../services/api';
+import {
+    ItemHeader,
+    ItemNavigation,
+    ItemImage,
+    ItemMetadata,
+    AnalysisLoading,
+    AnalysisResults,
+    NoAnalysisAvailable
+} from '../components/item';
 
-// TODO: Implement Item page
-// Reference: /Volumes/wd/projects/food_healthiness_product/frontend/src/pages/Item.jsx
-// Simplify to show only 2 columns: OpenAI (Flow 2) and Gemini (Flow 3)
-
+/**
+ * Item Page Component
+ *
+ * Main page for viewing detailed analysis of a single food record.
+ * Handles polling for analysis completion and displays OpenAI and Gemini results.
+ */
 const Item = () => {
     const { recordId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const [item, setItem] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [analyzing, setAnalyzing] = useState(false);
+    const pollingIntervalRef = useRef(null);
+
+    // Get uploaded image info from navigation state (if coming from upload)
+    const uploadedData = location.state || {};
+
+    useEffect(() => {
+        loadItem();
+        return () => {
+            // Clean up polling on unmount
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+            }
+        };
+    }, [recordId]);
+
+    const loadItem = async () => {
+        try {
+            setLoading(true);
+            const data = await apiService.getItem(recordId);
+            setItem(data);
+            setError(null);
+
+            // If no analysis result yet, start polling
+            if (!data.result_openai && !data.result_gemini) {
+                setAnalyzing(true);
+                startPolling();
+            } else {
+                setAnalyzing(false);
+                stopPolling();
+            }
+        } catch (err) {
+            setError('Failed to load item details');
+            console.error(err);
+            setAnalyzing(false);
+            stopPolling();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const startPolling = () => {
+        // Don't start if already polling
+        if (pollingIntervalRef.current) return;
+
+        // Poll every 3 seconds
+        pollingIntervalRef.current = setInterval(async () => {
+            try {
+                const data = await apiService.getItem(recordId);
+                setItem(data);
+
+                // Stop polling if we have results
+                if (data.result_openai || data.result_gemini) {
+                    setAnalyzing(false);
+                    stopPolling();
+                }
+            } catch (err) {
+                console.error('Polling error:', err);
+            }
+        }, 3000);
+    };
+
+    const stopPolling = () => {
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+            pollingIntervalRef.current = null;
+        }
+    };
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-xl text-red-600">{error}</div>
+            </div>
+        );
+    }
+
+    // Show minimal loading only on very first load without any data
+    if (loading && !item && !uploadedData.uploadedImage) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-xl">Loading...</div>
+            </div>
+        );
+    }
+
+    // If we have uploaded data but no item yet, create a temporary item object
+    const displayItem = item || (uploadedData.uploadedImage ? {
+        id: recordId,
+        image_url: uploadedData.uploadedImage,
+        meal_type: uploadedData.uploadedMealType,
+        created_at: new Date().toISOString()
+    } : null);
+
+    if (!displayItem) return null;
+
+    // Extract date from target_date or created_at
+    const getDatePath = () => {
+        const dateStr = item?.target_date || item?.created_at;
+        if (!dateStr) return '/dashboard';
+
+        const dateMatch = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (!dateMatch) return '/dashboard';
+
+        const year = parseInt(dateMatch[1], 10);
+        const month = parseInt(dateMatch[2], 10);
+        const day = parseInt(dateMatch[3], 10);
+
+        return `/dashboard/date/${year}/${month}/${day}`;
+    };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <div className="bg-white shadow">
-                <div className="max-w-7xl mx-auto px-4 py-4">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="text-blue-600 hover:underline"
-                    >
-                        ← Back
-                    </button>
-                    <h1 className="text-2xl font-bold mt-2">
-                        Item Details: {recordId}
-                    </h1>
+        <div className="min-h-screen bg-gray-100 p-4">
+            <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-6">
+                {/* Header */}
+                <ItemHeader itemId={displayItem.id} />
+
+                {/* Navigation */}
+                <ItemNavigation
+                    onBackToDate={() => navigate(getDatePath())}
+                />
+
+                {/* Record Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <ItemImage imageUrl={displayItem.image_url} />
+                    <ItemMetadata item={displayItem} />
                 </div>
-            </div>
-            
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded">
-                    <p className="font-bold">TODO: Implement Item Page</p>
-                    <p className="mt-2">
-                        Copy from: /Volumes/wd/projects/food_healthiness_product/frontend/src/pages/Item.jsx
-                    </p>
-                    <p className="mt-1">
-                        Show only 2 analysis columns:
-                    </p>
-                    <ul className="list-disc list-inside ml-4 mt-1">
-                        <li>Column 1: OpenAI (Flow 2) - result_openai</li>
-                        <li>Column 2: Gemini (Flow 3) - result_gemini</li>
-                    </ul>
-                    <p className="mt-1">
-                        Display fields: dish_name, healthiness_score, healthiness_score_rationale,
-                        calories_kcal, carbs_g, protein_g, fat_g, fiber_g, related_keywords, micronutrients
-                    </p>
-                </div>
+
+                {/* Analysis Results */}
+                {analyzing || !item ? (
+                    <AnalysisLoading />
+                ) : (displayItem.result_openai || displayItem.result_gemini) ? (
+                    <AnalysisResults item={displayItem} />
+                ) : (
+                    <NoAnalysisAvailable />
+                )}
             </div>
         </div>
     );
 };
 
 export default Item;
-

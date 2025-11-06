@@ -10,6 +10,30 @@ venv/
 logs/*
 .cursor/
 
+# Node.js dependencies and build artifacts
+node_modules/
+frontend/node_modules/
+frontend/build/
+frontend/.pnp
+frontend/.pnp.js
+
+# Testing
+frontend/coverage/
+
+# Production
+frontend/build/
+
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Python cache and compiled files
 __pycache__/
 *.pyc
