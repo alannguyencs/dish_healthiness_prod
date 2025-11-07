@@ -58,7 +58,7 @@ def enrich_result_with_metadata(
 async def analyze_with_gemini_async(
     image_path: Path,
     analysis_prompt: str,
-    gemini_model: str = "gemini-2.5-flash",
+    gemini_model: str = "gemini-2.5-pro",
     thinking_budget: int = -1
 ) -> Dict[str, Any]:
     """
@@ -94,6 +94,9 @@ async def analyze_with_gemini_async(
             mime_type="image/jpeg"
         )
 
+        # Log model being used
+        print(f"[Gemini] Using model: {gemini_model} with thinking_budget: {thinking_budget}")
+
         # Run in executor (Gemini SDK isn't truly async)
         loop = asyncio.get_event_loop()
 
@@ -112,7 +115,7 @@ async def analyze_with_gemini_async(
             )
 
         response = await loop.run_in_executor(None, _sync_gemini_call)
-        print(f"Gemini response: {response}")
+        print(f"[Gemini] Response received: {response}")
 
         # Parse response
         if response.parsed:

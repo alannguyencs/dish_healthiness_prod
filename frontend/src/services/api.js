@@ -60,6 +60,11 @@ const apiService = {
         return response.data;
     },
 
+    // Alias for uploadDishImage
+    uploadMealImage: async (year, month, day, mealType, file) => {
+        return apiService.uploadDishImage(year, month, day, mealType, file);
+    },
+
     // Item endpoints
     getItem: async (recordId) => {
         const response = await api.get(`/api/item/${recordId}`);

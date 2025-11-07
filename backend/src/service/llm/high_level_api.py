@@ -16,7 +16,7 @@ from src.service.llm.prompts import get_analysis_prompt
 async def analyze_dish_parallel_async(
     image_path: Union[str, Path],
     openai_model: str = "gpt-5-low",
-    gemini_model: str = "gemini-2.5-flash",
+    gemini_model: str = "gemini-2.5-pro",
     analysis_prompt: str = None,
     gemini_thinking_budget: int = -1
 ) -> Dict[str, Dict[str, Any]]:
@@ -58,7 +58,7 @@ async def analyze_dish_parallel_async(
 def analyze_dish_parallel(
     image_path: Union[str, Path],
     openai_model: str = "gpt-5-low",
-    gemini_model: str = "gemini-2.5-flash",
+    gemini_model: str = "gemini-2.5-pro",
     analysis_prompt: str = None,
     gemini_thinking_budget: int = -1
 ) -> Dict[str, Dict[str, Any]]:

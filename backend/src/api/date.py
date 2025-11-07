@@ -56,7 +56,7 @@ async def analyze_image_background(query_id: int, file_path: str):
         results = await analyze_dish_parallel_async(
             image_path=file_path,
             openai_model="gpt-5-low",
-            gemini_model="gemini-2.5-flash",
+            gemini_model="gemini-2.5-pro",
             gemini_thinking_budget=-1
         )
 
