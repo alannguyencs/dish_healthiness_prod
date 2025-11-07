@@ -11,7 +11,7 @@ from typing import Dict, Any, List, Optional
 
 from sqlalchemy import func, or_, and_
 from src.database import SessionLocal
-from src.models import DishImageQuery, MealType
+from src.models import DishImageQuery
 
 
 def create_dish_image_query(
@@ -19,7 +19,7 @@ def create_dish_image_query(
     image_url: Optional[str] = None,
     result_openai: Optional[Dict[str, Any]] = None,
     result_gemini: Optional[Dict[str, Any]] = None,
-    meal_type: str = MealType.LUNCH.value,
+    dish_position: Optional[int] = None,
     created_at: Optional[datetime] = None,
     target_date: Optional[datetime] = None
 ) -> DishImageQuery:
@@ -31,7 +31,7 @@ def create_dish_image_query(
         image_url (Optional[str]): URL of the uploaded image
         result_openai (Optional[Dict[str, Any]]): OpenAI analysis result
         result_gemini (Optional[Dict[str, Any]]): Gemini analysis result
-        meal_type (str): Type of meal (breakfast, lunch, dinner, snack)
+        dish_position (Optional[int]): Position of dish (1-5)
         created_at (Optional[datetime]): Creation timestamp
         target_date (Optional[datetime]): Date when dish was consumed
 
@@ -48,7 +48,7 @@ def create_dish_image_query(
             image_url=image_url,
             result_openai=result_openai,
             result_gemini=result_gemini,
-            meal_type=meal_type,
+            dish_position=dish_position,
             created_at=created_at or datetime.now(timezone.utc),
             target_date=target_date
         )
@@ -103,8 +103,7 @@ def get_dish_image_queries_by_user(user_id: int) -> List[DishImageQuery]:
 
 def get_dish_image_queries_by_user_and_date(
     user_id: int,
-    query_date,
-    meal_type: Optional[str] = None
+    query_date
 ) -> List[DishImageQuery]:
     """
     Get all dish image queries for a specific user and date.
@@ -112,7 +111,6 @@ def get_dish_image_queries_by_user_and_date(
     Args:
         user_id (int): ID of the user
         query_date: Date to filter queries for
-        meal_type (Optional[str]): Optional meal type filter
 
     Returns:
         List[DishImageQuery]: List of queries for the specified date
@@ -136,39 +134,35 @@ def get_dish_image_queries_by_user_and_date(
             )
         ]
         
-        # Add meal type filter if specified
-        if meal_type is not None:
-            filters.append(DishImageQuery.meal_type == meal_type)
-        
         return db.query(DishImageQuery).filter(*filters).order_by(
-            DishImageQuery.target_date.desc().nulls_last(),
+            DishImageQuery.dish_position.asc().nulls_last(),
             DishImageQuery.created_at.desc()
         ).all()
     finally:
         db.close()
 
 
-def get_single_dish_by_user_date_meal(
+def get_single_dish_by_user_date_position(
     user_id: int,
     query_date,
-    meal_type: str
+    dish_position: int
 ) -> Optional[DishImageQuery]:
     """
-    Get single dish for a specific user, date, and meal type.
+    Get single dish for a specific user, date, and position.
     
     Args:
         user_id (int): ID of the user
         query_date: Date to filter queries for
-        meal_type (str): Meal type to filter for
+        dish_position (int): Dish position (1-5)
 
     Returns:
-        Optional[DishImageQuery]: Single dish for the meal slot, or None
+        Optional[DishImageQuery]: Single dish for the position, or None
     """
     db = SessionLocal()
     try:
         result = db.query(DishImageQuery).filter(
             DishImageQuery.user_id == user_id,
-            DishImageQuery.meal_type == meal_type,
+            DishImageQuery.dish_position == dish_position,
             or_(
                 # Primary: Use target_date if it exists
                 and_(

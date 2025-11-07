@@ -3,12 +3,16 @@ import React from 'react';
 const getHealthinessBadge = (score) => {
     if (!score && score !== 0) return { text: '-', className: 'bg-gray-100 text-gray-600' };
     
-    if (score >= 7) {
-        return { text: 'HEALTHY', className: 'bg-green-100 text-green-800 border-green-300' };
-    } else if (score >= 4) {
-        return { text: 'NEUTRAL', className: 'bg-gray-200 text-gray-700 border-gray-400' };
+    if (score >= 9) {
+        return { text: 'VERY HIGH', className: 'bg-green-600 text-white border-green-700' };
+    } else if (score >= 7) {
+        return { text: 'HIGH', className: 'bg-green-100 text-green-800 border-green-300' };
+    } else if (score >= 5) {
+        return { text: 'MEDIUM', className: 'bg-yellow-100 text-yellow-800 border-yellow-400' };
+    } else if (score >= 3) {
+        return { text: 'LOW', className: 'bg-orange-100 text-orange-700 border-orange-400' };
     } else {
-        return { text: 'UNHEALTHY', className: 'bg-orange-100 text-orange-700 border-orange-400' };
+        return { text: 'VERY LOW', className: 'bg-red-100 text-red-800 border-red-400' };
     }
 };
 
@@ -17,13 +21,14 @@ const Rationale = ({ text }) => {
     
     return (
         <div>
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">{text}</p>
+            <p className="text-sm text-gray-700 whitespace-pre-wrap text-justify">{text}</p>
         </div>
     );
 };
 
-const TableCell = ({ children, isHeader, openaiTheme, geminiTheme }) => {
+const TableCell = ({ children, isHeader, openaiTheme, geminiTheme, centerAlign }) => {
     const baseClasses = "px-4 py-3 border-r border-gray-300";
+    const alignClass = centerAlign ? "text-center" : "";
     
     if (isHeader) {
         if (openaiTheme) {
@@ -49,10 +54,10 @@ const TableCell = ({ children, isHeader, openaiTheme, geminiTheme }) => {
         return <th className={`${baseClasses} bg-gray-700 text-white font-semibold`}>{children}</th>;
     }
     
-    return <td className={`${baseClasses} text-sm`}>{children}</td>;
+    return <td className={`${baseClasses} text-sm ${alignClass}`}>{children}</td>;
 };
 
-const TableRow = ({ label, openaiValue, geminiValue, icon, altBg }) => {
+const TableRow = ({ label, openaiValue, geminiValue, icon, altBg, centerAlign = true }) => {
     const rowClass = altBg ? "bg-gray-50" : "bg-white";
     
     return (
@@ -63,8 +68,8 @@ const TableRow = ({ label, openaiValue, geminiValue, icon, altBg }) => {
                     {label}
                 </div>
             </td>
-            <TableCell>{openaiValue}</TableCell>
-            <TableCell>{geminiValue}</TableCell>
+            <TableCell centerAlign={centerAlign}>{openaiValue}</TableCell>
+            <TableCell centerAlign={centerAlign}>{geminiValue}</TableCell>
         </tr>
     );
 };
@@ -185,7 +190,7 @@ export const AnalysisResults = ({ item }) => {
                             <td className="px-4 py-3 border-r border-gray-300 font-medium text-gray-700 bg-gray-100">
                                 ⭐ Healthiness
                             </td>
-                            <TableCell>
+                            <TableCell centerAlign>
                                 {openaiResult.healthiness_score !== undefined && openaiResult.healthiness_score !== null ? (
                                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold border ${getHealthinessBadge(openaiResult.healthiness_score).className}`}>
                                         {getHealthinessBadge(openaiResult.healthiness_score).text}
@@ -194,7 +199,7 @@ export const AnalysisResults = ({ item }) => {
                                     <span className="text-gray-400">-</span>
                                 )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell centerAlign>
                                 {geminiResult.healthiness_score !== undefined && geminiResult.healthiness_score !== null ? (
                                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold border ${getHealthinessBadge(geminiResult.healthiness_score).className}`}>
                                         {getHealthinessBadge(geminiResult.healthiness_score).text}
@@ -210,10 +215,10 @@ export const AnalysisResults = ({ item }) => {
                             <td className="px-4 py-3 border-r border-gray-300 font-medium text-gray-700 bg-gray-100">
                                 🔍 Healthiness Rationale
                             </td>
-                            <TableCell>
+                            <TableCell centerAlign={false}>
                                 <Rationale text={openaiResult.healthiness_score_rationale} />
                             </TableCell>
-                            <TableCell>
+                            <TableCell centerAlign={false}>
                                 <Rationale text={geminiResult.healthiness_score_rationale} />
                             </TableCell>
                         </tr>
@@ -261,8 +266,8 @@ export const AnalysisResults = ({ item }) => {
                             <td className="px-4 py-3 border-r border-gray-300 font-medium text-gray-700 bg-gray-100">
                                 🍊 Micronutrients
                             </td>
-                            <TableCell>{formatMicronutrients(openaiResult.micronutrients)}</TableCell>
-                            <TableCell>{formatMicronutrients(geminiResult.micronutrients)}</TableCell>
+                            <TableCell centerAlign={false}>{formatMicronutrients(openaiResult.micronutrients)}</TableCell>
+                            <TableCell centerAlign={false}>{formatMicronutrients(geminiResult.micronutrients)}</TableCell>
                         </tr>
                     </tbody>
                 </table>

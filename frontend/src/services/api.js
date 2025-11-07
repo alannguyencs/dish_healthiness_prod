@@ -43,9 +43,9 @@ const apiService = {
         return response.data;
     },
 
-    uploadDishImage: async (year, month, day, mealType, file) => {
+    uploadDishImage: async (year, month, day, dishPosition, file) => {
         const formData = new FormData();
-        formData.append('meal_type', mealType);
+        formData.append('dish_position', dishPosition);
         formData.append('file', file);
 
         const response = await api.post(
@@ -58,11 +58,6 @@ const apiService = {
             }
         );
         return response.data;
-    },
-
-    // Alias for uploadDishImage
-    uploadMealImage: async (year, month, day, mealType, file) => {
-        return apiService.uploadDishImage(year, month, day, mealType, file);
     },
 
     // Item endpoints

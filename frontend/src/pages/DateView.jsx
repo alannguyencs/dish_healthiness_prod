@@ -35,18 +35,18 @@ const DateView = () => {
         }
     };
 
-    const handleFileUpload = async (mealType, file) => {
+    const handleFileUpload = async (dishPosition, file) => {
         if (!file) return;
 
-        setUploading(mealType);
+        setUploading(dishPosition);
         try {
-            const response = await apiService.uploadMealImage(year, month, day, mealType, file);
+            const response = await apiService.uploadDishImage(year, month, day, dishPosition, file);
             // Redirect to item page to show upload and wait for analysis
             if (response.query && response.query.id) {
                 navigate(`/item/${response.query.id}`, {
                     state: {
                         uploadedImage: response.query.image_url,
-                        uploadedMealType: mealType
+                        uploadedDishPosition: dishPosition
                     }
                 });
             }
@@ -67,7 +67,7 @@ const DateView = () => {
 
     if (!dateData) return null;
 
-    const hasAnyData = dateData.meal_types.some((mt) => dateData.meal_data[mt].has_data);
+    const hasAnyData = dateData.dish_data && Object.values(dateData.dish_data).some(d => d.has_data);
 
     return (
         <div className="min-h-screen bg-gray-100 p-4">

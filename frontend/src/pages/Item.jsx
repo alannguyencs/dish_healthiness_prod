@@ -114,7 +114,7 @@ const Item = () => {
     const displayItem = item || (uploadedData.uploadedImage ? {
         id: recordId,
         image_url: uploadedData.uploadedImage,
-        meal_type: uploadedData.uploadedMealType,
+        dish_position: uploadedData.uploadedDishPosition,
         created_at: new Date().toISOString()
     } : null);
 
@@ -132,7 +132,7 @@ const Item = () => {
         const month = parseInt(dateMatch[2], 10);
         const day = parseInt(dateMatch[3], 10);
 
-        return `/dashboard/date/${year}/${month}/${day}`;
+        return `/date/${year}/${month}/${day}`;
     };
 
     return (

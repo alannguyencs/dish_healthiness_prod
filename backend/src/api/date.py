@@ -25,7 +25,6 @@ from src.crud.crud_food_image_query import (
     update_dish_image_query_results,
     get_dish_image_query_by_id
 )
-from src.models import MealType
 from src.service.llm.high_level_api import analyze_dish_parallel_async
 
 logger = logging.getLogger(__name__)
@@ -36,9 +35,8 @@ router = APIRouter(
     tags=['date']
 )
 
-# Meal types
-MEAL_TYPES = [MealType.BREAKFAST.value, MealType.LUNCH.value,
-              MealType.DINNER.value, MealType.SNACK.value]
+# Number of dishes per date
+MAX_DISHES_PER_DATE = 5
 
 
 async def analyze_image_background(query_id: int, file_path: str):
@@ -77,7 +75,7 @@ def _serialize_query(query) -> Dict[str, Any]:
     return {
         'id': query.id,
         'image_url': query.image_url,
-        'meal_type': query.meal_type,
+        'dish_position': query.dish_position,
         'created_at': query.created_at.isoformat() if (
             query.created_at
         ) else None,
@@ -128,20 +126,25 @@ async def get_date(
         user.id, target_date
     )
 
-    # Organize queries by meal type
-    meal_data = {}
-    for meal_type in MEAL_TYPES:
-        meal_queries = [q for q in date_queries if q.meal_type == meal_type]
-        meal_data[meal_type] = [
-            _serialize_query(q) for q in meal_queries
-        ]
+    # Organize queries by dish position (1-5)
+    dish_data = {}
+    for position in range(1, MAX_DISHES_PER_DATE + 1):
+        position_query = next(
+            (q for q in date_queries if q.dish_position == position),
+            None
+        )
+        dish_data[f"dish_{position}"] = {
+            "has_data": position_query is not None,
+            "record_id": position_query.id if position_query else None,
+            "image_url": position_query.image_url if position_query else None
+        }
 
     return JSONResponse(
         content={
             "target_date": target_date.isoformat(),
             "formatted_date": target_date.strftime('%B %d, %Y'),
-            "meal_data": meal_data,
-            "meal_types": MEAL_TYPES,
+            "dish_data": dish_data,
+            "max_dishes": MAX_DISHES_PER_DATE,
             "year": year,
             "month": month,
             "day": day
@@ -156,11 +159,11 @@ async def upload_dish(
     year: int,
     month: int,
     day: int,
-    meal_type: str = Form(...),
+    dish_position: int = Form(...),
     file: UploadFile = File(...)
 ) -> JSONResponse:
     """
-    Handle image upload for a specific date and meal type.
+    Handle image upload for a specific date and dish position.
 
     Args:
         background_tasks: FastAPI background tasks
@@ -168,7 +171,7 @@ async def upload_dish(
         year (int): Year
         month (int): Month
         day (int): Day
-        meal_type (str): Meal type
+        dish_position (int): Dish position (1-5)
         file (UploadFile): Uploaded image
 
     Returns:
@@ -181,8 +184,11 @@ async def upload_dish(
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
-    if meal_type not in MEAL_TYPES:
-        raise HTTPException(status_code=400, detail="Invalid meal type")
+    if dish_position < 1 or dish_position > MAX_DISHES_PER_DATE:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid dish position. Must be between 1 and {MAX_DISHES_PER_DATE}"
+        )
 
     try:
         meal_date = datetime(year, month, day).date()
@@ -193,7 +199,7 @@ async def upload_dish(
 
     # Generate filename
     timestamp = datetime.now(timezone.utc).strftime("%y%m%d_%H%M%S")
-    filename = f"{timestamp}_{meal_type}.jpg"
+    filename = f"{timestamp}_dish{dish_position}.jpg"
     file_path = IMAGE_DIR / filename
 
     # Process image
@@ -228,12 +234,12 @@ async def upload_dish(
         result_gemini=None,
         created_at=datetime.now(timezone.utc),
         target_date=target_datetime,
-        meal_type=meal_type
+        dish_position=dish_position
     )
 
     logger.info(
         f"Created query ID={query.id} for user {user.id}, "
-        f"meal_type={meal_type}, target_date={target_datetime}"
+        f"dish_position={dish_position}, target_date={target_datetime}"
     )
 
     # Schedule analysis in background

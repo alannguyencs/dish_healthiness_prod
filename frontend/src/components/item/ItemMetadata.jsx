@@ -9,8 +9,10 @@ export const ItemMetadata = ({ item, getHealthinessLabel }) => {
             
             <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                    <span className="text-gray-600">Meal Type:</span>
-                    <span className="font-medium capitalize">{item.meal_type || 'N/A'}</span>
+                    <span className="text-gray-600">Dish Position:</span>
+                    <span className="font-medium">
+                        {item.dish_position ? `Dish ${item.dish_position}` : 'N/A'}
+                    </span>
                 </div>
                 
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded">

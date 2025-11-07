@@ -5,7 +5,6 @@ This module defines SQLAlchemy ORM models for the food healthiness
 application, including user management and food image query storage.
 """
 
-from enum import Enum
 from typing import Any, Dict
 
 from sqlalchemy import (
@@ -13,19 +12,6 @@ from sqlalchemy import (
 )
 
 from src.database import Base
-
-
-class MealType(str, Enum):
-    """
-    Enum for meal types throughout the day.
-    
-    This enum defines the standard meal categories used for organizing
-    daily food intake tracking.
-    """
-    BREAKFAST = "breakfast"
-    LUNCH = "lunch"
-    DINNER = "dinner"
-    SNACK = "snack"
 
 
 class Users(Base):
@@ -96,7 +82,7 @@ class DishImageQuery(Base):
     image_url = Column(String, nullable=True, default=None)
     result_openai = Column(JSON, nullable=True, default=None)
     result_gemini = Column(JSON, nullable=True, default=None)
-    meal_type = Column(String, nullable=False, default=MealType.LUNCH.value)
+    dish_position = Column(Integer, nullable=True, default=None)
     created_at = Column(DateTime, nullable=False)
     target_date = Column(DateTime, nullable=True, default=None)
 
@@ -120,4 +106,3 @@ class DishImageQuery(Base):
             column.name: getattr(self, column.name)
             for column in self.__table__.columns
         }
-

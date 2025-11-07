@@ -66,7 +66,7 @@ async def item_detail(
     item_data = {
         'id': query_record.id,
         'image_url': query_record.image_url,
-        'meal_type': query_record.meal_type,
+        'dish_position': query_record.dish_position,
         'created_at': query_record.created_at.isoformat() if (
             query_record.created_at
         ) else None,
