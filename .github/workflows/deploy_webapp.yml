@@ -1,0 +1,333 @@
+name: Deploy Dish Healthiness Webapp
+
+on:
+  workflow_dispatch:  # Add this to enable manual triggers
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        run: |
+          # Create the .ssh directory
+          mkdir -p ~/.ssh
+
+          # Add the SSH private key for DigitalOcean
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # Add the GitHub SSH key if needed (optional)
+          echo "${{ secrets.GIT_TOKEN }}" > ~/.ssh/github_key
+          chmod 600 ~/.ssh/github_key
+
+          # Add known hosts for both DigitalOcean and GitHub
+          ssh-keyscan -H ${{ vars.SERVER_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+          # Configure SSH to use the correct keys for GitHub and DigitalOcean
+          echo -e "Host github.com\n  IdentityFile ~/.ssh/github_key\n  IdentitiesOnly yes\n\nHost ${{ vars.SERVER_IP }}\n  IdentityFile ~/.ssh/id_rsa\n  IdentitiesOnly yes" > ~/.ssh/config
+
+      - name: Debug SSH Connection to DigitalOcean
+        run: |
+          ssh -vvv -i ~/.ssh/id_rsa ${{ vars.SSH_USERNAME }}@${{ vars.SERVER_IP }} "echo 'SSH connection successful!'"
+
+      - name: Deploy to DigitalOcean
+        run: |
+          ssh ${{ vars.SSH_USERNAME }}@${{ vars.SERVER_IP }} << 'EOF'
+            # Skip package updates - all required packages are already installed
+            echo "Skipping system package updates (run separately during maintenance)"
+            
+            # Verify required tools are available
+            echo "Verifying required tools..."
+            python3 --version || { echo "❌ Python3 not found"; exit 1; }
+            pip3 --version || { echo "❌ pip3 not found"; exit 1; }
+            git --version || { echo "❌ git not found"; exit 1; }
+            
+            # Update PATH to ensure node and npm are available
+            export PATH="/usr/bin:/usr/local/bin:/snap/bin:$PATH"
+            
+            # Verify Node.js and npm installation
+            node --version || { echo "❌ Node.js not found"; exit 1; }
+            npm --version || { echo "❌ npm not found"; exit 1; }
+            
+            echo "✅ All required tools are available"
+
+            # Clone or update repository using HTTPS with token
+            if [ -d dish_healthiness_prod ]; then
+                echo "Repository exists, updating..."
+                # Change to your project directory on the server
+                cd /root/dish_healthiness_prod
+                git remote set-url origin https://${{ vars.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USERNAME }}/dish_healthiness_prod.git
+                git fetch origin
+                git reset --hard origin/main
+            else
+                echo "Directory is empty or not a git repo, cloning repository."
+                git clone https://${{ vars.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USERNAME }}/dish_healthiness_prod.git
+                cd dish_healthiness_prod
+            fi
+
+            echo "Current commit: $(git rev-parse HEAD)"
+            echo "Current branch: $(git branch --show-current)"
+
+            # Verify repository contents
+            echo "Repository contents:"
+            ls -la
+
+            # Check if frontend directory exists
+            if [ ! -d "frontend" ]; then
+                echo "❌ Frontend directory not found in repository"
+                echo "This indicates the repository may not have the complete frontend code."
+                echo "Please ensure the frontend directory is committed to the repository."
+                exit 1
+            else
+                echo "✅ Frontend directory found in repository"
+                echo "Frontend contents:"
+                ls -la frontend/
+            fi
+
+            # Check if backend directory exists
+            if [ ! -d "backend" ]; then
+                echo "❌ Backend directory not found in repository"
+                echo "This indicates the repository may not have the complete backend code."
+                echo "Please ensure the backend directory is committed to the repository."
+                exit 1
+            else
+                echo "✅ Backend directory found in repository"
+                echo "Backend contents:"
+                ls -la backend/
+            fi
+
+            # Kill any processes using ports 2611 and 2511
+            fuser -k 2611/tcp || true
+            fuser -k 2511/tcp || true
+
+            # Wait for processes to terminate
+            sleep 5
+
+            # Only create venv if it doesn't exist
+            if [ ! -d "venv" ]; then
+                python3 -m venv venv
+            fi
+
+            # Activate virtual environment
+            source venv/bin/activate
+
+            # Upgrade pip
+            pip install --upgrade pip
+
+            # Check if requirements.txt exists at root level
+            if [ -f requirements.txt ]; then
+                # Only reinstall requirements if requirements.txt has changed
+                if [ ! -f requirements.md5 ] || ! md5sum --status -c requirements.md5; then
+                    pip install --no-cache-dir -r requirements.txt
+                    md5sum requirements.txt > requirements.md5
+                fi
+            else
+                echo "❌ requirements.txt not found at root level"
+                exit 1
+            fi
+
+            # Create necessary directories in backend
+            cd backend
+            mkdir -p data/images
+            mkdir -p resources
+            mkdir -p logs
+
+            # Export environment variables to make them available to the application
+            export OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
+            export GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
+            export MIDDLEWARE_SECRET_KEY="${{ secrets.MIDDLEWARE_SECRET_KEY }}"
+            export JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}"
+            export DB_USERNAME="${{ vars.DB_USERNAME }}"
+            export DB_URL="${{ vars.DB_URL }}"
+            export DB_NAME="${{ vars.DB_NAME }}"
+            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            export ALLOWED_ORIGINS="*"
+
+            echo "OPENAI_API_KEY=${OPENAI_API_KEY}"
+            echo "GEMINI_API_KEY=${GEMINI_API_KEY}"
+            echo "MIDDLEWARE_SECRET_KEY=${MIDDLEWARE_SECRET_KEY}"
+            echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}"
+            echo "DB_USERNAME=${DB_USERNAME}"
+            echo "DB_URL=${DB_URL}"
+            echo "DB_NAME=${DB_NAME}"
+            echo "DB_PASSWORD=${DB_PASSWORD}"
+            echo "ALLOWED_ORIGINS=${ALLOWED_ORIGINS}"
+
+            # Start the backend application in the background using nohup
+            nohup python -m uvicorn src.main:app --host 0.0.0.0 --port 2611 > backend.log 2>&1 &
+            BACKEND_PID=$!
+
+            # Go back to root directory
+            cd ..
+
+            # Wait for backend to start
+            sleep 10
+
+            # Check if backend started successfully
+            if ps -p $BACKEND_PID > /dev/null; then
+                echo "Backend process is running (PID: $BACKEND_PID)"
+            else
+                echo "❌ Failed to start backend - process not running"
+                echo "Backend logs:"
+                cat backend/backend.log
+                exit 1
+            fi
+
+            # Start the frontend application
+            echo "Current directory: $(pwd)"
+            echo "Available directories:"
+            ls -la
+
+            if [ ! -d "frontend" ]; then
+                echo "❌ Frontend directory not found in repository"
+                exit 1
+            fi
+
+            cd frontend
+
+            echo "Changed to frontend directory: $(pwd)"
+
+            # Check if npm is available in this context
+            echo "Checking npm availability..."
+            which npm || echo "npm not found"
+            npm --version || echo "npm version check failed"
+
+            # Install frontend dependencies if needed
+            if [ ! -d "node_modules" ]; then
+                echo "Installing frontend dependencies..."
+                # Try npm first, then fallback to full path
+                if command -v npm >/dev/null 2>&1; then
+                    npm install
+                elif [ -f "/usr/bin/npm" ]; then
+                    /usr/bin/npm install
+                else
+                    echo "❌ npm not found, trying to locate it..."
+                    find /usr -name "npm" 2>/dev/null | head -1 | xargs -I {} {} install
+                fi
+            else
+                echo "Node modules already exist, skipping installation"
+            fi
+
+            # Set environment variables for frontend build
+            export PORT=2511
+            export BROWSER=none
+            export REACT_APP_API_URL="http://${{ vars.SERVER_IP }}:2611"
+
+            echo "Building frontend with API URL: $REACT_APP_API_URL"
+
+            # Build frontend for production
+            if command -v npm >/dev/null 2>&1; then
+                npm run build
+            elif [ -f "/usr/bin/npm" ]; then
+                /usr/bin/npm run build
+            else
+                echo "❌ npm not found for building frontend"
+                exit 1
+            fi
+
+            # Install serve if not present
+            if ! command -v serve >/dev/null 2>&1; then
+                echo "Installing serve..."
+                if command -v npm >/dev/null 2>&1; then
+                    npm install -g serve
+                elif [ -f "/usr/bin/npm" ]; then
+                    /usr/bin/npm install -g serve
+                fi
+            fi
+
+            # Kill any existing serve process on port 2511
+            lsof -ti:2511 | xargs kill -9 2>/dev/null || true
+
+            # Start serving the build
+            echo "Starting frontend server on port 2511..."
+            nohup serve -s build -l 2511 > ../frontend.log 2>&1 &
+            FRONTEND_PID=$!
+
+            # Wait for frontend to start
+            sleep 15
+
+            # Check if frontend started successfully
+            if ps -p $FRONTEND_PID > /dev/null; then
+                echo "Frontend process is running (PID: $FRONTEND_PID)"
+            else
+                echo "❌ Failed to start frontend - process not running"
+                echo "Frontend logs:"
+                cat ../frontend.log
+                exit 1
+            fi
+
+            # Go back to project root for health checks
+            cd ..
+
+            # Comprehensive health check with retries
+            echo "Performing health checks..."
+
+            HEALTH_CHECK_RETRIES=5
+            HEALTH_CHECK_INTERVAL=10
+
+            for i in $(seq 1 $HEALTH_CHECK_RETRIES); do
+                echo "Health check attempt $i/$HEALTH_CHECK_RETRIES..."
+
+                # Check backend health endpoint
+                BACKEND_HEALTH_RESPONSE=$(curl -s -w "%{http_code}" http://localhost:2611/health)
+                BACKEND_HTTP_CODE="${BACKEND_HEALTH_RESPONSE: -3}"
+                BACKEND_RESPONSE_BODY="${BACKEND_HEALTH_RESPONSE%???}"
+
+                # Check frontend endpoint
+                FRONTEND_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:2511/)
+
+                if [ "$BACKEND_HTTP_CODE" = "200" ] && [ "$FRONTEND_HTTP_CODE" = "200" ]; then
+                    echo "Backend health endpoint responded with HTTP 200"
+                    echo "Frontend endpoint responded with HTTP 200"
+                    echo "Backend Response: $BACKEND_RESPONSE_BODY"
+
+                    # Validate the backend response contains the expected health status
+                    if echo "$BACKEND_RESPONSE_BODY" | grep -q '"status":"healthy"'; then
+                        echo "✅ Backend health check passed - Application is healthy"
+                        echo "✅ Frontend check passed - React app is serving"
+                        echo "🚀 Deployment successful and validated!"
+                        echo "Backend URL: http://localhost:2611"
+                        echo "Frontend URL: http://localhost:2511"
+                        exit 0
+                    else
+                        echo "❌ Backend health endpoint returned unexpected response: $BACKEND_RESPONSE_BODY"
+                    fi
+                else
+                    echo "❌ Health checks failed:"
+                    echo "   Backend (port 2611): HTTP $BACKEND_HTTP_CODE"
+                    echo "   Frontend (port 2511): HTTP $FRONTEND_HTTP_CODE"
+                    if [ -n "$BACKEND_RESPONSE_BODY" ]; then
+                        echo "   Backend Response: $BACKEND_RESPONSE_BODY"
+                    fi
+                fi
+
+                if [ $i -lt $HEALTH_CHECK_RETRIES ]; then
+                    echo "Waiting ${HEALTH_CHECK_INTERVAL}s before retry..."
+                    sleep $HEALTH_CHECK_INTERVAL
+                fi
+            done
+
+            echo "❌ Health checks failed after $HEALTH_CHECK_RETRIES attempts"
+            echo "Applications are running but not responding correctly to health checks"
+            echo "Recent backend logs:"
+            tail -n 30 backend/backend.log
+            echo "Recent frontend logs:"
+            tail -n 30 frontend.log
+            exit 1
+
+            # Disconnect from SSH without killing the background processes
+            disown -h $BACKEND_PID
+            disown -h $FRONTEND_PID
+
+          EOF
+
