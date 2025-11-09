@@ -151,7 +151,7 @@ jobs:
             export DB_URL="${{ vars.DB_URL }}"
             export DB_NAME="${{ vars.DB_NAME }}"
             export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-            export ALLOWED_ORIGINS="*"
+            export ALLOWED_ORIGINS="http://${{ vars.SERVER_IP }}:2512"
 
             echo "OPENAI_API_KEY=${OPENAI_API_KEY}"
             echo "GEMINI_API_KEY=${GEMINI_API_KEY}"

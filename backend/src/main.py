@@ -7,6 +7,7 @@ healthiness analysis application.
 """
 
 import logging
+import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -71,11 +72,33 @@ def create_app() -> FastAPI:
         secret_key="your-secret-key-change-in-production"
     )
 
+    # Configure CORS origins from environment variable
+    allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:2512")
+    
+    # If ALLOWED_ORIGINS is "*", allow all origins
+    # Note: When using "*", allow_credentials must be False
+    if allowed_origins_env == "*":
+        allowed_origins = ["*"]
+        allow_credentials = False
+    else:
+        # Split by comma and strip whitespace, or use as single origin
+        allowed_origins = [
+            origin.strip() 
+            for origin in allowed_origins_env.split(",")
+        ]
+        # Always include localhost for development
+        if "http://localhost:2512" not in allowed_origins:
+            allowed_origins.append("http://localhost:2512")
+        allow_credentials = True
+    
+    logger.info(f"CORS allowed origins: {allowed_origins}")
+    logger.info(f"CORS allow credentials: {allow_credentials}")
+    
     # Add CORS middleware for React frontend
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:2512"],
-        allow_credentials=True,
+        allow_origins=allowed_origins,
+        allow_credentials=allow_credentials,
         allow_methods=["*"],
         allow_headers=["*"],
     )
