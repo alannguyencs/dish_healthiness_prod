@@ -24,7 +24,7 @@ export const MealUploadSlot = ({ dishPosition, dishData, uploading, onFileUpload
 
     const isUploading = uploading === dishPosition;
     const displayImageUrl = dishData?.image_url ? 
-        `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:2612'}${dishData.image_url}` 
+        `${process.env.REACT_APP_API_URL || 'http://localhost:2512'}${dishData.image_url}` 
         : null;
 
     return (
