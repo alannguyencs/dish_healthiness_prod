@@ -2,7 +2,7 @@ import React from 'react';
 
 export const ItemImage = ({ imageUrl }) => {
     const displayImageUrl = imageUrl ? 
-        `${process.env.REACT_APP_API_URL || 'http://localhost:2512'}${imageUrl}` 
+        `${process.env.REACT_APP_API_URL || 'http://localhost:2612'}${imageUrl}` 
         : null;
 
     return (
