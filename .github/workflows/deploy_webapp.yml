@@ -106,9 +106,9 @@ jobs:
                 ls -la backend/
             fi
 
-            # Kill any processes using ports 2611 and 2511
-            fuser -k 2611/tcp || true
-            fuser -k 2511/tcp || true
+            # Kill any processes using ports 2612 and 2512
+            fuser -k 2612/tcp || true
+            fuser -k 2512/tcp || true
 
             # Wait for processes to terminate
             sleep 5
@@ -164,7 +164,7 @@ jobs:
             echo "ALLOWED_ORIGINS=${ALLOWED_ORIGINS}"
 
             # Start the backend application in the background using nohup
-            nohup python -m uvicorn src.main:app --host 0.0.0.0 --port 2611 > backend.log 2>&1 &
+            nohup python -m uvicorn src.main:app --host 0.0.0.0 --port 2612 > backend.log 2>&1 &
             BACKEND_PID=$!
 
             # Go back to root directory
@@ -219,9 +219,9 @@ jobs:
             fi
 
             # Set environment variables for frontend build
-            export PORT=2511
+            export PORT=2512
             export BROWSER=none
-            export REACT_APP_API_URL="http://${{ vars.SERVER_IP }}:2611"
+            export REACT_APP_API_URL="http://${{ vars.SERVER_IP }}:2612"
 
             echo "Building frontend with API URL: $REACT_APP_API_URL"
 
@@ -245,12 +245,12 @@ jobs:
                 fi
             fi
 
-            # Kill any existing serve process on port 2511
-            lsof -ti:2511 | xargs kill -9 2>/dev/null || true
+            # Kill any existing serve process on port 2512
+            lsof -ti:2512 | xargs kill -9 2>/dev/null || true
 
             # Start serving the build
-            echo "Starting frontend server on port 2511..."
-            nohup serve -s build -l 2511 > ../frontend.log 2>&1 &
+            echo "Starting frontend server on port 2512..."
+            nohup serve -s build -l 2512 > ../frontend.log 2>&1 &
             FRONTEND_PID=$!
 
             # Wait for frontend to start
@@ -279,12 +279,12 @@ jobs:
                 echo "Health check attempt $i/$HEALTH_CHECK_RETRIES..."
 
                 # Check backend health endpoint
-                BACKEND_HEALTH_RESPONSE=$(curl -s -w "%{http_code}" http://localhost:2611/health)
+                BACKEND_HEALTH_RESPONSE=$(curl -s -w "%{http_code}" http://localhost:2612/health)
                 BACKEND_HTTP_CODE="${BACKEND_HEALTH_RESPONSE: -3}"
                 BACKEND_RESPONSE_BODY="${BACKEND_HEALTH_RESPONSE%???}"
 
                 # Check frontend endpoint
-                FRONTEND_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:2511/)
+                FRONTEND_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:2512/)
 
                 if [ "$BACKEND_HTTP_CODE" = "200" ] && [ "$FRONTEND_HTTP_CODE" = "200" ]; then
                     echo "Backend health endpoint responded with HTTP 200"
@@ -296,16 +296,16 @@ jobs:
                         echo "✅ Backend health check passed - Application is healthy"
                         echo "✅ Frontend check passed - React app is serving"
                         echo "🚀 Deployment successful and validated!"
-                        echo "Backend URL: http://localhost:2611"
-                        echo "Frontend URL: http://localhost:2511"
+                        echo "Backend URL: http://localhost:2612"
+                        echo "Frontend URL: http://localhost:2512"
                         exit 0
                     else
                         echo "❌ Backend health endpoint returned unexpected response: $BACKEND_RESPONSE_BODY"
                     fi
                 else
                     echo "❌ Health checks failed:"
-                    echo "   Backend (port 2611): HTTP $BACKEND_HTTP_CODE"
-                    echo "   Frontend (port 2511): HTTP $FRONTEND_HTTP_CODE"
+                    echo "   Backend (port 2612): HTTP $BACKEND_HTTP_CODE"
+                    echo "   Frontend (port 2512): HTTP $FRONTEND_HTTP_CODE"
                     if [ -n "$BACKEND_RESPONSE_BODY" ]; then
                         echo "   Backend Response: $BACKEND_RESPONSE_BODY"
                     fi
