@@ -2,8 +2,7 @@
 API routes for individual item detail views.
 
 This module provides detailed view functionality for individual dish
-image query records, showing analysis results from Flow 2 (OpenAI)
-and Flow 3 (Gemini).
+image query records, showing analysis results from Gemini.
 """
 
 import logging
@@ -32,7 +31,7 @@ async def item_detail(
     Get detailed information for a specific dish image query record.
 
     This endpoint returns analysis results for a single dish image query,
-    including results from Flow 2 (OpenAI) and Flow 3 (Gemini).
+    including results from Gemini.
     Users can only view their own records.
 
     Args:
@@ -62,7 +61,7 @@ async def item_detail(
     if query_record.user_id != user.id:
         raise HTTPException(status_code=404, detail="Record not found")
 
-    # Prepare response data
+    # Prepare response data (Gemini only)
     item_data = {
         'id': query_record.id,
         'image_url': query_record.image_url,
@@ -73,9 +72,7 @@ async def item_detail(
         'target_date': query_record.target_date.isoformat() if (
             query_record.target_date
         ) else None,
-        'result_openai': query_record.result_openai,
         'result_gemini': query_record.result_gemini,
-        'has_openai_result': query_record.result_openai is not None,
         'has_gemini_result': query_record.result_gemini is not None
     }
 

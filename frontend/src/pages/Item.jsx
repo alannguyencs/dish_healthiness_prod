@@ -15,7 +15,7 @@ import {
  * Item Page Component
  *
  * Main page for viewing detailed analysis of a single food record.
- * Handles polling for analysis completion and displays OpenAI and Gemini results.
+ * Handles polling for analysis completion and displays Gemini results.
  */
 const Item = () => {
     const { recordId } = useParams();
@@ -48,7 +48,7 @@ const Item = () => {
             setError(null);
 
             // If no analysis result yet, start polling
-            if (!data.result_openai && !data.result_gemini) {
+            if (!data.result_gemini) {
                 setAnalyzing(true);
                 startPolling();
             } else {
@@ -76,7 +76,7 @@ const Item = () => {
                 setItem(data);
 
                 // Stop polling if we have results
-                if (data.result_openai || data.result_gemini) {
+                if (data.result_gemini) {
                     setAnalyzing(false);
                     stopPolling();
                 }
@@ -155,7 +155,7 @@ const Item = () => {
                 {/* Analysis Results */}
                 {analyzing || !item ? (
                     <AnalysisLoading />
-                ) : (displayItem.result_openai || displayItem.result_gemini) ? (
+                ) : displayItem.result_gemini ? (
                     <AnalysisResults item={displayItem} />
                 ) : (
                     <NoAnalysisAvailable />

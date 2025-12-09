@@ -75,7 +75,7 @@ class DishImageQuery(Base):
         target_date (datetime): Date when the dish was actually consumed
     """
 
-    __tablename__ = 'dish_image_query_prod'
+    __tablename__ = 'dish_image_query_prod_dev'
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)

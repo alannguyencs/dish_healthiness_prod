@@ -25,7 +25,8 @@ from src.crud.crud_food_image_query import (
     update_dish_image_query_results,
     get_dish_image_query_by_id
 )
-from src.service.llm.high_level_api import analyze_dish_parallel_async
+from src.service.llm.gemini_analyzer import analyze_with_gemini_async
+from src.service.llm.prompts import get_analysis_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ MAX_DISHES_PER_DATE = 5
 
 async def analyze_image_background(query_id: int, file_path: str):
     """
-    Background task to analyze food image with Flow 2 & 3.
+    Background task to analyze food image with Gemini.
 
     Args:
         query_id: ID of the DishImageQuery to update
@@ -50,19 +51,20 @@ async def analyze_image_background(query_id: int, file_path: str):
     logger.info(f"Starting background analysis for query {query_id}")
 
     try:
-        # Run parallel analysis (Flow 2: OpenAI, Flow 3: Gemini)
-        results = await analyze_dish_parallel_async(
+        # Run Gemini analysis only
+        analysis_prompt = get_analysis_prompt()
+        gemini_result = await analyze_with_gemini_async(
             image_path=file_path,
-            openai_model="gpt-5-low",
+            analysis_prompt=analysis_prompt,
             gemini_model="gemini-2.5-pro",
-            gemini_thinking_budget=-1
+            thinking_budget=-1
         )
 
-        # Update the query with both results
+        # Update the query with Gemini result only
         update_dish_image_query_results(
             query_id=query_id,
-            result_openai=results.get("OpenAI"),
-            result_gemini=results.get("Gemini")
+            result_openai=None,
+            result_gemini=gemini_result
         )
         logger.info(f"Query {query_id} updated successfully")
 
