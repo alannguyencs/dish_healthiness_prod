@@ -56,8 +56,18 @@ For clarity, we define the components of a dish as those parts of the dish that 
 
 You will accomplish the task of estimating calories and macronutrients for the whole dish in the following five steps:
 
-**Step 0: Dish Identification.**
-Try first to identify the dish among known popular dishes. If this is possible, use this name to identify the dish. Otherwise, provide a clear and concise name for the dish using the main components and cooking method (e.g., "Fried Rice," "Grilled Chicken Salad"). Keep this identification information for the next steps.
+**Step 0: Dish Identification and Predictions.**
+Try first to identify the dish among known popular dishes. Generate the top 5 most likely dish names based on visual analysis, ranked by confidence. For each prediction:
+- Provide the dish name
+- Assign a confidence score between 0.0 and 1.0 (where 1.0 is absolute certainty)
+- Provide 3 appropriate serving size options specific to that dish (e.g., "1 piece (85g)", "100g", "1 cup (140g)")
+
+The serving sizes should be realistic and commonly used for that specific dish type. For example:
+- Grilled chicken: "1 piece (85g)", "100g", "1 breast (150g)"
+- Rice dishes: "1 cup (150g)", "1 bowl (200g)", "½ cup (75g)"
+- Pizza: "1 slice (120g)", "2 slices (240g)", "1 whole pizza"
+
+Keep this identification information for the next steps.
 
 **Step 1: Understand each component and estimate amounts.**
 Identify the components of the dish. For each component, you should also identify additional information (if any), such as chicken seems to be deep fried, there is butter on the bread, etc. After identifying the components, you have to estimate the amount of each of the components in serving size terms (cup, plate, etc.) and also in weight (in grams).

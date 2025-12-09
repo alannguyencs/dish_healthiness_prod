@@ -8,9 +8,7 @@ and serialization in the food healthiness application API endpoints.
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-from pydantic import BaseModel
-
-from src.models import MealType
+from pydantic import BaseModel, Field
 
 
 class Token(BaseModel):
@@ -86,13 +84,11 @@ class DishImageQueryBase(BaseModel):
         image_url (Optional[str]): URL path to the uploaded image
         result_openai (Optional[Dict]): OpenAI analysis results (Flow 2)
         result_gemini (Optional[Dict]): Gemini analysis results (Flow 3)
-        meal_type (str): Type of meal (breakfast, lunch, dinner, snack)
     """
 
     image_url: Optional[str] = None
     result_openai: Optional[Dict[str, Any]] = None
     result_gemini: Optional[Dict[str, Any]] = None
-    meal_type: str = MealType.LUNCH.value
 
 
 class DishImageQueryCreate(DishImageQueryBase):
@@ -129,4 +125,21 @@ class DishImageQueryResponse(DishImageQueryBase):
     class Config:
         """Pydantic configuration for ORM mode compatibility."""
         from_attributes = True
+
+
+class MetadataUpdate(BaseModel):
+    """
+    Schema for metadata update request.
+
+    Used when users update dish, serving size, or servings count
+    for a food analysis.
+
+    Attributes:
+        selected_dish (str): User-selected or custom dish name
+        selected_serving_size (str): Selected or custom serving size
+        number_of_servings (float): Quantity consumed (0.1 - 10.0)
+    """
+    selected_dish: str
+    selected_serving_size: str
+    number_of_servings: float = Field(..., ge=0.1, le=10.0)
 

@@ -8,7 +8,10 @@ import {
     ItemMetadata,
     AnalysisLoading,
     AnalysisResults,
-    NoAnalysisAvailable
+    NoAnalysisAvailable,
+    DishPredictions,
+    ServingSizeSelector,
+    ServingsCountInput
 } from '../components/item';
 
 /**
@@ -26,6 +29,18 @@ const Item = () => {
     const [error, setError] = useState(null);
     const [analyzing, setAnalyzing] = useState(false);
     const pollingIntervalRef = useRef(null);
+
+    // Metadata state for feedback system
+    const [metadata, setMetadata] = useState({
+        selectedDish: null,
+        selectedServingSize: null,
+        numberOfServings: 1.0,
+        servingOptions: [],
+        metadataModified: false
+    });
+    const [savingMetadata, setSavingMetadata] = useState(false);
+    const [metadataSaved, setMetadataSaved] = useState(false);
+    const [reanalyzing, setReanalyzing] = useState(false);
 
     // Get uploaded image info from navigation state (if coming from upload)
     const uploadedData = location.state || {};
@@ -46,6 +61,28 @@ const Item = () => {
             const data = await apiService.getItem(recordId);
             setItem(data);
             setError(null);
+
+            // Initialize metadata from current iteration
+            if (data.iterations && data.iterations.length > 0) {
+                const currentIter = data.iterations[data.current_iteration - 1];
+                if (currentIter && currentIter.analysis) {
+                    const predictions = currentIter.analysis.dish_predictions || [];
+                    const currentMetadata = currentIter.metadata || {};
+
+                    // Auto-select top prediction if available
+                    const topPrediction = predictions[0];
+                    const selectedDish = currentMetadata.selected_dish || (topPrediction ? topPrediction.name : null);
+                    const servingSizes = topPrediction ? topPrediction.serving_sizes : [];
+
+                    setMetadata({
+                        selectedDish: selectedDish,
+                        selectedServingSize: currentMetadata.selected_serving_size || (servingSizes[0] || null),
+                        numberOfServings: currentMetadata.number_of_servings || 1.0,
+                        servingOptions: servingSizes,
+                        metadataModified: currentMetadata.metadata_modified || false
+                    });
+                }
+            }
 
             // If no analysis result yet, start polling
             if (!data.result_gemini) {
@@ -90,6 +127,72 @@ const Item = () => {
         if (pollingIntervalRef.current) {
             clearInterval(pollingIntervalRef.current);
             pollingIntervalRef.current = null;
+        }
+    };
+
+    // Event Handlers for Metadata
+    const handleDishSelect = (dishName) => {
+        // Find selected dish prediction
+        if (!item || !item.iterations || item.iterations.length === 0) return;
+
+        const currentIter = item.iterations[item.current_iteration - 1];
+        const predictions = currentIter?.analysis?.dish_predictions || [];
+        const selectedPrediction = predictions.find(p => p.name === dishName);
+        const servingSizes = selectedPrediction?.serving_sizes || [];
+
+        setMetadata(prev => ({
+            ...prev,
+            selectedDish: dishName,
+            selectedServingSize: servingSizes[0] || prev.selectedServingSize,
+            servingOptions: servingSizes,
+            metadataModified: true
+        }));
+    };
+
+    const handleServingSizeSelect = (size) => {
+        setMetadata(prev => ({
+            ...prev,
+            selectedServingSize: size,
+            metadataModified: true
+        }));
+    };
+
+    const handleServingsCountChange = (count) => {
+        setMetadata(prev => ({
+            ...prev,
+            numberOfServings: count,
+            metadataModified: true
+        }));
+    };
+
+    const handleUpdateAnalysis = async () => {
+        try {
+            setSavingMetadata(true);
+            setReanalyzing(true);
+
+            // Save metadata
+            await apiService.updateItemMetadata(recordId, {
+                selected_dish: metadata.selectedDish,
+                selected_serving_size: metadata.selectedServingSize,
+                number_of_servings: metadata.numberOfServings
+            });
+
+            // Trigger re-analysis
+            await apiService.reanalyzeItem(recordId);
+
+            // Reload item to get new iteration
+            await loadItem();
+
+            setMetadata(prev => ({ ...prev, metadataModified: false }));
+            setMetadataSaved(true);
+            setTimeout(() => setMetadataSaved(false), 3000);
+
+        } catch (error) {
+            console.error('Update analysis failed:', error);
+            alert('Failed to update analysis. Please try again.');
+        } finally {
+            setSavingMetadata(false);
+            setReanalyzing(false);
         }
     };
 
@@ -151,6 +254,63 @@ const Item = () => {
                     <ItemImage imageUrl={displayItem.image_url} />
                     <ItemMetadata item={displayItem} />
                 </div>
+
+                {/* Metadata Panel - Only shown when predictions exist */}
+                {item && item.iterations && item.iterations.length > 0 && (() => {
+                    const currentIter = item.iterations[item.current_iteration - 1];
+                    const predictions = currentIter?.analysis?.dish_predictions || [];
+
+                    if (predictions.length > 0) {
+                        return (
+                            <div className="mb-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                                    Adjust Dish Information
+                                </h2>
+                                <p className="text-sm text-gray-600 mb-4">
+                                    Review the AI's dish identification and adjust portion details if needed.
+                                </p>
+
+                                <DishPredictions
+                                    predictions={predictions}
+                                    selectedDish={metadata.selectedDish}
+                                    onDishSelect={handleDishSelect}
+                                    disabled={reanalyzing}
+                                />
+
+                                <ServingSizeSelector
+                                    options={metadata.servingOptions}
+                                    selectedOption={metadata.selectedServingSize}
+                                    onSelect={handleServingSizeSelect}
+                                    disabled={reanalyzing}
+                                    dishName={metadata.selectedDish}
+                                />
+
+                                <ServingsCountInput
+                                    value={metadata.numberOfServings}
+                                    onChange={handleServingsCountChange}
+                                    disabled={reanalyzing}
+                                />
+
+                                {metadata.metadataModified && (
+                                    <button
+                                        onClick={handleUpdateAnalysis}
+                                        disabled={savingMetadata || reanalyzing}
+                                        className="w-full mt-4 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-medium transition-colors"
+                                    >
+                                        {reanalyzing ? 'Updating Analysis...' : 'Update Food Analysis'}
+                                    </button>
+                                )}
+
+                                {metadataSaved && (
+                                    <div className="mt-3 p-3 bg-green-100 text-green-800 rounded-lg text-sm">
+                                        Analysis updated successfully!
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    }
+                    return null;
+                })()}
 
                 {/* Analysis Results */}
                 {analyzing || !item ? (

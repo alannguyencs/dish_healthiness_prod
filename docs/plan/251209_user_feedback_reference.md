@@ -1,6 +1,5 @@
 # User Feedback Feature Investigation Report
 
-**Date**: December 9, 2025
 **Project**: Food Healthiness Analysis System
 **Source**: `/Users/alan/Documents/delta/food_healthiness/`
 **Report ID**: 251209_user_feedback
@@ -24,14 +23,14 @@ These features form an integrated system that enables users to provide feedback 
 ### Overall Flow
 
 ```
-1. Image Upload ’ 2. AI Analysis ’ 3. Display Results
-                                          “
+1. Image Upload ï¿½ 2. AI Analysis ï¿½ 3. Display Results
+                                          ï¿½
                                    4. User Feedback
-                                          “
+                                          ï¿½
                         5. Metadata Selection (Dish/Serving/Count)
-                                          “
+                                          ï¿½
                                    6. Re-Analysis
-                                          “
+                                          ï¿½
                                    7. Updated Results
 ```
 
@@ -787,7 +786,7 @@ DishPrediction(
 
 6. **View Updated Analysis**
    - New analysis tab appears
-   - Shows "Analyzed with: [dish], [serving] × [count]"
+   - Shows "Analyzed with: [dish], [serving] ï¿½ [count]"
    - User can compare with previous iterations
    - Metadata no longer marked as modified
 
@@ -998,168 +997,3 @@ if query_record.user_id != user.id:
 - Range enforcement
 - XSS prevention (React auto-escaping)
 
----
-
-## Future Enhancement Opportunities
-
-### 1. Machine Learning Improvements
-
-**Personalized Predictions:**
-- Learn from user's correction patterns
-- Boost confidence for user-preferred dishes
-- Dietary preference filtering
-
-**Serving Size Recommendations:**
-- Historical serving size preferences
-- Portion size warnings (too large/small)
-- Regional serving size variations
-
-### 2. User Experience Enhancements
-
-**Quick Actions:**
-- "Use last settings" button
-- Favorite dish quick-select
-- Common serving size presets
-
-**Visual Improvements:**
-- Food category icons
-- Nutritional previews on hover
-- Comparison view between iterations
-
-**Mobile Optimization:**
-- Swipe gestures for dish selection
-- Larger touch targets
-- Simplified mobile UI
-
-### 3. Analytics & Insights
-
-**Usage Metrics:**
-- Track confidence score accuracy
-- Monitor custom dish usage
-- Analyze serving size patterns
-
-**User Insights:**
-- Most frequently eaten dishes
-- Typical serving sizes
-- Portion size trends
-
-### 4. Integration Features
-
-**Nutrition Database:**
-- Link to USDA FoodData Central
-- Auto-populate nutritional info
-- Verify serving size accuracy
-
-**Meal Planning:**
-- Save favorite dishes
-- Portion size templates
-- Recipe integration
-
----
-
-## Testing Recommendations
-
-### Unit Tests
-
-**Backend:**
-```python
-def test_dish_prediction_validation():
-    """Test confidence score validation"""
-    with pytest.raises(ValidationError):
-        DishPrediction(name="Test", confidence=1.5)  # > 1.0
-
-def test_servings_count_range():
-    """Test servings count validation"""
-    assert validate_servings(0.05) == 0.1  # Min clamp
-    assert validate_servings(15.0) == 10.0  # Max clamp
-```
-
-**Frontend:**
-```javascript
-describe('DishPredictions', () => {
-    it('auto-selects top prediction', () => {
-        const predictions = [
-            { name: 'Dish A', confidence: 0.9 },
-            { name: 'Dish B', confidence: 0.7 }
-        ];
-        render(<DishPredictions predictions={predictions} />);
-        expect(onDishSelect).toHaveBeenCalledWith('Dish A');
-    });
-});
-```
-
-### Integration Tests
-
-**Metadata Update Flow:**
-1. Upload image
-2. Wait for analysis
-3. Select different dish
-4. Change serving size
-5. Adjust servings count
-6. Click "Update Food Analysis"
-7. Verify new iteration created
-8. Verify metadata persisted
-
-### End-to-End Tests
-
-**Complete User Journey:**
-1. Login
-2. Navigate to date view
-3. Upload food image
-4. Wait for analysis completion
-5. Review dish predictions
-6. Select alternative dish
-7. Modify serving size
-8. Update servings count
-9. Trigger re-analysis
-10. Compare iterations
-11. Verify data persists on page refresh
-
----
-
-## Conclusion
-
-The user feedback system in the food_healthiness project provides a comprehensive, user-friendly approach to refining AI-generated food analysis through:
-
-1. **Dish Identification** - AI predictions with user override capability
-2. **Serving Size Selection** - Dish-specific portion size options
-3. **Number of Servings** - Flexible quantity input with validation
-
-**Key Strengths:**
-- Intuitive dropdown-based UI
-- Automatic defaults with manual override
-- Iteration system preserves analysis history
-- Cost-effective re-analysis with lighter model
-- Comprehensive error handling
-- Accessibility-first design
-
-**Technical Highlights:**
-- Two-model approach (full vs brief analysis)
-- JSON-based iteration storage
-- Dish-specific serving sizes
-- Metadata modified flag for state tracking
-- RESTful API design
-
-This system can serve as a strong foundation for implementing similar functionality in the current dish_healthiness_prod project, with potential adaptations for the Gemini-only analysis approach.
-
----
-
-## Appendix: File Reference
-
-### Backend Files
-- `backend/src/service/llm/models.py` - Pydantic models for analysis
-- `backend/src/api/item.py` - Item detail and feedback endpoints
-- `backend/src/crud/crud_food_image_query.py` - Database operations
-- `backend/src/service/food_health_analysis.py` - Analysis orchestration
-
-### Frontend Files
-- `frontend/src/pages/Item.jsx` - Main item detail page
-- `frontend/src/components/item/DishPredictions.jsx` - Dish selection component
-- `frontend/src/components/item/ServingSizeSelector.jsx` - Serving size component
-- `frontend/src/components/item/ServingsCountInput.jsx` - Servings count component
-- `frontend/src/components/item/FeedbackInput.jsx` - Text feedback component
-- `frontend/src/services/api.js` - API communication layer
-
-### Documentation Files
-- `docs/user_feedback_plan.md` - Original implementation plan
-- `docs/plan/251122_1749_dish_predictions_serving_features.md` - Feature specification

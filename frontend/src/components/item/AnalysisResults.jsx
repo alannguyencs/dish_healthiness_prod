@@ -41,7 +41,40 @@ const formatModelName = (modelName) => {
 };
 
 export const AnalysisResults = ({ item }) => {
-    const geminiResult = item.result_gemini || {};
+    const [selectedIterationIndex, setSelectedIterationIndex] = React.useState(0);
+
+    // Get all iterations
+    let iterations = [];
+    let currentIterationNumber = 1;
+
+    if (item.iterations && item.iterations.length > 0) {
+        iterations = item.iterations;
+        currentIterationNumber = item.current_iteration || 1;
+    } else if (item.result_gemini) {
+        if (item.result_gemini.iterations) {
+            iterations = item.result_gemini.iterations;
+            currentIterationNumber = item.result_gemini.current_iteration || 1;
+        } else {
+            // Legacy format - wrap in iteration structure
+            iterations = [{
+                iteration_number: 1,
+                analysis: item.result_gemini,
+                metadata: {}
+            }];
+        }
+    }
+
+    // Auto-select latest iteration when new iteration is added
+    React.useEffect(() => {
+        if (iterations.length > 0) {
+            setSelectedIterationIndex(iterations.length - 1);
+        }
+    }, [iterations.length]);
+
+    // Get selected iteration's analysis
+    const selectedIteration = iterations[selectedIterationIndex] || {};
+    const geminiResult = selectedIteration.analysis || {};
+    const metadata = selectedIteration.metadata || {};
 
     // Format values with fallbacks
     const formatValue = (value, suffix = '') => {
@@ -76,6 +109,73 @@ export const AnalysisResults = ({ item }) => {
     return (
         <div className="mt-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Analysis Results</h2>
+
+            {/* Iteration Tabs - Show only if multiple iterations exist */}
+            {iterations.length > 1 && (
+                <div className="mb-6">
+                    <div className="border-b border-gray-200">
+                        <nav className="flex gap-2 overflow-x-auto" aria-label="Iteration tabs">
+                            {iterations.map((iter, index) => {
+                                const isSelected = index === selectedIterationIndex;
+                                const isLatest = index === iterations.length - 1;
+                                const iterMetadata = iter.metadata || {};
+
+                                return (
+                                    <button
+                                        key={index}
+                                        onClick={() => setSelectedIterationIndex(index)}
+                                        className={`
+                                            px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors
+                                            ${isSelected
+                                                ? 'border-blue-600 text-blue-600'
+                                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                            }
+                                        `}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <span>
+                                                {iter.iteration_number === 1
+                                                    ? 'Initial Analysis'
+                                                    : `Re-analysis #${iter.iteration_number - 1}`
+                                                }
+                                            </span>
+                                            {isLatest && iterations.length > 1 && (
+                                                <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded">
+                                                    Latest
+                                                </span>
+                                            )}
+                                        </div>
+                                        {iterMetadata.metadata_modified && iterMetadata.selected_dish && (
+                                            <div className="text-xs text-gray-500 mt-1">
+                                                {iterMetadata.selected_dish}
+                                                {iterMetadata.number_of_servings && iterMetadata.number_of_servings !== 1.0 && (
+                                                    <> × {iterMetadata.number_of_servings}</>
+                                                )}
+                                            </div>
+                                        )}
+                                    </button>
+                                );
+                            })}
+                        </nav>
+                    </div>
+
+                    {/* Iteration Context Info */}
+                    {metadata.metadata_modified && (
+                        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p className="text-sm text-blue-900">
+                                <span className="font-semibold">Analyzed with:</span>{' '}
+                                {metadata.selected_dish}
+                                {metadata.selected_serving_size && (
+                                    <>, {metadata.selected_serving_size}</>
+                                )}
+                                {metadata.number_of_servings && (
+                                    <> × {metadata.number_of_servings} serving{metadata.number_of_servings !== 1 ? 's' : ''}</>
+                                )}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
 
             <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-300">
                 <table className="w-full border-collapse">

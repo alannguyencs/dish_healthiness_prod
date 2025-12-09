@@ -65,6 +65,18 @@ const apiService = {
         const response = await api.get(`/api/item/${recordId}`);
         return response.data;
     },
+
+    // Metadata update endpoint
+    updateItemMetadata: async (recordId, metadata) => {
+        const response = await api.patch(`/api/item/${recordId}/metadata`, metadata);
+        return response.data;
+    },
+
+    // Re-analysis endpoint
+    reanalyzeItem: async (recordId) => {
+        const response = await api.post(`/api/item/${recordId}/reanalyze`);
+        return response.data;
+    },
 };
 
 export default apiService;
