@@ -1,12 +1,9 @@
 name: Deploy Dish Healthiness Webapp
 
-on:
-  workflow_dispatch:  # Add this to enable manual triggers
+on:  # Auto deploy on push to dev branch
   push:
     branches:
-      - main
-    paths-ignore:
-      - '**'
+      - dev
 
 jobs:
   deploy:
@@ -62,17 +59,17 @@ jobs:
             echo "✅ All required tools are available"
 
             # Clone or update repository using HTTPS with token
-            if [ -d dish_healthiness_prod ]; then
+            if [ -d dish_healthiness_prod_dev ]; then
                 echo "Repository exists, updating..."
                 # Change to your project directory on the server
-                cd /root/dish_healthiness_prod
+                cd /root/dish_healthiness_prod_dev
                 git remote set-url origin https://${{ vars.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USERNAME }}/dish_healthiness_prod.git
                 git fetch origin
                 git reset --hard origin/main
             else
                 echo "Directory is empty or not a git repo, cloning repository."
-                git clone https://${{ vars.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USERNAME }}/dish_healthiness_prod.git
-                cd dish_healthiness_prod
+                git clone https://${{ vars.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USERNAME }}/dish_healthiness_prod.git dish_healthiness_prod_dev
+                cd dish_healthiness_prod_dev
             fi
 
             echo "Current commit: $(git rev-parse HEAD)"
@@ -106,9 +103,9 @@ jobs:
                 ls -la backend/
             fi
 
-            # Kill any processes using ports ${{ vars.PROD_BACKEND_PORT }} and ${{ vars.PROD_FRONTEND_PORT }}
-            fuser -k ${{ vars.PROD_BACKEND_PORT }}/tcp || true
-            fuser -k ${{ vars.PROD_FRONTEND_PORT }}/tcp || true
+            # Kill any processes using ports ${{ vars.DEV_BACKEND_PORT }} and ${{ vars.DEV_FRONTEND_PORT }}
+            fuser -k ${{ vars.DEV_BACKEND_PORT }}/tcp || true
+            fuser -k ${{ vars.DEV_FRONTEND_PORT }}/tcp || true
 
             # Wait for processes to terminate
             sleep 5
@@ -151,7 +148,7 @@ jobs:
             export DB_URL="${{ vars.DB_URL }}"
             export DB_NAME="${{ vars.DB_NAME }}"
             export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-            export ALLOWED_ORIGINS="http://${{ vars.SERVER_IP }}:${{ vars.PROD_FRONTEND_PORT }}"
+            export ALLOWED_ORIGINS="http://${{ vars.SERVER_IP }}:${{ vars.DEV_FRONTEND_PORT }}"
 
             echo "OPENAI_API_KEY=${OPENAI_API_KEY}"
             echo "GEMINI_API_KEY=${GEMINI_API_KEY}"
@@ -164,7 +161,7 @@ jobs:
             echo "ALLOWED_ORIGINS=${ALLOWED_ORIGINS}"
 
             # Start the backend application in the background using nohup
-            nohup python -m uvicorn src.main:app --host 0.0.0.0 --port ${{ vars.PROD_BACKEND_PORT }} > backend.log 2>&1 &
+            nohup python -m uvicorn src.main:app --host 0.0.0.0 --port ${{ vars.DEV_BACKEND_PORT }} > backend.log 2>&1 &
             BACKEND_PID=$!
 
             # Go back to root directory
@@ -219,9 +216,9 @@ jobs:
             fi
 
             # Set environment variables for frontend build
-            export PORT=${{ vars.PROD_FRONTEND_PORT }}
+            export PORT=${{ vars.DEV_FRONTEND_PORT }}
             export BROWSER=none
-            export REACT_APP_API_URL="http://${{ vars.SERVER_IP }}:${{ vars.PROD_BACKEND_PORT }}"
+            export REACT_APP_API_URL="http://${{ vars.SERVER_IP }}:${{ vars.DEV_BACKEND_PORT }}"
 
             echo "Building frontend with API URL: $REACT_APP_API_URL"
 
@@ -245,12 +242,12 @@ jobs:
                 fi
             fi
 
-            # Kill any existing serve process on port ${{ vars.PROD_FRONTEND_PORT }}
-            lsof -ti:${{ vars.PROD_FRONTEND_PORT }} | xargs kill -9 2>/dev/null || true
+            # Kill any existing serve process on port ${{ vars.DEV_FRONTEND_PORT }}
+            lsof -ti:${{ vars.DEV_FRONTEND_PORT }} | xargs kill -9 2>/dev/null || true
 
             # Start serving the build
-            echo "Starting frontend server on port ${{ vars.PROD_FRONTEND_PORT }}..."
-            nohup serve -s build -l ${{ vars.PROD_FRONTEND_PORT }} > ../frontend.log 2>&1 &
+            echo "Starting frontend server on port ${{ vars.DEV_FRONTEND_PORT }}..."
+            nohup serve -s build -l ${{ vars.DEV_FRONTEND_PORT }} > ../frontend.log 2>&1 &
             FRONTEND_PID=$!
 
             # Wait for frontend to start
@@ -279,12 +276,12 @@ jobs:
                 echo "Health check attempt $i/$HEALTH_CHECK_RETRIES..."
 
                 # Check backend health endpoint
-                BACKEND_HEALTH_RESPONSE=$(curl -s -w "%{http_code}" http://localhost:${{ vars.PROD_BACKEND_PORT }}/health)
+                BACKEND_HEALTH_RESPONSE=$(curl -s -w "%{http_code}" http://localhost:${{ vars.DEV_BACKEND_PORT }}/health)
                 BACKEND_HTTP_CODE="${BACKEND_HEALTH_RESPONSE: -3}"
                 BACKEND_RESPONSE_BODY="${BACKEND_HEALTH_RESPONSE%???}"
 
                 # Check frontend endpoint
-                FRONTEND_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${{ vars.PROD_FRONTEND_PORT }}/)
+                FRONTEND_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${{ vars.DEV_FRONTEND_PORT }}/)
 
                 if [ "$BACKEND_HTTP_CODE" = "200" ] && [ "$FRONTEND_HTTP_CODE" = "200" ]; then
                     echo "Backend health endpoint responded with HTTP 200"
@@ -296,16 +293,16 @@ jobs:
                         echo "✅ Backend health check passed - Application is healthy"
                         echo "✅ Frontend check passed - React app is serving"
                         echo "🚀 Deployment successful and validated!"
-                        echo "Backend URL: http://localhost:${{ vars.PROD_BACKEND_PORT }}"
-                        echo "Frontend URL: http://localhost:${{ vars.PROD_FRONTEND_PORT }}"
+                        echo "Backend URL: http://localhost:${{ vars.DEV_BACKEND_PORT }}"
+                        echo "Frontend URL: http://localhost:${{ vars.DEV_FRONTEND_PORT }}"
                         exit 0
                     else
                         echo "❌ Backend health endpoint returned unexpected response: $BACKEND_RESPONSE_BODY"
                     fi
                 else
                     echo "❌ Health checks failed:"
-                    echo "   Backend (port ${{ vars.PROD_BACKEND_PORT }}): HTTP $BACKEND_HTTP_CODE"
-                    echo "   Frontend (port ${{ vars.PROD_FRONTEND_PORT }}): HTTP $FRONTEND_HTTP_CODE"
+                    echo "   Backend (port ${{ vars.DEV_BACKEND_PORT }}): HTTP $BACKEND_HTTP_CODE"
+                    echo "   Frontend (port ${{ vars.DEV_FRONTEND_PORT }}): HTTP $FRONTEND_HTTP_CODE"
                     if [ -n "$BACKEND_RESPONSE_BODY" ]; then
                         echo "   Backend Response: $BACKEND_RESPONSE_BODY"
                     fi
