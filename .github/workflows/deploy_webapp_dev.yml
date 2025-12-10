@@ -65,10 +65,10 @@ jobs:
                 cd /root/dish_healthiness_prod_dev
                 git remote set-url origin https://${{ vars.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USERNAME }}/dish_healthiness_prod.git
                 git fetch origin
-                git reset --hard origin/main
+                git reset --hard origin/dev
             else
                 echo "Directory is empty or not a git repo, cloning repository."
-                git clone https://${{ vars.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USERNAME }}/dish_healthiness_prod.git dish_healthiness_prod_dev
+                git clone -b dev https://${{ vars.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USERNAME }}/dish_healthiness_prod.git dish_healthiness_prod_dev
                 cd dish_healthiness_prod_dev
             fi
 
