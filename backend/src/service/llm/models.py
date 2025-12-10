@@ -27,7 +27,7 @@ class DishPrediction(BaseModel):
     )
     predicted_servings: float = Field(
         default=1.0,
-        gt=0,
+        ge=0.01,
         description="Estimated number of servings visible in the image"
     )
 
