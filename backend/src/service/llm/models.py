@@ -10,12 +10,13 @@ from pydantic import BaseModel, Field
 
 class DishPrediction(BaseModel):
     """
-    Single dish prediction with confidence score and serving sizes.
+    Single dish prediction with confidence score, serving sizes, and predicted servings.
 
     Attributes:
         name (str): The predicted dish name
         confidence (float): Confidence score between 0.0 and 1.0
         serving_sizes (List[str]): Top 3 serving size options for this dish
+        predicted_servings (float): Estimated number of servings visible in the image
     """
     name: str = Field(..., description="Predicted dish name")
     confidence: float = Field(..., ge=0.0, le=1.0,
@@ -23,6 +24,11 @@ class DishPrediction(BaseModel):
     serving_sizes: List[str] = Field(
         default_factory=list,
         description="Top 3 serving size options specific to this dish"
+    )
+    predicted_servings: float = Field(
+        default=1.0,
+        gt=0,
+        description="Estimated number of servings visible in the image"
     )
 
 

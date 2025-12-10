@@ -137,9 +137,9 @@ class MetadataUpdate(BaseModel):
     Attributes:
         selected_dish (str): User-selected or custom dish name
         selected_serving_size (str): Selected or custom serving size
-        number_of_servings (float): Quantity consumed (0.1 - 10.0)
+        number_of_servings (float): Quantity consumed (must be positive)
     """
     selected_dish: str
     selected_serving_size: str
-    number_of_servings: float = Field(..., ge=0.1, le=10.0)
+    number_of_servings: float = Field(..., gt=0)
 

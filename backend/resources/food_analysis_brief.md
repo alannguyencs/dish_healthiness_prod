@@ -63,6 +63,33 @@ Using the user-selected dish name and serving size as guidance, identify the com
 
 For example, if the user specified "Grilled Chicken Breast, 1 piece (85g), 1.5 servings", your estimates should reflect approximately 127.5g of grilled chicken total.
 
+### Standard Serving Size Reference
+When estimating serving sizes and validating user-provided serving sizes, use the following standard definitions:
+
+**Bread, Cereal, Rice, and Pasta:**
+- 1 slice of bread
+- 1 ounce of ready-to-eat cereal
+- 1/2 cup of cooked cereal, rice, or pasta
+
+**Vegetables:**
+- 1 cup of raw leafy vegetables
+- 1/2 cup of other vegetables, cooked or chopped raw
+- 3/4 cup of vegetable juice
+
+**Fruit:**
+- 1 medium apple, banana, orange
+- 1/2 cup of chopped, cooked, or canned fruit
+- 3/4 cup of fruit juice
+
+**Milk, Yogurt, and Cheese:**
+- 1 cup of milk or yogurt
+- 1-1/2 ounces of natural cheese
+- 2 ounces of process cheese
+
+**Meat, Poultry, Fish, Dry Beans, Eggs, and Nuts:**
+- 2-3 ounces of cooked lean meat, poultry, or fish
+- 1/2 cup of cooked dry beans, 1 egg, or 2 tablespoons of peanut butter count as 1 ounce of lean meat
+
 **Step 2: Estimate calories and macronutrients for each dish component.**
 Estimate **calories**, **macronutrients** (carbohydrate, protein, fat) and **fiber** for each component identified in Step 1, scaled by the number of servings.
 

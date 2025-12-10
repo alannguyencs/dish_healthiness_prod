@@ -57,15 +57,78 @@ For clarity, we define the components of a dish as those parts of the dish that 
 You will accomplish the task of estimating calories and macronutrients for the whole dish in the following five steps:
 
 **Step 0: Dish Identification and Predictions.**
-Try first to identify the dish among known popular dishes. Generate the top 5 most likely dish names based on visual analysis, ranked by confidence. For each prediction:
-- Provide the dish name
-- Assign a confidence score between 0.0 and 1.0 (where 1.0 is absolute certainty)
-- Provide 3 appropriate serving size options specific to that dish (e.g., "1 piece (85g)", "100g", "1 cup (140g)")
 
-The serving sizes should be realistic and commonly used for that specific dish type. For example:
-- Grilled chicken: "1 piece (85g)", "100g", "1 breast (150g)"
-- Rice dishes: "1 cup (150g)", "1 bowl (200g)", "½ cup (75g)"
-- Pizza: "1 slice (120g)", "2 slices (240g)", "1 whole pizza"
+Complete the following three sub-steps for dish identification and portion estimation:
+
+### Sub-step 0.1: Identify the Dish
+First, identify the dish among known popular dishes. Generate the top 5 most likely dish names based on visual analysis, ranked by confidence. For each prediction, provide:
+- The dish name (e.g., "Grilled Chicken Breast", "Chicken Fried Rice", "Margherita Pizza")
+- A confidence score between 0.0 and 1.0 (where 1.0 is absolute certainty)
+
+### Sub-step 0.2: Determine Appropriate Serving Sizes Using Standard Reference
+For each of the 5 dish predictions from Sub-step 0.1, consult the Standard Serving Size Reference below to determine what serving size units should be used for that specific dish type. Then provide 3 appropriate serving size options.
+
+**Standard Serving Size Reference:**
+
+**Bread, Cereal, Rice, and Pasta:**
+- 1 slice of bread
+- 1 ounce of ready-to-eat cereal
+- 1/2 cup of cooked cereal, rice, or pasta
+
+**Vegetables:**
+- 1 cup of raw leafy vegetables
+- 1/2 cup of other vegetables, cooked or chopped raw
+- 3/4 cup of vegetable juice
+
+**Fruit:**
+- 1 medium apple, banana, orange
+- 1/2 cup of chopped, cooked, or canned fruit
+- 3/4 cup of fruit juice
+
+**Milk, Yogurt, and Cheese:**
+- 1 cup of milk or yogurt
+- 1-1/2 ounces of natural cheese
+- 2 ounces of process cheese
+
+**Meat, Poultry, Fish, Dry Beans, Eggs, and Nuts:**
+- 2-3 ounces of cooked lean meat, poultry, or fish
+- 1/2 cup of cooked dry beans, 1 egg, or 2 tablespoons of peanut butter count as 1 ounce of lean meat
+
+Based on the Standard Serving Size Reference, provide 3 realistic and commonly used serving size options for each dish. Include both the measurement unit and approximate weight in grams. Examples:
+- For grilled chicken (protein): "1 piece (85g)", "3 oz (85g)", "1 breast (150g)"
+- For rice dishes (grain): "1/2 cup (75g)", "1 cup (150g)", "1 bowl (200g)"
+- For pizza: "1 slice (120g)", "2 slices (240g)", "1/4 pizza (200g)"
+
+### Sub-step 0.3: Estimate Number of Servings Visible in Image
+For each of the 5 dish predictions, estimate how many standard servings are visible in the image.
+
+**Methodology:**
+
+1. **Identify the primary serving unit** from the Standard Serving Size Reference that matches the dish category:
+   - For rice-based dishes → use 1/2 cup cooked as 1 serving
+   - For chicken/meat dishes → use 2-3 ounces cooked as 1 serving
+   - For bread → use 1 slice as 1 serving
+   - For vegetables → use 1/2 cup cooked or 1 cup raw as 1 serving
+
+2. **Visually estimate the total quantity** in the image and compare it to the standard serving unit:
+   - If approximately one standard serving is visible → predicted_servings = 1.0
+   - If a smaller portion is visible → predicted_servings < 1.0 (e.g., 0.5 for half, 0.25 for quarter)
+   - If a larger portion is visible → predicted_servings > 1.0 (e.g., 1.5, 2.0, 2.5)
+
+3. **Use visual cues for accuracy**:
+   - Compare with standard plate sizes (typically 9-10 inches diameter)
+   - Use visible utensils as reference (fork tines ~1 inch, spoon bowl ~2 inches)
+   - Consider food density and volume
+   - Account for typical restaurant vs. home-cooked portion sizes
+
+4. **Calculation examples:**
+   - Rice: If you see ~1 cup cooked rice → 1 cup ÷ 0.5 cup (standard) = 2.0 servings
+   - Rice: If you see ~1/4 cup cooked rice → 0.25 cup ÷ 0.5 cup (standard) = 0.5 servings
+   - Chicken: If you see ~5 oz cooked chicken → 5 oz ÷ 2.5 oz (standard midpoint) = 2.0 servings
+   - Chicken: If you see ~2 oz cooked chicken → 2 oz ÷ 2.5 oz (standard) = 0.8 servings
+   - Bread: If you see 2 slices → 2 slices ÷ 1 slice (standard) = 2.0 servings
+
+5. **Be precise** with decimals (0.3, 0.7, 1.3, 2.5, etc.) based on your best visual assessment.
 
 Keep this identification information for the next steps.
 

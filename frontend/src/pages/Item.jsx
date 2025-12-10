@@ -36,6 +36,7 @@ const Item = () => {
         selectedServingSize: null,
         numberOfServings: 1.0,
         servingOptions: [],
+        predictedServings: null, // AI predicted number of servings
         metadataModified: false
     });
     const [savingMetadata, setSavingMetadata] = useState(false);
@@ -73,12 +74,14 @@ const Item = () => {
                     const topPrediction = predictions[0];
                     const selectedDish = currentMetadata.selected_dish || (topPrediction ? topPrediction.name : null);
                     const servingSizes = topPrediction ? topPrediction.serving_sizes : [];
+                    const predictedServings = topPrediction ? topPrediction.predicted_servings : null;
 
                     setMetadata({
                         selectedDish: selectedDish,
                         selectedServingSize: currentMetadata.selected_serving_size || (servingSizes[0] || null),
-                        numberOfServings: currentMetadata.number_of_servings || 1.0,
+                        numberOfServings: currentMetadata.number_of_servings || predictedServings || 1.0,
                         servingOptions: servingSizes,
+                        predictedServings: predictedServings,
                         metadataModified: currentMetadata.metadata_modified || false
                     });
                 }
@@ -139,12 +142,15 @@ const Item = () => {
         const predictions = currentIter?.analysis?.dish_predictions || [];
         const selectedPrediction = predictions.find(p => p.name === dishName);
         const servingSizes = selectedPrediction?.serving_sizes || [];
+        const predictedServings = selectedPrediction?.predicted_servings || null;
 
         setMetadata(prev => ({
             ...prev,
             selectedDish: dishName,
             selectedServingSize: servingSizes[0] || prev.selectedServingSize,
+            numberOfServings: predictedServings || prev.numberOfServings,
             servingOptions: servingSizes,
+            predictedServings: predictedServings,
             metadataModified: true
         }));
     };
@@ -289,6 +295,7 @@ const Item = () => {
                                     value={metadata.numberOfServings}
                                     onChange={handleServingsCountChange}
                                     disabled={reanalyzing}
+                                    predictedServings={metadata.predictedServings}
                                 />
 
                                 {metadata.metadataModified && (
