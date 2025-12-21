@@ -13,9 +13,7 @@ class ComponentConfirmation(BaseModel):
 
     component_name: str = Field(..., description="Component name")
     selected_serving_size: str = Field(..., description="Selected serving size")
-    number_of_servings: float = Field(
-        ..., ge=0.01, le=10.0, description="Number of servings"
-    )
+    number_of_servings: float = Field(..., ge=0.01, le=10.0, description="Number of servings")
 
 
 class Step1ConfirmationRequest(BaseModel):

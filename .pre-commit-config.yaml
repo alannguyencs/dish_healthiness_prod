@@ -68,7 +68,7 @@ repos:
     hooks:
       - id: pylint
         name: pylint (backend)
-        args: ["--disable=C0114,R0903,R0913", "--max-line-length=99"]
+        args: ["--disable=C0114,R0903,R0913,R0801", "--max-line-length=99"]
         additional_dependencies:
           - fastapi
           - uvicorn

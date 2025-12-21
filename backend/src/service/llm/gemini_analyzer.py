@@ -11,8 +11,8 @@ import time
 from pathlib import Path
 from typing import Any, Dict
 
-from google import genai
-from google.genai import types
+from google import genai  # pylint: disable=no-name-in-module
+from google.genai import types  # pylint: disable=import-error,no-name-in-module
 
 from src.service.llm.models import Step1ComponentIdentification, Step2NutritionalAnalysis
 from src.service.llm.pricing import compute_price_usd, extract_token_usage
@@ -41,7 +41,7 @@ def enrich_result_with_metadata(
         result["price_usd"] = compute_price_usd(
             model=model, vendor="gemini", input_tokens=in_tok, output_tokens=out_tok
         )
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         pass
 
     # Add analysis time
@@ -55,7 +55,7 @@ def enrich_result_with_metadata(
 # ============================================================
 
 
-async def analyze_step1_component_identification_async(
+async def analyze_step1_component_identification_async(  # pylint: disable=too-many-locals
     image_path: Path,
     analysis_prompt: str,
     gemini_model: str = "gemini-2.5-pro",
@@ -149,7 +149,7 @@ async def analyze_step1_component_identification_async(
         raise ValueError(f"Error calling Gemini API (Step 1): {e}") from e
 
 
-async def analyze_step2_nutritional_analysis_async(
+async def analyze_step2_nutritional_analysis_async(  # pylint: disable=too-many-locals
     image_path: Path,
     analysis_prompt: str,
     gemini_model: str = "gemini-2.5-pro",

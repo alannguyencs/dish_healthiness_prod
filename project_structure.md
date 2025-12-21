@@ -1,716 +1,672 @@
-# Project Structure Documentation
+# Dish Healthiness Application - Project Structure Documentation
 
 ## Project Overview
 
-**Dish Healthiness** is a fullstack web application that analyzes food images using AI to provide health and nutritional insights. The application uses OpenAI GPT-5 and Google Gemini models to analyze uploaded dish photos and provide detailed nutritional information, healthiness scores, and personalized serving size recommendations.
+The Dish Healthiness application is a full-stack web application that analyzes food images using AI (Google Gemini) to provide nutritional insights and healthiness scores. The application implements a two-step analysis workflow:
 
-### Key Features
-- User authentication with JWT sessions
-- Calendar-based food diary interface
-- AI-powered dish identification and nutritional analysis
-- Multiple dish predictions with confidence scores
-- Customizable serving sizes and portions
-- Iterative re-analysis based on user feedback
-- Dual LLM analysis (OpenAI GPT-5 and Google Gemini)
+1. **Step 1: Component Identification** - Identifies dish names and individual food components with serving size predictions
+2. **Step 2: Nutritional Analysis** - Calculates detailed nutritional values and healthiness scores after user confirmation
 
-### Technology Stack
-
-**Backend:**
-- FastAPI (Python web framework)
-- PostgreSQL (Database)
-- SQLAlchemy (ORM)
-- OpenAI API (GPT-5 for analysis)
-- Google Gemini API (2.5-pro/flash for analysis)
-- JWT for authentication
-- Pydantic for data validation
-
-**Frontend:**
-- React 18
-- React Router v6 (Client-side routing)
-- Axios (HTTP client)
-- Tailwind CSS (Styling)
+**Technology Stack:**
+- **Backend**: Python/FastAPI with PostgreSQL database
+- **Frontend**: React with Tailwind CSS
+- **AI/ML**: Google Gemini 2.5 Pro for vision-based food analysis
+- **Authentication**: JWT-based session management
 
 ---
 
 ## Backend
 
-The backend is located in `/Users/alan/Documents/delta/dish_healthiness_prod/backend/` and follows a modular architecture with clear separation of concerns.
+The backend is a FastAPI application that handles user authentication, image processing, database operations, and AI-powered food analysis.
 
-### Root Level (`/backend/src/`)
+### Root Files (`backend/src/`)
 
-This folder contains the core application setup and configuration files.
+#### main.py
 
-#### `main.py`
+Application entry point and FastAPI configuration.
 
-Main FastAPI application entry point that orchestrates the entire backend.
+**Public Functions:**
+- `configure_logging()` - Sets up application logging with console and file handlers
+- `create_app()` - Creates and configures the FastAPI application instance with middleware, CORS, database setup, and routing
+- `root()` - Root endpoint that returns API welcome message and documentation URL
+- `health()` - Health check endpoint for monitoring application status
 
-- `configure_logging()`: Sets up application logging with console and file handlers
-- `create_app()`: Creates and configures the FastAPI application instance with middleware, CORS, static files, and database initialization
-- `root()`: Root endpoint returning API information
-- `health()`: Health check endpoint for monitoring
+#### models.py
 
-#### `configs.py`
+SQLAlchemy ORM models for database schema.
 
-Configuration management and application settings.
+**Public Classes:**
+- `Users` - User model for authentication with username, hashed password, and role
+  - `to_dict()` - Converts user instance to dictionary representation
+- `DishImageQuery` - Model for storing food image analysis requests and results
+  - Fields: user_id, image_url, result_openai, result_gemini, dish_position, created_at, target_date
+  - `to_dict()` - Converts query instance to dictionary representation
 
-- `Settings`: Pydantic settings class managing API versioning and project configuration
-- `Settings.get_api_url()`: Returns the full API URL string
-- `Settings.get_project_identifier()`: Returns lowercase project name identifier
-- Module defines directory constants: `PROJECT_DIR`, `DATA_DIR`, `IMAGE_DIR`, `RESOURCE_DIR`, `LOG_DIR`
-- Module defines authentication constant: `TOKEN_EXPIRATION_DAYS`
+#### schemas.py
 
-#### `database.py`
+Pydantic models for request/response validation and serialization.
 
-Database configuration and session management for PostgreSQL.
+**Public Classes:**
+- `Token` - Authentication token response schema with access_token and token_type
+- `UserBase` - Base user schema with username and role fields
+- `UserCreate` - User creation schema extending UserBase with password field
+- `UserResponse` - User response schema for API responses (excludes sensitive data)
+- `DishImageQueryBase` - Base schema for dish image queries
+- `DishImageQueryCreate` - Schema for creating new dish image queries
+- `DishImageQueryResponse` - Schema for dish image query API responses
+- `MetadataUpdate` - Schema for updating dish metadata (selected_dish, selected_serving_size, number_of_servings)
 
-- `build_database_url()`: Constructs PostgreSQL connection URL from environment variables
-- `get_db()`: Generator function providing database sessions for dependency injection
-- Module creates SQLAlchemy engine and session factory
-- Module defines `Base` declarative base for ORM models
+#### database.py
 
-#### `models.py`
+Database configuration and session management using SQLAlchemy.
 
-SQLAlchemy ORM models defining database schema.
+**Public Functions:**
+- `build_database_url()` - Constructs PostgreSQL database URL from environment variables
+- `get_db()` - Provides database session via dependency injection for FastAPI endpoints
 
-- `Users`: User authentication model with username, hashed password, and role
-- `Users.__repr__()`: String representation of user object
-- `Users.to_dict()`: Converts user to dictionary format
-- `DishImageQuery`: Food analysis query model storing image URLs and AI analysis results
-- `DishImageQuery.__repr__()`: String representation of query object
-- `DishImageQuery.to_dict()`: Converts query to dictionary format
+**Public Variables:**
+- `engine` - SQLAlchemy database engine instance
+- `SessionLocal` - SQLAlchemy session factory for creating database sessions
+- `Base` - Declarative base class for ORM models
 
-#### `schemas.py`
+#### configs.py
 
-Pydantic schemas for request/response validation and serialization.
+Application configuration settings and constants.
 
-- `Token`: Authentication token response schema
-- `UserBase`: Base user schema with common fields
-- `UserCreate`: Schema for user registration with password
-- `UserResponse`: User response schema excluding sensitive data
-- `DishImageQueryBase`: Base schema for dish image queries
-- `DishImageQueryCreate`: Schema for creating new dish queries
-- `DishImageQueryResponse`: Schema for dish query responses
-- `MetadataUpdate`: Schema for updating dish metadata (dish name, serving size, servings count)
+**Public Classes:**
+- `Settings` - Pydantic settings class managing API versioning and project configuration
+  - `get_api_url()` - Returns the full API URL string
+  - `get_project_identifier()` - Returns lowercase project name as identifier
 
-#### `auth.py`
+**Public Variables:**
+- `PROJECT_DIR` - Root project directory path
+- `DATA_DIR` - Directory for data storage
+- `IMAGE_DIR` - Directory for uploaded dish images
+- `RESOURCE_DIR` - Directory for resource files (prompts, templates)
+- `LOG_DIR` - Directory for application logs
+- `TOKEN_EXPIRATION_DAYS` - JWT token expiration duration (90 days)
+- `settings` - Global settings instance
 
-Authentication utilities for JWT and user verification.
+#### auth.py
 
-- `authenticate_user()`: Authenticates user with username and password
-- `create_access_token()`: Creates JWT access token with expiration
-- `get_current_user_from_token()`: Validates JWT token and returns user object
-- `authenticate_user_from_request()`: Authenticates user from HTTP request cookie
-- Module defines password hashing context and OAuth2 scheme
+Authentication utilities for JWT token generation and user verification.
 
-#### `utils.py`
+**Public Functions:**
+- `authenticate_user(username, password)` - Authenticates user with username and password, returns User object or False
+- `create_access_token(data, expires_delta)` - Creates JWT access token with optional expiration delta
+- `get_current_user_from_token(token)` - Validates JWT token and returns corresponding User object
+- `authenticate_user_from_request(request)` - Authenticates user from HTTP request using session cookie
 
-General utility functions for the application.
+**Public Variables:**
+- `oauth2_scheme` - OAuth2 password bearer instance for token extraction
+- `bcrypt_context` - Password hashing context using bcrypt
 
-- `format_datetime()`: Formats datetime objects for display
+#### utils.py
+
+Utility functions for common operations.
+
+**Public Functions:**
+- `format_datetime(dt)` - Formats datetime object to display string (YYYY-MM-DD HH:MM:SS)
 
 ---
 
-### API Endpoints (`/backend/src/api/`)
+### API Module (`backend/src/api/`)
 
-This folder contains all REST API endpoint definitions organized by functionality.
+API route handlers and endpoint definitions organized by functionality.
 
-#### `api_router.py`
+#### api_router.py
 
 Central API router aggregating all endpoint modules.
 
-- Module includes routers from: login, dashboard, date, and item modules
+**Purpose:** Combines all API sub-routers (login, dashboard, date, item) into a single router for the FastAPI application.
 
-#### `login.py`
+#### login.py
 
-User authentication endpoints with session management.
+Authentication endpoints for user login and logout.
 
-- `LoginRequest`: Pydantic model for login credentials
-- `process_login()`: POST endpoint handling user login and creating session cookies
-- `logout()`: POST endpoint handling user logout and clearing session
+**Public Classes:**
+- `LoginRequest` - Pydantic model for login request with username and password
 
-#### `dashboard.py`
+**Public Functions:**
+- `process_login(login_data)` - POST /api/login/ - Handles user login, creates JWT token, sets session cookie
+- `logout()` - POST /api/login/logout - Handles user logout, clears session cookie
 
-Dashboard calendar view endpoints providing monthly overview.
+#### dashboard.py
 
-- `dashboard()`: GET endpoint returning calendar data with user's food analyses for a specific month
+Dashboard API endpoints for calendar view data.
 
-#### `date.py`
+**Public Functions:**
+- `dashboard(request, year, month)` - GET /api/dashboard/ - Returns calendar data with user's food analyses for specified month/year
+  - Builds calendar grid structure with record counts per day
+  - Provides navigation data for previous/next months
+
+#### date.py
 
 Date-specific endpoints for viewing and uploading dishes.
 
-- `analyze_image_background()`: Background task function for asynchronous Gemini image analysis
-- `_serialize_query()`: Helper function to serialize query objects to dictionaries
-- `get_date()`: GET endpoint returning all dishes for a specific date
-- `upload_dish()`: POST endpoint handling image upload, processing, and scheduling background analysis
+**Public Functions:**
+- `analyze_image_background(query_id, file_path)` - Background task performing Step 1 analysis (component identification) using Gemini
+- `get_date(request, year, month, day)` - GET /api/date/{year}/{month}/{day} - Returns dish data for specific date organized by dish positions (1-5)
+- `upload_dish(background_tasks, request, year, month, day, dish_position, file)` - POST /api/date/{year}/{month}/{day}/upload - Handles image upload, processes image, creates database record, triggers Step 1 analysis in background
 
-#### `item.py`
+**Private Functions:**
+- `_serialize_query(query)` - Serializes query object to dictionary for JSON response
 
-Individual dish detail and analysis endpoints.
+#### item.py
 
-- `item_detail()`: GET endpoint returning detailed analysis for a specific dish record
-- `update_item_metadata()`: PATCH endpoint updating dish metadata (name, serving size, servings count)
-- `reanalyze_item()`: POST endpoint triggering re-analysis with updated metadata using brief model
+Individual item detail view endpoints for analysis results.
 
----
+**Public Functions:**
+- `item_detail(record_id, request)` - GET /api/item/{record_id} - Returns detailed analysis information for specific dish image query with iteration support
+- `update_item_metadata(record_id, request, metadata)` - PATCH /api/item/{record_id}/metadata - Updates metadata for current iteration (dish name, serving size, servings count)
+- `confirm_step1_and_trigger_step2(record_id, request, background_tasks, confirmation)` - POST /api/item/{record_id}/confirm-step1 - Confirms Step 1 data and triggers Step 2 nutritional analysis in background
 
-### CRUD Operations (`/backend/src/crud/`)
+#### item_schemas.py
 
-This folder contains database CRUD (Create, Read, Update, Delete) operations.
+Request/response schemas for item API endpoints.
 
-#### `crud_user.py`
+**Public Classes:**
+- `ComponentConfirmation` - User-confirmed component with serving size and servings count
+- `Step1ConfirmationRequest` - Request body for confirming Step 1 data with selected dish name and components list
 
-User model CRUD operations.
+#### item_tasks.py
 
-- `get_db_session()`: Returns a new database session
-- `get_user_by_username()`: Retrieves user by username
-- `get_user_by_id()`: Retrieves user by ID
-- `create_user()`: Creates new user with hashed password
-- `update_user_password()`: Updates user password
-- `delete_user()`: Deletes user by ID
+Background tasks for item API operations.
 
-#### `crud_food_image_query.py`
-
-Dish image query CRUD operations with iteration management.
-
-- `create_dish_image_query()`: Creates new dish image query record
-- `get_dish_image_query_by_id()`: Retrieves query by ID
-- `get_dish_image_queries_by_user()`: Gets all queries for a user
-- `get_dish_image_queries_by_user_and_date()`: Gets queries for specific user and date
-- `get_single_dish_by_user_date_position()`: Gets single dish by position for a date
-- `update_dish_image_query_results()`: Updates analysis results (OpenAI/Gemini)
-- `delete_dish_image_query_by_id()`: Deletes query by ID
-- `get_calendar_data()`: Returns record counts per day for calendar view
-- `initialize_iterations_structure()`: Creates iteration structure for first analysis
-- `get_current_iteration()`: Retrieves current iteration from query result
-- `add_metadata_reanalysis_iteration()`: Adds new iteration after metadata-based re-analysis
-- `update_metadata()`: Updates metadata for current iteration
-- `get_latest_iterations()`: Gets most recent iterations for display
+**Public Functions:**
+- `trigger_step2_analysis_background(query_id, image_path, dish_name, components)` - Async background task running Step 2 nutritional analysis using Gemini with confirmed component data
 
 ---
 
-### Service Layer (`/backend/src/service/llm/`)
+### CRUD Module (`backend/src/crud/`)
 
-This folder contains LLM (Large Language Model) integration services for food analysis.
+Database CRUD (Create, Read, Update, Delete) operations for models.
 
-#### `high_level_api.py`
+#### crud_user.py
 
-High-level API for orchestrating dish analysis.
+CRUD operations for User model.
 
-- `analyze_dish_parallel_async()`: Runs OpenAI and Gemini analyses in parallel (async)
-- `analyze_dish_parallel()`: Synchronous wrapper for parallel dish analysis
+**Public Functions:**
+- `get_db_session()` - Returns new database session for CRUD operations
+- `get_user_by_username(username)` - Retrieves user by username
+- `get_user_by_id(user_id)` - Retrieves user by ID
+- `create_user(username, hashed_password, role)` - Creates new user record
+- `update_user_password(user_id, new_hashed_password)` - Updates user password
+- `delete_user(user_id)` - Deletes user by ID
 
-#### `openai_analyzer.py`
+#### crud_food_image_query.py
 
-OpenAI GPT integration for dish health analysis.
+CRUD operations for DishImageQuery model with iteration support.
 
-- `prepare_openai_model_and_reasoning()`: Extracts reasoning mode and model name for GPT-5 variants
-- `enrich_result_with_metadata()`: Enriches analysis results with model, pricing, and timing metadata
-- `analyze_with_openai_async()`: Analyzes dish image using OpenAI GPT with structured output
+**Public Functions:**
+- `create_dish_image_query(user_id, image_url, result_openai, result_gemini, dish_position, created_at, target_date)` - Creates new dish image query record
+- `get_dish_image_query_by_id(query_id)` - Retrieves query by ID
+- `get_dish_image_queries_by_user(user_id)` - Retrieves all queries for specific user ordered by creation date
+- `get_dish_image_queries_by_user_and_date(user_id, query_date)` - Retrieves queries for user on specific date using target_date or created_at
+- `get_single_dish_by_user_date_position(user_id, query_date, dish_position)` - Retrieves single dish for user, date, and position (1-5)
+- `update_dish_image_query_results(query_id, result_openai, result_gemini)` - Updates analysis results for existing query
+- `delete_dish_image_query_by_id(query_id)` - Deletes query by ID
+- `get_calendar_data(user_id, year, month)` - Returns record count per day for calendar month display
+- `initialize_iterations_structure(analysis_result, metadata)` - Initializes iteration structure for first analysis with metadata tracking
+- `get_current_iteration(record)` - Extracts current iteration data from result_gemini, handles legacy format conversion
+- `add_metadata_reanalysis_iteration(query_id, analysis_result, metadata)` - Adds new iteration after metadata-based re-analysis
+- `update_metadata(query_id, selected_dish, selected_serving_size, number_of_servings)` - Updates metadata for current iteration
+- `get_latest_iterations(record_id, limit)` - Returns most recent iterations for display (default: 3 most recent)
 
-#### `gemini_analyzer.py`
+---
 
-Google Gemini integration for dish health analysis.
+### Service Module (`backend/src/service/llm/`)
 
-- `enrich_result_with_metadata()`: Enriches results with model, pricing, and timing metadata
-- `analyze_with_gemini_async()`: Analyzes dish image using Gemini with full schema
-- `analyze_with_gemini_brief_async()`: Re-analyzes dish using Gemini with brief schema (excludes dish predictions to save tokens)
+LLM (Large Language Model) service integration for AI-powered analysis.
 
-#### `prompts.py`
+#### gemini_analyzer.py
 
-Prompt loading and management utilities.
+Gemini API integration for dish health analysis implementing two-step workflow.
 
-- `get_analysis_prompt()`: Loads default analysis prompt from food_analysis.md (with dish predictions)
-- `get_brief_analysis_prompt()`: Loads brief analysis prompt from food_analysis_brief.md (without dish predictions)
+**Public Functions:**
+- `enrich_result_with_metadata(result, model, analysis_start_time)` - Enriches analysis result with model metadata, pricing, and timing information
+- `analyze_step1_component_identification_async(image_path, analysis_prompt, gemini_model, thinking_budget)` - Async Step 1 analysis identifying dish predictions and components with serving sizes using Gemini vision model
+- `analyze_step2_nutritional_analysis_async(image_path, analysis_prompt, gemini_model, thinking_budget)` - Async Step 2 analysis calculating nutritional values and healthiness score after user confirmation
 
-#### `models.py`
+#### models.py
 
-Pydantic models defining LLM response schemas.
+Pydantic models for LLM analysis data structures.
 
-- `DishPrediction`: Single dish prediction with name, confidence, serving sizes, and predicted servings
-- `FoodHealthAnalysis`: Full analysis model with dish predictions (for initial analysis)
-- `FoodHealthAnalysisBrief`: Brief analysis model without dish predictions (for re-analysis)
+**Public Classes:**
+- `DishNamePrediction` - Single dish name prediction with confidence score (0.0-1.0)
+- `ComponentServingPrediction` - Serving size predictions for individual dish component with name, serving sizes list (3-5 options), and predicted servings count
+- `Step1ComponentIdentification` - Step 1 complete response model containing dish predictions (1-5) and components (1-10) for user confirmation
+- `Step2NutritionalAnalysis` - Step 2 complete response model with dish name, healthiness score (0-100), healthiness rationale, calories, macronutrients (fiber, carbs, protein, fat), and micronutrients list
 
-#### `pricing.py`
+#### prompts.py
 
-LLM pricing and token usage calculation utilities.
+Prompt loading and formatting utilities for LLM analysis.
 
-- `normalize_model_key()`: Normalizes model string to pricing key
-- `compute_price_usd()`: Calculates API cost based on token usage and model pricing
-- `extract_token_usage()`: Extracts input and output token counts from API responses
-- Module defines pricing table for OpenAI and Gemini models
+**Public Functions:**
+- `get_step1_component_identification_prompt()` - Loads Step 1 prompt for component identification from resources/step1_component_identification.md
+- `get_step2_nutritional_analysis_prompt(dish_name, components)` - Loads and formats Step 2 prompt for nutritional analysis, injecting user-confirmed dish name and components data
+
+#### pricing.py
+
+LLM pricing and token calculation utilities for cost tracking.
+
+**Public Functions:**
+- `normalize_model_key(model, vendor)` - Normalizes model string to standardized pricing key
+- `compute_price_usd(model, vendor, input_tokens, output_tokens, cached_input_tokens)` - Computes API cost in USD based on model and token usage (per 1M tokens)
+- `extract_token_usage(response, vendor)` - Extracts input and output token counts from OpenAI or Gemini API response
+
+**Public Variables:**
+- `PRICING` - Pricing table in USD per 1 million tokens for GPT-5 and Gemini models
+- `DEFAULT_PRICING` - Default pricing for unknown models
 
 ---
 
 ## Frontend
 
-The frontend is located in `/Users/alan/Documents/delta/dish_healthiness_prod/frontend/` and is built with React following a component-based architecture.
+The frontend is a React single-page application providing user interface for authentication, calendar navigation, image uploads, and two-step analysis workflow.
 
-### Root Level (`/frontend/src/`)
+### Root Files (`frontend/src/`)
 
-This folder contains the main application setup and entry points.
-
-#### `index.js`
+#### index.js
 
 React application entry point.
 
-- Renders the root `App` component with StrictMode enabled
+**Purpose:** Renders the root App component into the DOM with React.StrictMode enabled.
 
-#### `App.js`
+#### App.js
 
 Main application component with routing configuration.
 
-- `RedirectToDashboard`: Component handling root path redirects based on authentication state
-- `App`: Main app component configuring routes for login, dashboard, date view, and item detail pages
+**Public Components:**
+- `RedirectToDashboard` - Redirect component routing to dashboard or login based on authentication status
+- `App` - Main app component configuring React Router with protected routes for dashboard, date view, and item detail pages
+
+#### contexts/AuthContext.js
+
+Authentication context provider for global auth state management.
+
+**Public Functions:**
+- `AuthProvider` - Context provider component managing authentication state (user, authenticated status, loading)
+  - `login(username, password)` - Logs in user via API, sets user state
+  - `logout()` - Logs out user via API, clears user state
+- `useAuth()` - Custom hook for accessing authentication context
+
+#### services/api.js
+
+API service layer for backend communication using Axios.
+
+**Public Functions:**
+- `login(username, password)` - POST /api/login/ - Authenticates user
+- `logout()` - POST /api/login/logout - Logs out user
+- `getDashboardData(year, month)` - GET /api/dashboard/ - Fetches calendar dashboard data
+- `getDateData(year, month, day)` - GET /api/date/{year}/{month}/{day} - Fetches date-specific dish data
+- `uploadDishImage(year, month, day, dishPosition, file)` - POST /api/date/{year}/{month}/{day}/upload - Uploads dish image
+- `getItem(recordId)` - GET /api/item/{recordId} - Fetches item detail data
+- `updateItemMetadata(recordId, metadata)` - PATCH /api/item/{recordId}/metadata - Updates item metadata
+- `reanalyzeItem(recordId)` - POST /api/item/{recordId}/reanalyze - Triggers re-analysis (legacy)
+- `confirmStep1(recordId, confirmationData)` - POST /api/item/{recordId}/confirm-step1 - Confirms Step 1 and triggers Step 2
+
+**Public Variables:**
+- `API_BASE_URL` - Base URL for API requests (from environment or localhost:2612)
+
+#### components/ProtectedRoute.jsx
+
+Route protection component for authenticated pages.
+
+**Public Components:**
+- `ProtectedRoute` - Wrapper component redirecting to login if user not authenticated, shows loading state during auth check
 
 ---
 
-### Authentication (`/frontend/src/contexts/`)
+### Pages (`frontend/src/pages/`)
 
-This folder contains React context providers for global state management.
+Top-level page components for main application routes.
 
-#### `AuthContext.js`
+#### Login.jsx
 
-Authentication context provider managing user session state.
+Login page component.
 
-- `AuthProvider`: Context provider component managing authentication state
-- `useAuth()`: Custom hook for accessing authentication context
-- Login and logout functions for authentication flow
+**Public Components:**
+- `Login` - Login form page with username/password inputs, handles authentication, redirects to dashboard on success
 
----
-
-### API Services (`/frontend/src/services/`)
-
-This folder contains HTTP client services for backend communication.
-
-#### `api.js`
-
-Axios-based API service with all backend endpoints.
-
-- `login()`: Authenticates user and returns session data
-- `logout()`: Logs out user and clears session
-- `getDashboardData()`: Fetches calendar data for dashboard
-- `getDateData()`: Fetches dish data for specific date
-- `uploadDishImage()`: Uploads dish image with position and date
-- `getItem()`: Fetches detailed analysis for specific record
-- `updateItemMetadata()`: Updates dish metadata (name, serving size, count)
-- `reanalyzeItem()`: Triggers re-analysis with updated metadata
-
----
-
-### Pages (`/frontend/src/pages/`)
-
-This folder contains top-level page components corresponding to routes.
-
-#### `Login.jsx`
-
-Login page component with authentication form.
-
-- Renders login form with username and password inputs
-- Handles form submission and authentication errors
-- Redirects to dashboard on successful login
-
-#### `Dashboard.jsx`
+#### Dashboard.jsx
 
 Main dashboard page displaying calendar view.
 
-- Orchestrates dashboard sub-components (header, navigation, calendar grid)
-- Loads calendar data with dish counts per day
-- Handles month navigation and date selection
-- Shows empty state when no records exist
+**Public Components:**
+- `Dashboard` - Dashboard page orchestrating header, month navigation, and calendar grid components
+  - Loads calendar data with record counts
+  - Handles month navigation
+  - Navigates to date view on day click
 
-#### `DateView.jsx`
+#### DateView.jsx
 
-Date-specific view page for managing daily meals.
+Date-specific view for managing meals.
 
-- Displays upload slots for up to 5 dishes per date
-- Handles file uploads and redirects to analysis page
-- Shows navigation back to calendar
+**Public Components:**
+- `DateView` - Date view page for specific date showing meal upload slots (1-5 dishes)
+  - Loads date-specific dish data
+  - Handles image uploads with file processing
+  - Redirects to item detail page after upload
 
-#### `Item.jsx`
+#### ItemV2.jsx
 
-Item detail page displaying dish analysis results.
+Item detail page implementing two-step analysis workflow.
 
-- Polls for analysis completion after upload
-- Displays image, metadata, and Gemini analysis results
-- Manages user feedback system (dish selection, serving sizes, servings count)
-- Handles metadata updates and re-analysis requests
-- Shows analysis loading states and results
-
----
-
-### Components (`/frontend/src/components/`)
-
-This folder contains reusable React components organized by feature.
-
-#### `ProtectedRoute.jsx`
-
-Route wrapper component for authentication protection.
-
-- `ProtectedRoute`: Wraps routes requiring authentication and redirects unauthenticated users to login
+**Public Components:**
+- `ItemV2` - Item detail page displaying Step 1 component editor and Step 2 results
+  - Polls for Step 1 completion every 3 seconds
+  - Shows Step 1 component editor when ready for user confirmation
+  - Handles Step 1 confirmation triggering Step 2
+  - Polls for Step 2 completion every 3 seconds
+  - Displays Step 2 nutritional results when complete
+  - Allows toggling between Step 1 and Step 2 views
 
 ---
 
-### Dashboard Components (`/frontend/src/components/dashboard/`)
+### Dashboard Components (`frontend/src/components/dashboard/`)
 
-This folder contains components specific to the dashboard calendar view.
+Components for dashboard calendar interface.
 
-#### `index.js`
+#### index.js
 
-Centralized exports for dashboard components.
+Central export file for dashboard components.
 
-- Exports: `DashboardHeader`, `MonthNavigation`, `CalendarGrid`, `CalendarDay`, `EmptyState`
+**Purpose:** Exports DashboardHeader, MonthNavigation, CalendarGrid, CalendarDay, and EmptyState components.
 
-#### `DashboardHeader.jsx`
+#### DashboardHeader.jsx
 
-Dashboard page header component.
+Dashboard header with logout functionality.
 
-- Displays application title and logout button
+**Public Components:**
+- `DashboardHeader` - Header displaying page title, username, and logout button
 
-#### `MonthNavigation.jsx`
+#### MonthNavigation.jsx
 
-Month navigation controls component.
+Month navigation controls.
 
-- Displays current month and year
-- Provides previous/next month navigation buttons
+**Public Components:**
+- `MonthNavigation` - Month/year display with previous/next navigation buttons
 
-#### `CalendarGrid.jsx`
+#### CalendarGrid.jsx
 
-Calendar grid component displaying month days.
+Calendar table grid layout.
 
-- Renders weekday headers and calendar weeks
-- Delegates day rendering to CalendarDay component
+**Public Components:**
+- `CalendarGrid` - Calendar table rendering weekday headers and day cells using CalendarDay component
 
-#### `CalendarDay.jsx`
+#### CalendarDay.jsx
 
-Individual calendar day cell component.
+Individual calendar day cell.
 
-- Displays day number and dish count badge
-- Handles click events for date navigation
-- Highlights current day and current month days
+**Public Components:**
+- `CalendarDay` - Single day cell displaying day number, record count badge, and click handler for date navigation
 
-#### `EmptyState.jsx`
+#### EmptyState.jsx
 
-Empty state message component.
+Empty state message for calendar.
 
-- Displays when user has no food records for the month
-
----
-
-### Date View Components (`/frontend/src/components/dateview/`)
-
-This folder contains components for the date-specific meal upload view.
-
-#### `index.js`
-
-Centralized exports for date view components.
-
-- Exports: `DateViewNavigation`, `MealUploadSlot`, `MealUploadGrid`
-
-#### `DateViewNavigation.jsx`
-
-Navigation component for date view page.
-
-- Displays formatted date and back button to calendar
-
-#### `MealUploadSlot.jsx`
-
-Individual meal upload slot component.
-
-- Handles file input and preview for dish images
-- Shows existing dish thumbnails or upload prompts
-- Manages upload state and image selection
-
-#### `MealUploadGrid.jsx`
-
-Grid layout component organizing meal upload slots.
-
-- Renders up to 5 meal slots per date
-- Displays formatted date header
-- Organizes slots in responsive grid
+**Public Components:**
+- `EmptyState` - Empty state component shown when user has no dish records
 
 ---
 
-### Item Components (`/frontend/src/components/item/`)
+### Date View Components (`frontend/src/components/dateview/`)
 
-This folder contains components for individual dish detail views.
+Components for date-specific meal upload interface.
 
-#### `index.js`
+#### index.js
 
-Centralized exports for item components.
+Central export file for date view components.
 
-- Exports: `ItemHeader`, `ItemNavigation`, `ItemImage`, `ItemMetadata`, `AnalysisLoading`, `AnalysisResults`, `NoAnalysisAvailable`, `DishPredictions`, `ServingSizeSelector`, `ServingsCountInput`
+**Purpose:** Exports DateViewNavigation, MealUploadSlot, and MealUploadGrid components.
 
-#### `ItemHeader.jsx`
+#### DateViewNavigation.jsx
 
-Item detail page header component.
+Navigation header for date view.
 
-- Displays record ID and logout button
+**Public Components:**
+- `DateViewNavigation` - Back to calendar button navigation component
 
-#### `ItemNavigation.jsx`
+#### MealUploadGrid.jsx
 
-Navigation component for item detail page.
+Grid layout for meal upload slots.
 
-- Provides back button to date view
+**Public Components:**
+- `MealUploadGrid` - Grid container rendering 5 MealUploadSlot components for dish positions with formatted date header
 
-#### `ItemImage.jsx`
+#### MealUploadSlot.jsx
+
+Individual meal upload slot.
+
+**Public Components:**
+- `MealUploadSlot` - Upload slot for single dish position showing upload button or existing dish image
+  - Handles file selection and upload
+  - Navigates to item detail when dish exists
+  - Shows uploading state during upload
+
+---
+
+### Item Components (`frontend/src/components/item/`)
+
+Components for item detail view and two-step analysis workflow.
+
+#### index.js
+
+Central export file for item components.
+
+**Purpose:** Exports ItemHeader, ItemNavigation, ItemImage, ItemMetadata, AnalysisLoading, NoAnalysisAvailable, DishPredictions, ServingSizeSelector, ServingsCountInput, Step1ComponentEditor, and Step2Results components.
+
+#### ItemHeader.jsx
+
+Item detail page header.
+
+**Public Components:**
+- `ItemHeader` - Header with back navigation to date view and page title
+
+#### ItemNavigation.jsx
+
+Item page navigation controls.
+
+**Public Components:**
+- `ItemNavigation` - Back to date view navigation button
+
+#### ItemImage.jsx
 
 Dish image display component.
 
-- Shows uploaded dish image with responsive sizing
+**Public Components:**
+- `ItemImage` - Displays uploaded dish image with fallback for missing images
 
-#### `ItemMetadata.jsx`
+#### ItemMetadata.jsx
 
-Metadata display component for dish records.
+Record metadata display.
 
-- Shows creation date and target consumption date
+**Public Components:**
+- `ItemMetadata` - Displays dish position, created timestamp, and target date metadata
 
-#### `AnalysisLoading.jsx`
+#### AnalysisLoading.jsx
 
-Loading state component during analysis.
+Analysis loading indicator.
 
-- Displays spinner and processing message while AI analyzes dish
+**Public Components:**
+- `AnalysisLoading` - Loading spinner and message shown during Step 1 or Step 2 analysis
 
-#### `AnalysisResults.jsx`
+#### NoAnalysisAvailable.jsx
 
-Analysis results display component.
+Empty analysis state.
 
-- Shows healthiness score with visual indicator
-- Displays nutritional information (calories, macros, micronutrients)
-- Shows healthiness rationale
-- Supports multi-iteration display
+**Public Components:**
+- `NoAnalysisAvailable` - Message shown when no analysis results available
 
-#### `NoAnalysisAvailable.jsx`
+#### DishPredictions.jsx
 
-Error state component when analysis fails.
+Dish name prediction selector (legacy component).
 
-- Displays message when no analysis results are available
+**Public Components:**
+- `DishPredictions` - Dropdown selector for AI-generated dish predictions with custom input
+  - Shows top 5 predictions with confidence scores
+  - Allows custom dish name input
+  - Auto-selects top prediction initially
 
-#### `DishPredictions.jsx`
+#### ServingSizeSelector.jsx
 
-Dish prediction selection component.
+Serving size selector dropdown (legacy component).
 
-- Displays AI-predicted dish options with confidence scores
-- Allows user to select correct dish prediction
-- Shows selected prediction state
+**Public Components:**
+- `ServingSizeSelector` - Dropdown for dish-specific serving sizes with custom input
+  - Options update dynamically based on selected dish
+  - Allows custom serving size input
+  - Auto-selects first option
 
-#### `ServingSizeSelector.jsx`
+#### ServingsCountInput.jsx
 
-Serving size selection component.
+Servings count number input (legacy component).
 
-- Displays serving size options for selected dish
-- Allows user to select or input custom serving size
-- Updates based on dish selection
+**Public Components:**
+- `ServingsCountInput` - Number input with increment/decrement controls for servings consumed
+  - Validates minimum (0.1), rounds to 1 decimal place
+  - Shows AI prediction badge when using predicted servings
+  - Supports keyboard arrow keys for adjustment
 
-#### `ServingsCountInput.jsx`
+#### Step1ComponentEditor.jsx
 
-Servings count input component.
+Step 1 component identification editor (critical two-step workflow component).
 
-- Number input for quantity of servings consumed
-- Shows predicted servings from AI
-- Validates input range (0.1-10.0)
+**Public Components:**
+- `Step1ComponentEditor` - Interactive editor for confirming Step 1 component identification results
+  - Displays overall meal name predictions (top 1-5 with confidence scores)
+  - Shows individual dish components with checkboxes for selection
+  - Allows selecting/deselecting AI-predicted components
+  - Enables custom dish name input via collapsible dropdown
+  - Provides serving size dropdown and servings count input per component
+  - Supports adding manual custom dishes with serving details
+  - Validates at least one component selected before confirmation
+  - Triggers Step 2 nutritional analysis on confirmation
+  - Displays model, cost, and timing metadata from Step 1
 
----
+#### Step2Results.jsx
 
-## Project Configuration Files
+Step 2 nutritional analysis results display (critical two-step workflow component).
 
-### Root Level Configuration
-
-- `.env`: Environment variables (database credentials, API keys, CORS settings)
-- `.gitignore`: Git ignore patterns for dependencies and sensitive files
-- `requirements.txt`: Python dependencies for backend
-- `start_app.sh`: Shell script to start both backend and frontend services
-- `env_template.txt`: Template for environment variables setup
-
-### Backend Configuration
-
-- `run_uvicorn.py`: Uvicorn server startup script for FastAPI
-
-### Frontend Configuration
-
-- `package.json`: Node.js dependencies and scripts
-- `package-lock.json`: Locked dependency versions
-- `tailwind.config.js`: Tailwind CSS configuration
-- `postcss.config.js`: PostCSS configuration for Tailwind
-
----
-
-## Key Architectural Patterns
-
-### Backend Patterns
-
-1. **Layered Architecture**: Clear separation between API routes, business logic (services), and data access (CRUD)
-2. **Dependency Injection**: Database sessions injected via FastAPI dependencies
-3. **Structured Responses**: Pydantic schemas ensure type safety and validation
-4. **Background Tasks**: Long-running AI analysis executed as background tasks
-5. **Iteration System**: Multi-iteration analysis allowing user feedback and refinement
-6. **Dual LLM Strategy**: Parallel analysis with OpenAI and Gemini for comparison
-
-### Frontend Patterns
-
-1. **Component Composition**: Reusable components organized by feature
-2. **Context API**: Global authentication state managed via React Context
-3. **Protected Routes**: Authentication guards for secure pages
-4. **Polling Pattern**: Client-side polling for async analysis completion
-5. **Optimistic UI**: Immediate feedback while waiting for backend operations
-6. **Modular Services**: API calls abstracted into service layer
-
-### Data Flow
-
-1. User uploads dish image → Background analysis triggered
-2. Frontend polls for analysis completion
-3. AI returns dish predictions with serving sizes
-4. User can adjust dish/serving selections
-5. Re-analysis uses brief model to save tokens
-6. New iteration created with updated analysis
-7. Results stored in iterations structure for history
+**Public Components:**
+- `Step2Results` - Displays Step 2 nutritional analysis results after user confirmation
+  - Shows confirmed dish name
+  - Displays healthiness score (0-100) with color-coded badge (Very Healthy, Healthy, Moderate, Unhealthy, Very Unhealthy)
+  - Shows healthiness score rationale explanation
+  - Presents nutritional information: calories (kcal), fiber (g), carbs (g), protein (g), fat (g)
+  - Lists notable micronutrients with badges
+  - Displays model, cost, and timing metadata from Step 2
 
 ---
 
-## Database Schema
+## Two-Step Analysis Workflow
 
-### Users Table
-- `id`: Primary key
-- `username`: Unique username
-- `hashed_password`: Bcrypt hashed password
-- `role`: User role (optional)
+The application implements a sophisticated two-step workflow for dish analysis:
 
-### DishImageQuery Table
-- `id`: Primary key
-- `user_id`: Foreign key to Users
-- `image_url`: Path to uploaded image
-- `result_openai`: JSON field for OpenAI analysis
-- `result_gemini`: JSON field for Gemini analysis (with iterations)
-- `dish_position`: Position slot (1-5) for the date
-- `created_at`: Record creation timestamp
-- `target_date`: Date when dish was consumed
+### Step 1: Component Identification
 
-### Iteration Structure (within result_gemini JSON)
-```json
-{
-  "iterations": [
-    {
-      "iteration_number": 1,
-      "created_at": "ISO timestamp",
-      "user_feedback": null,
-      "metadata": {
-        "selected_dish": "dish name",
-        "selected_serving_size": "serving size",
-        "number_of_servings": 1.0,
-        "metadata_modified": false
-      },
-      "analysis": { /* FoodHealthAnalysis or FoodHealthAnalysisBrief */ }
-    }
-  ],
-  "current_iteration": 1
-}
+1. **User uploads image** - DateView.jsx handles upload, redirects to ItemV2.jsx
+2. **Backend triggers Step 1** - date.py `analyze_image_background()` runs Gemini analysis
+3. **Gemini identifies components** - gemini_analyzer.py `analyze_step1_component_identification_async()` using Step1ComponentIdentification model
+4. **Results stored in database** - result_gemini field with step=1, step1_data, step1_confirmed=false
+5. **Frontend polls for results** - ItemV2.jsx polls every 3 seconds until Step 1 complete
+6. **User reviews and confirms** - Step1ComponentEditor.jsx displays predictions, allows editing
+   - Select/modify overall meal name from predictions or enter custom
+   - Enable/disable individual dish components with checkboxes
+   - Adjust serving sizes and servings count per component
+   - Add manual custom dishes not detected by AI
+7. **User confirms selections** - Triggers POST /api/item/{id}/confirm-step1
+
+### Step 2: Nutritional Analysis
+
+1. **Backend receives confirmation** - item.py `confirm_step1_and_trigger_step2()` handles request
+2. **Step 1 marked confirmed** - Updates result_gemini with step1_confirmed=true
+3. **Backend triggers Step 2** - item_tasks.py `trigger_step2_analysis_background()` runs with confirmed data
+4. **Gemini calculates nutrition** - gemini_analyzer.py `analyze_step2_nutritional_analysis_async()` using Step2NutritionalAnalysis model
+5. **Results stored in database** - Updates result_gemini with step=2, step2_data
+6. **Frontend polls for results** - ItemV2.jsx polls every 3 seconds until Step 2 complete
+7. **Display final results** - Step2Results.jsx shows nutritional information and healthiness score
+
+### Key Design Decisions
+
+- **Components are independent of meal name** - Users can select different components than suggested by overall meal prediction
+- **Checkbox-based component selection** - All AI-detected components shown, users select which to include
+- **Custom component support** - Users can add dishes not detected by AI
+- **Per-component serving customization** - Each component has own serving size and servings count
+- **Polling mechanism** - Frontend polls backend every 3 seconds for async analysis completion
+- **Step toggling** - Users can switch between Step 1 and Step 2 views after both complete
+- **Metadata tracking** - Model, cost, and timing information tracked for both steps
+
+---
+
+## Configuration and Deployment
+
+### Environment Variables
+
+**Backend (.env):**
+- `DB_USERNAME` - PostgreSQL database username
+- `DB_PASSWORD` - PostgreSQL database password
+- `DB_NAME` - PostgreSQL database name
+- `DB_URL` - PostgreSQL database host URL
+- `JWT_SECRET_KEY` - Secret key for JWT token signing
+- `GEMINI_API_KEY` - Google Gemini API key
+- `ALLOWED_ORIGINS` - CORS allowed origins (comma-separated or "*")
+
+**Frontend (.env):**
+- `REACT_APP_API_URL` - Backend API base URL (default: http://localhost:2612)
+
+### Directory Structure
+
+```
+backend/
+  src/
+    api/           - API route handlers
+    crud/          - Database CRUD operations
+    service/llm/   - LLM service integration
+  data/
+    images/        - Uploaded dish images
+  resources/       - Prompt templates (.md files)
+  logs/            - Application logs
+
+frontend/
+  src/
+    components/    - React components
+      dashboard/   - Calendar view components
+      dateview/    - Meal upload components
+      item/        - Analysis detail components
+    pages/         - Page-level components
+    contexts/      - React context providers
+    services/      - API service layer
 ```
 
----
+### Key Features
 
-## API Endpoints
-
-### Authentication
-- `POST /api/login/` - User login
-- `POST /api/login/logout` - User logout
-
-### Dashboard
-- `GET /api/dashboard/?year={year}&month={month}` - Get calendar data
-
-### Date View
-- `GET /api/date/{year}/{month}/{day}` - Get dishes for date
-- `POST /api/date/{year}/{month}/{day}/upload` - Upload dish image
-
-### Item Detail
-- `GET /api/item/{record_id}` - Get analysis details
-- `PATCH /api/item/{record_id}/metadata` - Update dish metadata
-- `POST /api/item/{record_id}/reanalyze` - Trigger re-analysis
-
-### System
-- `GET /` - Root endpoint with API info
-- `GET /health` - Health check endpoint
+- **JWT Authentication** - Session-based authentication with 90-day token expiration
+- **Image Processing** - Automatic image resizing (max 384px), RGB conversion, JPEG compression
+- **Background Tasks** - Async analysis processing with FastAPI BackgroundTasks
+- **Polling Architecture** - Frontend polls backend every 3 seconds for analysis completion
+- **CORS Configuration** - Configurable allowed origins for cross-origin requests
+- **Database Migrations** - SQLAlchemy automatic table creation on startup
+- **Error Handling** - Comprehensive error handling with logging throughout application
+- **Iteration Support** - Multiple analysis iterations per dish with metadata tracking (legacy feature)
 
 ---
 
-## Environment Variables
+## Development Notes
 
-### Backend (.env)
-- `DB_USERNAME`: PostgreSQL username
-- `DB_PASSWORD`: PostgreSQL password
-- `DB_NAME`: Database name
-- `DB_URL`: Database host URL
-- `JWT_SECRET_KEY`: Secret key for JWT tokens
-- `OPENAI_API_KEY`: OpenAI API key
-- `GEMINI_API_KEY`: Google Gemini API key
-- `ALLOWED_ORIGINS`: CORS allowed origins (comma-separated or "*")
-
-### Frontend
-- `REACT_APP_API_URL`: Backend API base URL
-
----
-
-## Development Workflow
-
-### Starting the Application
-
-1. **Backend**: `python backend/run_uvicorn.py` (starts on port 2612)
-2. **Frontend**: `npm start` in frontend directory (starts on port 2512)
-3. **Combined**: `./start_app.sh` (starts both services)
-
-### Image Processing Flow
-
-1. User uploads image → Saved to `/backend/data/images/`
-2. Image resized to max 384px
-3. Converted to RGB JPEG format
-4. Background task analyzes with Gemini
-5. Results stored in `result_gemini` JSON field
-
-### AI Analysis Models
-
-**Initial Analysis (Full):**
-- Schema: `FoodHealthAnalysis`
-- Includes: `dish_predictions` with serving sizes and predicted servings
-- Used for: First-time analysis of uploaded images
-
-**Re-Analysis (Brief):**
-- Schema: `FoodHealthAnalysisBrief`
-- Excludes: `dish_predictions` (saves 20-30% tokens)
-- Used for: Updates after user feedback on serving size/dish
+- Backend runs on port 2612 (configurable)
+- Frontend runs on port 2512 in development (configurable)
+- Database uses PostgreSQL 5432 default port
+- Images stored locally in backend/data/images/ directory
+- Prompts stored in backend/resources/ as markdown files
+- Step 1 and Step 2 use same Gemini model (gemini-2.5-pro) with thinking_budget=-1
+- Token usage and pricing tracked per analysis step
+- All timestamps stored in UTC timezone
+- Dish positions limited to 1-5 per date
+- Component serving sizes provided as list of 3-5 options
+- Servings count validated between 0.1 and 10.0
 
 ---
 
-## Deployment
-
-### Production Considerations
-
-1. **Security**: Update JWT secret key in production
-2. **CORS**: Configure ALLOWED_ORIGINS for production domain
-3. **Database**: Use production PostgreSQL instance
-4. **Static Files**: Serve frontend build via backend or CDN
-5. **HTTPS**: Enable secure cookies and HTTPS
-6. **API Keys**: Secure OpenAI and Gemini credentials
-7. **Logging**: Configure production logging levels
-
-### Build Process
-
-**Frontend Build:**
-```bash
-cd frontend
-npm run build
-```
-Creates optimized production build in `/frontend/build/`
-
-**Backend Deployment:**
-- Uvicorn server with Gunicorn for production
-- Serve static frontend files from `/frontend/build/`
-
----
-
-## Testing
-
-### Backend Tests
-- Test file: `/backend/test_new_features.py`
-- Tests new features and API endpoints
-
-### Frontend Tests
-- Test file: `/frontend/test_analysis_results.js`
-- Tests analysis result display components
+Generated on 2025-12-21

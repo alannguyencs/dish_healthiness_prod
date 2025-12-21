@@ -1,16 +1,8 @@
 import React, { useState } from "react";
+import DishNameSelector from "./DishNameSelector";
+import ComponentListItem from "./ComponentListItem";
+import AddComponentForm from "./AddComponentForm";
 
-/**
- * Step1ComponentEditor Component
- *
- * Displays Step 1 results (dish predictions and component predictions)
- * and allows user to confirm/modify before triggering Step 2.
- *
- * Features:
- * - Components are independent of dish name predictions
- * - Users can select/deselect components with checkboxes
- * - Users can add custom components manually
- */
 const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
   const { dish_predictions = [], components = [] } = step1Data || {};
 
@@ -20,13 +12,14 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
   );
   const [customDishName, setCustomDishName] = useState("");
   const [useCustomDish, setUseCustomDish] = useState(false);
+  const [showAllDishPredictions, setShowAllDishPredictions] = useState(false);
 
-  // State for AI-predicted component selections (component_name -> { enabled, serving_size, servings })
+  // State for AI-predicted component selections
   const [componentSelections, setComponentSelections] = useState(() => {
     const initial = {};
     components.forEach((comp) => {
       initial[comp.component_name] = {
-        enabled: true, // All components enabled by default
+        enabled: true,
         selected_serving_size: comp.serving_sizes[0] || "",
         number_of_servings: comp.predicted_servings || 1.0,
         serving_size_options: comp.serving_sizes || [],
@@ -41,9 +34,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
   const [newComponentName, setNewComponentName] = useState("");
   const [newComponentServingSize, setNewComponentServingSize] = useState("");
   const [newComponentServings, setNewComponentServings] = useState(1.0);
-
-  // State for meal name dropdown
-  const [showAllDishPredictions, setShowAllDishPredictions] = useState(false);
 
   // Toggle component enabled/disabled
   const handleComponentToggle = (componentName) => {
@@ -86,7 +76,7 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     }
 
     const newComp = {
-      id: Date.now(), // Unique ID for manual components
+      id: Date.now(),
       component_name: newComponentName.trim(),
       selected_serving_size: newComponentServingSize.trim(),
       number_of_servings: newComponentServings,
@@ -94,20 +84,45 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
 
     setManualComponents((prev) => [...prev, newComp]);
 
-    // Reset form
+    // Reset form and hide
     setNewComponentName("");
     setNewComponentServingSize("");
     setNewComponentServings(1.0);
     setShowAddComponent(false);
   };
 
-  // Remove manual component
-  const handleRemoveManualComponent = (id) => {
-    setManualComponents((prev) => prev.filter((c) => c.id !== id));
+  // Update manual component serving size
+  const handleManualServingSizeChange = (componentName, servingSize) => {
+    setManualComponents((prev) =>
+      prev.map((comp) =>
+        comp.component_name === componentName
+          ? { ...comp, selected_serving_size: servingSize }
+          : comp,
+      ),
+    );
   };
 
-  // Confirm and trigger Step 2
+  // Update manual component servings
+  const handleManualServingsChange = (componentName, servings) => {
+    setManualComponents((prev) =>
+      prev.map((comp) =>
+        comp.component_name === componentName
+          ? { ...comp, number_of_servings: parseFloat(servings) || 0.1 }
+          : comp,
+      ),
+    );
+  };
+
+  // Remove manual component
+  const handleRemoveManualComponent = (componentName) => {
+    setManualComponents((prev) =>
+      prev.filter((comp) => comp.component_name !== componentName),
+    );
+  };
+
+  // Handle confirm button
   const handleConfirm = () => {
+    // Get final dish name
     const finalDishName = useCustomDish ? customDishName : selectedDishName;
 
     if (!finalDishName.trim()) {
@@ -116,33 +131,22 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     }
 
     // Collect enabled AI components
-    const enabledAIComponents = components
-      .filter((comp) => componentSelections[comp.component_name]?.enabled)
-      .map((comp) => ({
-        component_name: comp.component_name,
-        selected_serving_size:
-          componentSelections[comp.component_name]?.selected_serving_size ||
-          comp.serving_sizes[0],
-        number_of_servings:
-          componentSelections[comp.component_name]?.number_of_servings || 1.0,
+    const enabledComponents = Object.entries(componentSelections)
+      .filter(([, data]) => data.enabled)
+      .map(([name, data]) => ({
+        component_name: name,
+        selected_serving_size: data.selected_serving_size,
+        number_of_servings: data.number_of_servings,
       }));
 
-    // Collect manual components
-    const enabledManualComponents = manualComponents.map((comp) => ({
-      component_name: comp.component_name,
-      selected_serving_size: comp.selected_serving_size,
-      number_of_servings: comp.number_of_servings,
-    }));
-
-    // Combine all components
-    const allComponents = [...enabledAIComponents, ...enabledManualComponents];
+    // Combine with manual components
+    const allComponents = [...enabledComponents, ...manualComponents];
 
     if (allComponents.length === 0) {
-      alert("Please select at least one component or add a manual component");
+      alert("Please select at least one component");
       return;
     }
 
-    // Build confirmation data
     const confirmationData = {
       selected_dish_name: finalDishName,
       components: allComponents,
@@ -150,393 +154,116 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
 
     onConfirm(confirmationData);
 
-    // Scroll down to show the loading indicator
+    // Auto-scroll to show Step 2 loading
     setTimeout(() => {
-      window.scrollBy({
-        top: 400,
-        behavior: "smooth",
-      });
+      window.scrollBy({ top: 400, behavior: "smooth" });
     }, 100);
   };
 
-  if (!step1Data || !components.length) {
-    return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <p className="text-yellow-800">No Step 1 data available.</p>
-      </div>
-    );
-  }
-
-  const enabledCount =
-    Object.values(componentSelections).filter((c) => c.enabled).length +
-    manualComponents.length;
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
-      <div className="border-b pb-4">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Step 1: Confirm Meal & Individual Dishes
-        </h2>
-        <p className="text-gray-600 mt-1">
-          Select individual dishes, adjust serving sizes, and add custom dishes
-          as needed.
-        </p>
-      </div>
+    <div className="space-y-6">
+      {/* Dish Name Selection */}
+      <DishNameSelector
+        dishPredictions={dish_predictions}
+        selectedDishName={selectedDishName}
+        customDishName={customDishName}
+        useCustomDish={useCustomDish}
+        showAllPredictions={showAllDishPredictions}
+        onSelectDish={setSelectedDishName}
+        onCustomDishChange={setCustomDishName}
+        onUseCustomToggle={setUseCustomDish}
+        onToggleShowAll={() =>
+          setShowAllDishPredictions(!showAllDishPredictions)
+        }
+      />
 
-      {/* Meal Name Selection */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Overall Meal Name
+      {/* Individual Dishes (Components) */}
+      <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Individual Dishes
         </h3>
-        <div className="space-y-2">
-          {/* Top prediction with dropdown button */}
-          {dish_predictions.slice(0, 1).map((pred, idx) => (
-            <div key={idx}>
-              <label className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input
-                  type="radio"
-                  name="dishName"
-                  value={pred.name}
-                  checked={!useCustomDish && selectedDishName === pred.name}
-                  onChange={(e) => {
-                    setSelectedDishName(e.target.value);
-                    setUseCustomDish(false);
-                  }}
-                  className="form-radio h-4 w-4 text-blue-600"
-                />
-                <div className="flex-1 flex items-center justify-between">
-                  <div>
-                    <span className="font-medium text-gray-800">
-                      {pred.name}
-                    </span>
-                    <span className="ml-2 text-sm text-gray-500">
-                      ({(pred.confidence * 100).toFixed(0)}% confidence)
-                    </span>
-                  </div>
-                  {(dish_predictions.length > 1 || true) && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShowAllDishPredictions(!showAllDishPredictions);
-                      }}
-                      className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 ml-4"
-                    >
-                      {showAllDishPredictions ? (
-                        <>
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 15l7-7 7 7"
-                            />
-                          </svg>
-                          Hide
-                        </>
-                      ) : (
-                        <>
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
-                          {dish_predictions.length > 1
-                            ? `${dish_predictions.length} more`
-                            : "More"}
-                        </>
-                      )}
-                    </button>
-                  )}
-                </div>
-              </label>
-            </div>
-          ))}
 
-          {/* Remaining predictions - collapsible */}
-          {showAllDishPredictions && (
-            <>
-              {dish_predictions.slice(1).map((pred, idx) => (
-                <label
-                  key={idx + 1}
-                  className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                >
-                  <input
-                    type="radio"
-                    name="dishName"
-                    value={pred.name}
-                    checked={!useCustomDish && selectedDishName === pred.name}
-                    onChange={(e) => {
-                      setSelectedDishName(e.target.value);
-                      setUseCustomDish(false);
-                    }}
-                    className="form-radio h-4 w-4 text-blue-600"
-                  />
-                  <div className="flex-1">
-                    <span className="font-medium text-gray-800">
-                      {pred.name}
-                    </span>
-                    <span className="ml-2 text-sm text-gray-500">
-                      ({(pred.confidence * 100).toFixed(0)}% confidence)
-                    </span>
-                  </div>
-                </label>
-              ))}
-
-              {/* Custom dish name option - in dropdown */}
-              <label className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input
-                  type="radio"
-                  name="dishName"
-                  checked={useCustomDish}
-                  onChange={() => setUseCustomDish(true)}
-                  className="form-radio h-4 w-4 text-blue-600 mt-1"
-                />
-                <div className="flex-1">
-                  <span className="font-medium text-gray-800">
-                    Custom dish name
-                  </span>
-                  {useCustomDish && (
-                    <input
-                      type="text"
-                      value={customDishName}
-                      onChange={(e) => setCustomDishName(e.target.value)}
-                      placeholder="Enter custom dish name..."
-                      className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      autoFocus
-                    />
-                  )}
-                </div>
-              </label>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* AI-Predicted Individual Dishes Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Individual Dishes
-          </h3>
-          <span className="text-sm text-gray-600">
-            {enabledCount} dish{enabledCount !== 1 ? "es" : ""} selected
-          </span>
-        </div>
-
-        <div className="space-y-3">
-          {components.map((comp, idx) => {
-            const selection = componentSelections[comp.component_name];
-            const isEnabled = selection?.enabled;
-
+        <div className="space-y-3 mb-4">
+          {/* AI-predicted components */}
+          {components.map((comp) => {
+            const selection = componentSelections[comp.component_name] || {};
             return (
-              <div
-                key={idx}
-                className={`border rounded-lg p-4 transition-all ${
-                  isEnabled
-                    ? "bg-gray-50 border-gray-300"
-                    : "bg-gray-100 border-gray-200 opacity-60"
-                }`}
-              >
-                {/* Component header with checkbox */}
-                <div className="flex items-start space-x-3 mb-3">
-                  <input
-                    type="checkbox"
-                    checked={isEnabled}
-                    onChange={() => handleComponentToggle(comp.component_name)}
-                    className="h-5 w-5 text-blue-600 rounded mt-0.5"
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-800 capitalize">
-                      {comp.component_name}
-                    </h4>
-                  </div>
-                </div>
-
-                {/* Serving details (only shown when enabled) */}
-                {isEnabled && (
-                  <div className="ml-8">
-                    <div className="grid grid-cols-[110px_minmax(200px,1fr)_160px_80px] gap-3 items-center text-sm">
-                      <span className="text-gray-700 font-medium">
-                        Serving Size:
-                      </span>
-                      <select
-                        value={selection.selected_serving_size}
-                        onChange={(e) =>
-                          handleComponentServingSizeChange(
-                            comp.component_name,
-                            e.target.value,
-                          )
-                        }
-                        className="px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                      >
-                        {comp.serving_sizes.map((size, sIdx) => (
-                          <option key={sIdx} value={size}>
-                            {size}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="text-gray-700 font-medium">
-                        Number of Servings:
-                      </span>
-                      <input
-                        type="number"
-                        min="0.1"
-                        max="10"
-                        step="0.1"
-                        value={selection.number_of_servings}
-                        onChange={(e) =>
-                          handleComponentServingsChange(
-                            comp.component_name,
-                            e.target.value,
-                          )
-                        }
-                        className="px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+              <ComponentListItem
+                key={comp.component_name}
+                componentName={comp.component_name}
+                servingSize={selection.selected_serving_size}
+                numberOfServings={selection.number_of_servings}
+                servingSizeOptions={selection.serving_size_options}
+                enabled={selection.enabled}
+                isManual={false}
+                onToggle={handleComponentToggle}
+                onServingSizeChange={handleComponentServingSizeChange}
+                onServingsChange={handleComponentServingsChange}
+              />
             );
           })}
-        </div>
-      </div>
 
-      {/* Manual Dishes Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Add Custom Dishes
-          </h3>
+          {/* Manual components */}
+          {manualComponents.map((comp) => (
+            <ComponentListItem
+              key={comp.id}
+              componentName={comp.component_name}
+              servingSize={comp.selected_serving_size}
+              numberOfServings={comp.number_of_servings}
+              servingSizeOptions={[]}
+              enabled={true}
+              isManual={true}
+              onServingSizeChange={handleManualServingSizeChange}
+              onServingsChange={handleManualServingsChange}
+              onRemove={handleRemoveManualComponent}
+            />
+          ))}
+        </div>
+
+        {/* Add component button/form */}
+        {!showAddComponent ? (
           <button
-            onClick={() => setShowAddComponent(!showAddComponent)}
-            className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+            type="button"
+            onClick={() => setShowAddComponent(true)}
+            className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
           >
-            {showAddComponent ? "− Cancel" : "+ Add Dish"}
+            <span>+</span>
+            <span>Add Custom Component</span>
           </button>
-        </div>
-
-        {/* Add Dish Form */}
-        {showAddComponent && (
-          <div className="border border-blue-200 rounded-lg p-4 bg-blue-50 space-y-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Dish Name
-              </label>
-              <input
-                type="text"
-                value={newComponentName}
-                onChange={(e) => setNewComponentName(e.target.value)}
-                placeholder="e.g., Side Salad, Garlic Bread, Soup"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Serving Size
-              </label>
-              <input
-                type="text"
-                value={newComponentServingSize}
-                onChange={(e) => setNewComponentServingSize(e.target.value)}
-                placeholder="e.g., 2 tbsp, 1 cup, 50g"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Number of Servings
-              </label>
-              <input
-                type="number"
-                min="0.1"
-                max="10"
-                step="0.1"
-                value={newComponentServings}
-                onChange={(e) =>
-                  setNewComponentServings(parseFloat(e.target.value) || 0.1)
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <button
-              onClick={handleAddManualComponent}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
-            >
-              Add Dish
-            </button>
-          </div>
-        )}
-
-        {/* Manual Components List */}
-        {manualComponents.length > 0 && (
-          <div className="space-y-3">
-            {manualComponents.map((comp) => (
-              <div
-                key={comp.id}
-                className="border border-green-300 rounded-lg p-4 bg-green-50"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-800 capitalize">
-                      {comp.component_name}
-                      <span className="ml-2 text-xs text-green-600 font-normal">
-                        (Manual)
-                      </span>
-                    </h4>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {comp.selected_serving_size} × {comp.number_of_servings}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveManualComponent(comp.id)}
-                    className="text-red-600 hover:text-red-700 text-sm font-medium"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+        ) : (
+          <AddComponentForm
+            componentName={newComponentName}
+            servingSize={newComponentServingSize}
+            numberOfServings={newComponentServings}
+            onComponentNameChange={setNewComponentName}
+            onServingSizeChange={setNewComponentServingSize}
+            onServingsChange={setNewComponentServings}
+            onAdd={handleAddManualComponent}
+            onCancel={() => setShowAddComponent(false)}
+          />
         )}
       </div>
 
       {/* Confirm Button */}
-      <div className="pt-4 border-t space-y-3">
+      <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
         <button
           onClick={handleConfirm}
-          disabled={isConfirming || enabledCount === 0}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+          disabled={isConfirming}
+          className={`w-full px-6 py-3 rounded-lg font-semibold ${
+            isConfirming
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-green-600 hover:bg-green-700"
+          } text-white`}
         >
-          {isConfirming
-            ? "Confirming & Running Analysis..."
-            : `Confirm & Calculate Nutrition (${enabledCount} dish${enabledCount !== 1 ? "es" : ""})`}
+          {isConfirming ? "Confirming..." : "Confirm and Analyze Nutrition"}
         </button>
-        {enabledCount === 0 && (
-          <p className="text-sm text-red-600 text-center mt-2">
-            Please select at least one dish
-          </p>
-        )}
 
-        {/* Model/Cost/Time Info */}
+        {/* Metadata display */}
         {(step1Data.model ||
           step1Data.price_usd ||
           step1Data.analysis_time) && (
-          <div className="pt-3 border-t text-sm text-gray-500">
-            <div className="flex items-center gap-6">
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-6 text-sm text-gray-600">
               {step1Data.model && (
                 <div className="flex items-center gap-1.5">
                   <span>🤖</span>
@@ -544,7 +271,7 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
                   <span className="font-medium">{step1Data.model}</span>
                 </div>
               )}
-              {step1Data.price_usd && (
+              {step1Data.price_usd !== undefined && (
                 <div className="flex items-center gap-1.5">
                   <span>💰</span>
                   <span>Cost:</span>
@@ -553,7 +280,7 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
                   </span>
                 </div>
               )}
-              {step1Data.analysis_time && (
+              {step1Data.analysis_time !== undefined && (
                 <div className="flex items-center gap-1.5">
                   <span>⏱️</span>
                   <span>Time:</span>

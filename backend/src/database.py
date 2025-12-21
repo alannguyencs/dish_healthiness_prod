@@ -30,6 +30,7 @@ def build_database_url() -> str:
         ValueError: If required environment variables are missing
     """
     if not all([DB_USERNAME, DB_NAME, DB_URL]):
+        # pylint: disable=implicit-str-concat
         raise ValueError(
             "Missing required database environment variables: " "DB_USERNAME, DB_NAME, DB_URL"
         )

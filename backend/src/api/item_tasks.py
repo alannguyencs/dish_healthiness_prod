@@ -77,5 +77,5 @@ async def trigger_step2_analysis_background(
         )
         logger.info("Query %s Step 2 completed successfully", query_id)
 
-    except Exception as exc:
+    except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.error("Failed Step 2 analysis for query %s: %s", query_id, exc, exc_info=True)

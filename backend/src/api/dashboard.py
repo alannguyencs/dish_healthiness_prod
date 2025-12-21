@@ -22,7 +22,7 @@ router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
 
 @router.get("/")
-async def dashboard(
+async def dashboard(  # pylint: disable=too-many-locals
     request: Request,
     year: int = Query(None, description="Year to display"),
     month: int = Query(None, description="Month to display"),

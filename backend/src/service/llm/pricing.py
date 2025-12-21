@@ -27,6 +27,7 @@ PRICING = {
 DEFAULT_PRICING = {"input": 0.075, "output": 0.30}
 
 
+# pylint: disable=too-many-return-statements
 def normalize_model_key(model: str, vendor: str) -> str:
     """
     Normalize model string to a pricing key.
@@ -150,7 +151,7 @@ def extract_token_usage(response: Any, vendor: str) -> Tuple[int, int]:
                 thoughts_tok = getattr(usage, "thoughts_token_count", None) or 0
 
                 output_tok = candidates_tok + thoughts_tok
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         pass
 
     return int(input_tok), int(output_tok)

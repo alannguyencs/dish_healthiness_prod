@@ -55,14 +55,16 @@ def create_app() -> FastAPI:
     logger.info("Database tables created/verified")
 
     # Create FastAPI app
-    app = FastAPI(
+    fastapi_app = FastAPI(
         title=settings.PROJECT_NAME,
         openapi_url=f"{settings.API_V1_STR}/openapi.json",
         docs_url="/api-docs",
     )
 
     # Add session middleware for cookie-based authentication
-    app.add_middleware(SessionMiddleware, secret_key="your-secret-key-change-in-production")
+    fastapi_app.add_middleware(
+        SessionMiddleware, secret_key="your-secret-key-change-in-production"
+    )
 
     # Configure CORS origins from environment variable
     allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:2512")
@@ -80,11 +82,11 @@ def create_app() -> FastAPI:
             allowed_origins.append("http://localhost:2512")
         allow_credentials = True
 
-    logger.info(f"CORS allowed origins: {allowed_origins}")
-    logger.info(f"CORS allow credentials: {allow_credentials}")
+    logger.info("CORS allowed origins: %s", allowed_origins)
+    logger.info("CORS allow credentials: %s", allow_credentials)
 
     # Add CORS middleware for React frontend
-    app.add_middleware(
+    fastapi_app.add_middleware(
         CORSMiddleware,
         allow_origins=allowed_origins,
         allow_credentials=allow_credentials,
@@ -93,15 +95,15 @@ def create_app() -> FastAPI:
     )
 
     # Mount static files directory for serving images
-    app.mount("/images", StaticFiles(directory=str(IMAGE_DIR)), name="images")
-    logger.info(f"Mounted static files at /images -> {IMAGE_DIR}")
+    fastapi_app.mount("/images", StaticFiles(directory=str(IMAGE_DIR)), name="images")
+    logger.info("Mounted static files at /images -> %s", IMAGE_DIR)
 
     # Include API router
-    app.include_router(api_router)
+    fastapi_app.include_router(api_router)
     logger.info("API router included")
 
     logger.info("Application initialization complete")
-    return app
+    return fastapi_app
 
 
 # Create the FastAPI app instance

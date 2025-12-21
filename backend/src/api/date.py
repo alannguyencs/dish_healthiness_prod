@@ -94,7 +94,7 @@ async def analyze_image_background(query_id: int, file_path: str):
         )
         logger.info("Query %s Step 1 completed successfully", query_id)
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.error("Failed to analyze image (Step 1): %s", e, exc_info=True)
 
 
@@ -165,12 +165,13 @@ async def get_date(request: Request, year: int, month: int, day: int) -> JSONRes
 
 
 @router.post("/{year}/{month}/{day}/upload")
-async def upload_dish(
+async def upload_dish(  # pylint: disable=too-many-locals
     background_tasks: BackgroundTasks,
     request: Request,
     year: int,
     month: int,
     day: int,
+    *,
     dish_position: int = Form(...),
     file: UploadFile = File(...),
 ) -> JSONResponse:
