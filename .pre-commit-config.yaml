@@ -1,0 +1,190 @@
+repos:
+  # ============================================================================
+  # GENERAL HOOKS (Both Frontend & Backend)
+  # ============================================================================
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '(.*\.md$|.*\.json$)'
+      - id: end-of-file-fixer
+        exclude: '(.*\.md$|.*\.json$)'
+      - id: check-yaml
+        args: ["--allow-multiple-documents"]
+      - id: check-added-large-files
+        args: ["--maxkb=500"]
+      - id: check-json
+        exclude: "^(frontend/node_modules/.*|venv/.*)$"
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+
+  # ============================================================================
+  # FRONTEND HOOKS (JavaScript/JSX/React)
+  # ============================================================================
+  - repo: local
+    hooks:
+      - id: eslint-frontend
+        name: eslint (frontend)
+        entry: bash -c 'cd frontend && npx eslint --fix --max-warnings=0'
+        language: system
+        files: ^frontend/.*\.(js|jsx)$
+        exclude: '(node_modules/.*$|build/.*$)'
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: prettier-frontend
+        name: prettier (frontend)
+        entry: frontend/node_modules/.bin/prettier --write
+        language: system
+        files: ^frontend/.*\.(js|jsx|json|css|html)$
+        exclude: '(node_modules/.*$|package-lock\.json$|build/.*$)'
+        pass_filenames: true
+
+  # ============================================================================
+  # BACKEND HOOKS (Python)
+  # ============================================================================
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        name: black (backend)
+        args: ["--line-length=99"]
+        files: ^backend/.*\.py$
+        exclude: '(venv/.*$|__pycache__/.*$)'
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        name: flake8 (backend)
+        args: ["--max-line-length=99", "--max-complexity=10", "--extend-ignore=E203,W503"]
+        files: ^backend/.*\.py$
+        exclude: '(venv/.*$|__pycache__/.*$)'
+
+  - repo: https://github.com/PyCQA/pylint
+    rev: v3.3.1
+    hooks:
+      - id: pylint
+        name: pylint (backend)
+        args: ["--disable=C0114,R0903,R0913", "--max-line-length=99"]
+        additional_dependencies:
+          - fastapi
+          - uvicorn
+          - python-multipart
+          - python-dotenv
+          - sqlalchemy
+          - pydantic
+          - pydantic-settings
+          - itsdangerous
+          - pytz
+          - python-jose
+          - psycopg2-binary
+          - passlib
+          - google-generativeai
+          - openai
+          - Pillow
+          - opencv-python-headless
+          - bcrypt
+        files: ^backend/.*\.py$
+        exclude: '(venv/.*$|__pycache__/.*$)'
+
+  # ============================================================================
+  # CUSTOM LOCAL HOOKS
+  # ============================================================================
+  - repo: local
+    hooks:
+      # Frontend: Check file line count
+      - id: check-frontend-file-line-count
+        name: Check frontend file line count (max 300 lines)
+        entry: bash -c
+        args:
+          - '-c'
+          - >
+            for file in "$@"; do
+              lines=$(wc -l < "$file");
+              if [ "$lines" -gt 300 ]; then
+                echo "Error: $file has $lines lines (max 300 allowed)";
+                exit 1;
+              fi;
+            done
+          - '--'
+        language: system
+        files: ^frontend/src/.*\.(js|jsx)$
+        pass_filenames: true
+
+      # Backend: Check file line count
+      - id: check-backend-file-line-count
+        name: Check backend file line count (max 300 lines)
+        entry: bash -c
+        args:
+          - '-c'
+          - >
+            for file in "$@"; do
+              lines=$(wc -l < "$file");
+              if [ "$lines" -gt 300 ]; then
+                echo "Error: $file has $lines lines (max 300 allowed)";
+                exit 1;
+              fi;
+            done
+          - '--'
+        language: system
+        files: ^backend/src/.*\.py$
+        exclude: '(backend/src/api/chat\.py|backend/src/service/llm/models\.py|backend/src/crud/crud_analysis\.py)'
+        pass_filenames: true
+
+      # Frontend: Check for console.log
+      - id: check-console-log
+        name: Check for console.log statements
+        entry: bash -c
+        args:
+          - '-c'
+          - >
+            if grep -n "console\.log" "$@"; then
+              echo "Error: Found console.log statements. Please remove them before committing.";
+              exit 1;
+            fi
+          - '--'
+        language: system
+        files: ^frontend/src/.*\.(js|jsx)$
+        exclude: '(frontend/src/utils/.*|frontend/src/contexts/.*)'
+        pass_filenames: true
+
+      # Frontend: Check for debugger
+      - id: check-debugger
+        name: Check for debugger statements
+        entry: bash -c
+        args:
+          - '-c'
+          - >
+            if grep -n "debugger" "$@"; then
+              echo "Error: Found debugger statements. Please remove them before committing.";
+              exit 1;
+            fi
+          - '--'
+        language: system
+        files: ^frontend/src/.*\.(js|jsx)$
+        pass_filenames: true
+
+      # Both: Check for TODO/FIXME
+      - id: check-todo-fixme
+        name: Check for TODO/FIXME comments
+        entry: bash -c
+        args:
+          - '-c'
+          - >
+            if grep -n "TODO\|FIXME" "$@"; then
+              echo "Warning: Found TODO/FIXME comments. Consider creating issues for these.";
+            fi
+          - '--'
+        language: system
+        files: \.(js|jsx|py)$
+        exclude: '(node_modules/.*|venv/.*)'
+        pass_filenames: true
+
+ci:
+  autofix_commit_msg: 'style: auto fixes from pre-commit hooks'
+  autoupdate_commit_msg: 'chore: pre-commit autoupdate'
+  skip: []
+  submodules: false

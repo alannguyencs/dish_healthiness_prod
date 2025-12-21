@@ -21,7 +21,7 @@ def create_dish_image_query(
     result_gemini: Optional[Dict[str, Any]] = None,
     dish_position: Optional[int] = None,
     created_at: Optional[datetime] = None,
-    target_date: Optional[datetime] = None
+    target_date: Optional[datetime] = None,
 ) -> DishImageQuery:
     """
     Create a new dish image query.
@@ -50,7 +50,7 @@ def create_dish_image_query(
             result_gemini=result_gemini,
             dish_position=dish_position,
             created_at=created_at or datetime.now(timezone.utc),
-            target_date=target_date
+            target_date=target_date,
         )
         db.add(db_query)
         db.commit()
@@ -75,9 +75,7 @@ def get_dish_image_query_by_id(query_id: int) -> Optional[DishImageQuery]:
     """
     db = SessionLocal()
     try:
-        return db.query(DishImageQuery).filter(
-            DishImageQuery.id == query_id
-        ).first()
+        return db.query(DishImageQuery).filter(DishImageQuery.id == query_id).first()
     finally:
         db.close()
 
@@ -94,17 +92,17 @@ def get_dish_image_queries_by_user(user_id: int) -> List[DishImageQuery]:
     """
     db = SessionLocal()
     try:
-        return db.query(DishImageQuery).filter(
-            DishImageQuery.user_id == user_id
-        ).order_by(DishImageQuery.created_at.desc()).all()
+        return (
+            db.query(DishImageQuery)
+            .filter(DishImageQuery.user_id == user_id)
+            .order_by(DishImageQuery.created_at.desc())
+            .all()
+        )
     finally:
         db.close()
 
 
-def get_dish_image_queries_by_user_and_date(
-    user_id: int,
-    query_date
-) -> List[DishImageQuery]:
+def get_dish_image_queries_by_user_and_date(user_id: int, query_date) -> List[DishImageQuery]:
     """
     Get all dish image queries for a specific user and date.
 
@@ -124,32 +122,34 @@ def get_dish_image_queries_by_user_and_date(
                 # Primary: Use target_date if it exists
                 and_(
                     DishImageQuery.target_date.isnot(None),
-                    func.date(DishImageQuery.target_date) == query_date
+                    func.date(DishImageQuery.target_date) == query_date,
                 ),
                 # Fallback: Use created_at if target_date is NULL
                 and_(
                     DishImageQuery.target_date.is_(None),
-                    func.date(DishImageQuery.created_at) == query_date
-                )
-            )
+                    func.date(DishImageQuery.created_at) == query_date,
+                ),
+            ),
         ]
-        
-        return db.query(DishImageQuery).filter(*filters).order_by(
-            DishImageQuery.dish_position.asc().nulls_last(),
-            DishImageQuery.created_at.desc()
-        ).all()
+
+        return (
+            db.query(DishImageQuery)
+            .filter(*filters)
+            .order_by(
+                DishImageQuery.dish_position.asc().nulls_last(), DishImageQuery.created_at.desc()
+            )
+            .all()
+        )
     finally:
         db.close()
 
 
 def get_single_dish_by_user_date_position(
-    user_id: int,
-    query_date,
-    dish_position: int
+    user_id: int, query_date, dish_position: int
 ) -> Optional[DishImageQuery]:
     """
     Get single dish for a specific user, date, and position.
-    
+
     Args:
         user_id (int): ID of the user
         query_date: Date to filter queries for
@@ -160,26 +160,30 @@ def get_single_dish_by_user_date_position(
     """
     db = SessionLocal()
     try:
-        result = db.query(DishImageQuery).filter(
-            DishImageQuery.user_id == user_id,
-            DishImageQuery.dish_position == dish_position,
-            or_(
-                # Primary: Use target_date if it exists
-                and_(
-                    DishImageQuery.target_date.isnot(None),
-                    func.date(DishImageQuery.target_date) == query_date
+        result = (
+            db.query(DishImageQuery)
+            .filter(
+                DishImageQuery.user_id == user_id,
+                DishImageQuery.dish_position == dish_position,
+                or_(
+                    # Primary: Use target_date if it exists
+                    and_(
+                        DishImageQuery.target_date.isnot(None),
+                        func.date(DishImageQuery.target_date) == query_date,
+                    ),
+                    # Fallback: Use created_at if target_date is NULL
+                    and_(
+                        DishImageQuery.target_date.is_(None),
+                        func.date(DishImageQuery.created_at) == query_date,
+                    ),
                 ),
-                # Fallback: Use created_at if target_date is NULL
-                and_(
-                    DishImageQuery.target_date.is_(None),
-                    func.date(DishImageQuery.created_at) == query_date
-                )
             )
-        ).order_by(
-            DishImageQuery.target_date.desc().nulls_last(),
-            DishImageQuery.created_at.desc()
-        ).first()
-        
+            .order_by(
+                DishImageQuery.target_date.desc().nulls_last(), DishImageQuery.created_at.desc()
+            )
+            .first()
+        )
+
         return result
     finally:
         db.close()
@@ -188,7 +192,7 @@ def get_single_dish_by_user_date_position(
 def update_dish_image_query_results(
     query_id: int,
     result_openai: Optional[Dict[str, Any]] = None,
-    result_gemini: Optional[Dict[str, Any]] = None
+    result_gemini: Optional[Dict[str, Any]] = None,
 ) -> Optional[DishImageQuery]:
     """
     Update analysis results for an existing dish image query.
@@ -206,9 +210,7 @@ def update_dish_image_query_results(
     """
     db = SessionLocal()
     try:
-        query = db.query(DishImageQuery).filter(
-            DishImageQuery.id == query_id
-        ).first()
+        query = db.query(DishImageQuery).filter(DishImageQuery.id == query_id).first()
         if query:
             if result_openai is not None:
                 query.result_openai = result_openai
@@ -239,9 +241,7 @@ def delete_dish_image_query_by_id(query_id: int) -> bool:
     """
     db = SessionLocal()
     try:
-        query = db.query(DishImageQuery).filter(
-            DishImageQuery.id == query_id
-        ).first()
+        query = db.query(DishImageQuery).filter(DishImageQuery.id == query_id).first()
         if not query:
             return False
         db.delete(query)
@@ -254,11 +254,7 @@ def delete_dish_image_query_by_id(query_id: int) -> bool:
         db.close()
 
 
-def get_calendar_data(
-    user_id: int,
-    year: int,
-    month: int
-) -> Dict[str, int]:
+def get_calendar_data(user_id: int, year: int, month: int) -> Dict[str, int]:
     """
     Get record count for each day in a month.
 
@@ -273,30 +269,32 @@ def get_calendar_data(
     db = SessionLocal()
     try:
         # Query all records for the month
-        queries = db.query(
-            func.date(
-                func.coalesce(
-                    DishImageQuery.target_date,
-                    DishImageQuery.created_at
+        queries = (
+            db.query(
+                func.date(
+                    func.coalesce(DishImageQuery.target_date, DishImageQuery.created_at)
+                ).label("date"),
+                func.count(DishImageQuery.id).label("count"),
+            )
+            .filter(
+                DishImageQuery.user_id == user_id,
+                func.extract(
+                    "year", func.coalesce(DishImageQuery.target_date, DishImageQuery.created_at)
                 )
-            ).label('date'),
-            func.count(DishImageQuery.id).label('count')
-        ).filter(
-            DishImageQuery.user_id == user_id,
-            func.extract('year', func.coalesce(
-                DishImageQuery.target_date,
-                DishImageQuery.created_at
-            )) == year,
-            func.extract('month', func.coalesce(
-                DishImageQuery.target_date,
-                DishImageQuery.created_at
-            )) == month
-        ).group_by('date').all()
+                == year,
+                func.extract(
+                    "month", func.coalesce(DishImageQuery.target_date, DishImageQuery.created_at)
+                )
+                == month,
+            )
+            .group_by("date")
+            .all()
+        )
 
         # Convert to dictionary
         result = {}
         for query in queries:
-            date_str = query.date.strftime('%Y-%m-%d')
+            date_str = query.date.strftime("%Y-%m-%d")
             result[date_str] = query.count
 
         return result
@@ -305,8 +303,7 @@ def get_calendar_data(
 
 
 def initialize_iterations_structure(
-    analysis_result: Dict[str, Any],
-    metadata: Optional[Dict[str, Any]] = None
+    analysis_result: Dict[str, Any], metadata: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Initialize iteration structure for first analysis.
@@ -324,7 +321,7 @@ def initialize_iterations_structure(
             "selected_dish": analysis_result.get("dish_name", "Unknown"),
             "selected_serving_size": None,
             "number_of_servings": 1.0,
-            "metadata_modified": False
+            "metadata_modified": False,
         }
 
     return {
@@ -334,10 +331,10 @@ def initialize_iterations_structure(
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "user_feedback": None,
                 "metadata": metadata,
-                "analysis": analysis_result
+                "analysis": analysis_result,
             }
         ],
-        "current_iteration": 1
+        "current_iteration": 1,
     }
 
 
@@ -359,15 +356,19 @@ def get_current_iteration(record: DishImageQuery) -> Optional[Dict[str, Any]]:
         # Convert to iterations format on-the-fly
         return {
             "iteration_number": 1,
-            "created_at": record.created_at.isoformat() if record.created_at else datetime.now(timezone.utc).isoformat(),
+            "created_at": (
+                record.created_at.isoformat()
+                if record.created_at
+                else datetime.now(timezone.utc).isoformat()
+            ),
             "user_feedback": None,
             "metadata": {
                 "selected_dish": record.result_gemini.get("dish_name", "Unknown"),
                 "selected_serving_size": None,
                 "number_of_servings": 1.0,
-                "metadata_modified": False
+                "metadata_modified": False,
             },
-            "analysis": record.result_gemini
+            "analysis": record.result_gemini,
         }
 
     # Get current iteration from iterations array
@@ -381,9 +382,7 @@ def get_current_iteration(record: DishImageQuery) -> Optional[Dict[str, Any]]:
 
 
 def add_metadata_reanalysis_iteration(
-    query_id: int,
-    analysis_result: Dict[str, Any],
-    metadata: Dict[str, Any]
+    query_id: int, analysis_result: Dict[str, Any], metadata: Dict[str, Any]
 ) -> Optional[DishImageQuery]:
     """
     Add new iteration after metadata-based re-analysis.
@@ -401,9 +400,7 @@ def add_metadata_reanalysis_iteration(
     """
     db = SessionLocal()
     try:
-        query = db.query(DishImageQuery).filter(
-            DishImageQuery.id == query_id
-        ).first()
+        query = db.query(DishImageQuery).filter(DishImageQuery.id == query_id).first()
 
         if not query:
             return None
@@ -420,11 +417,8 @@ def add_metadata_reanalysis_iteration(
             "iteration_number": new_iteration_number,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "user_feedback": None,
-            "metadata": {
-                **metadata,
-                "metadata_modified": True
-            },
-            "analysis": analysis_result
+            "metadata": {**metadata, "metadata_modified": True},
+            "analysis": analysis_result,
         }
 
         # Append new iteration
@@ -433,6 +427,7 @@ def add_metadata_reanalysis_iteration(
 
         # Mark as modified for SQLAlchemy to detect change
         from sqlalchemy.orm.attributes import flag_modified
+
         flag_modified(query, "result_gemini")
 
         db.commit()
@@ -446,10 +441,7 @@ def add_metadata_reanalysis_iteration(
 
 
 def update_metadata(
-    query_id: int,
-    selected_dish: str,
-    selected_serving_size: str,
-    number_of_servings: float
+    query_id: int, selected_dish: str, selected_serving_size: str, number_of_servings: float
 ) -> bool:
     """
     Update metadata for current iteration.
@@ -468,9 +460,7 @@ def update_metadata(
     """
     db = SessionLocal()
     try:
-        query = db.query(DishImageQuery).filter(
-            DishImageQuery.id == query_id
-        ).first()
+        query = db.query(DishImageQuery).filter(DishImageQuery.id == query_id).first()
 
         if not query or not query.result_gemini:
             return False
@@ -485,15 +475,18 @@ def update_metadata(
 
         if 0 <= current_idx < len(iterations):
             # Update metadata
-            iterations[current_idx]["metadata"].update({
-                "selected_dish": selected_dish,
-                "selected_serving_size": selected_serving_size,
-                "number_of_servings": number_of_servings,
-                "metadata_modified": True
-            })
+            iterations[current_idx]["metadata"].update(
+                {
+                    "selected_dish": selected_dish,
+                    "selected_serving_size": selected_serving_size,
+                    "number_of_servings": number_of_servings,
+                    "metadata_modified": True,
+                }
+            )
 
             # Mark as modified for SQLAlchemy
             from sqlalchemy.orm.attributes import flag_modified
+
             flag_modified(query, "result_gemini")
 
             db.commit()
@@ -507,10 +500,7 @@ def update_metadata(
         db.close()
 
 
-def get_latest_iterations(
-    record_id: int,
-    limit: int = 3
-) -> List[Dict[str, Any]]:
+def get_latest_iterations(record_id: int, limit: int = 3) -> List[Dict[str, Any]]:
     """
     Get most recent iterations for display.
 
@@ -529,20 +519,25 @@ def get_latest_iterations(
     # Handle legacy format
     if "iterations" not in query.result_gemini:
         # Return single iteration
-        return [{
-            "iteration_number": 1,
-            "created_at": query.created_at.isoformat() if query.created_at else datetime.now(timezone.utc).isoformat(),
-            "user_feedback": None,
-            "metadata": {
-                "selected_dish": query.result_gemini.get("dish_name", "Unknown"),
-                "selected_serving_size": None,
-                "number_of_servings": 1.0,
-                "metadata_modified": False
-            },
-            "analysis": query.result_gemini
-        }]
+        return [
+            {
+                "iteration_number": 1,
+                "created_at": (
+                    query.created_at.isoformat()
+                    if query.created_at
+                    else datetime.now(timezone.utc).isoformat()
+                ),
+                "user_feedback": None,
+                "metadata": {
+                    "selected_dish": query.result_gemini.get("dish_name", "Unknown"),
+                    "selected_serving_size": None,
+                    "number_of_servings": 1.0,
+                    "metadata_modified": False,
+                },
+                "analysis": query.result_gemini,
+            }
+        ]
 
     # Get iterations (most recent first)
     iterations = query.result_gemini.get("iterations", [])
     return list(reversed(iterations[-limit:]))
-

@@ -17,4 +17,3 @@ api_router.include_router(login.router)
 api_router.include_router(dashboard.router)
 api_router.include_router(date.router)
 api_router.include_router(item.router)
-

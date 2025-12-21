@@ -16,10 +16,7 @@ from src.auth import authenticate_user, create_access_token
 logger = logging.getLogger(__name__)
 
 # Create router for login endpoints
-router = APIRouter(
-    prefix='/api/login',
-    tags=['login']
-)
+router = APIRouter(prefix="/api/login", tags=["login"])
 
 
 class LoginRequest(BaseModel):
@@ -30,9 +27,7 @@ class LoginRequest(BaseModel):
 
 
 @router.post("/")
-async def process_login(
-    login_data: LoginRequest
-) -> JSONResponse:
+async def process_login(login_data: LoginRequest) -> JSONResponse:
     """
     Handle POST request for user login.
 
@@ -45,39 +40,29 @@ async def process_login(
     Returns:
         JSONResponse: JSON response with auth status and user data
     """
-    logger.info(f"Login attempt for username: {login_data.username}")
+    logger.info("Login attempt for username: %s", login_data.username)
 
     # Authenticate user
     user = authenticate_user(login_data.username, login_data.password)
 
     if not user:
-        logger.error(f"Authentication failed for: {login_data.username}")
+        logger.error("Authentication failed for: %s", login_data.username)
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content={
-                "success": False,
-                "message": "Invalid username or password"
-            }
+            content={"success": False, "message": "Invalid username or password"},
         )
 
-    logger.info(
-        f"Authentication successful for: {user.username} (ID: {user.id})"
-    )
+    logger.info("Authentication successful for: %s (ID: %s)", user.username, user.id)
 
     # Create access token
-    access_token = create_access_token(
-        data={"username": login_data.username}
-    )
+    access_token = create_access_token(data={"username": login_data.username})
 
     # Create response with user data
     response = JSONResponse(
         content={
             "success": True,
             "message": "Login successful",
-            "user": {
-                "id": user.id,
-                "username": user.username
-            }
+            "user": {"id": user.id, "username": user.username},
         }
     )
     response.set_cookie(
@@ -87,7 +72,7 @@ async def process_login(
         samesite="lax",
         secure=False,
         max_age=7776000,  # 90 days
-        path="/"
+        path="/",
     )
 
     return response
@@ -101,12 +86,6 @@ async def logout() -> JSONResponse:
     Returns:
         JSONResponse: JSON response confirming logout
     """
-    response = JSONResponse(
-        content={
-            "success": True,
-            "message": "Logout successful"
-        }
-    )
+    response = JSONResponse(content={"success": True, "message": "Logout successful"})
     response.delete_cookie(key="access_token")
     return response
-

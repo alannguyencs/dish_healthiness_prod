@@ -1,16 +1,16 @@
-import React from 'react';
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate
-} from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import DateView from './pages/DateView';
-import Item from './pages/Item';
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import DateView from "./pages/DateView";
+import ItemV2 from "./pages/ItemV2";
 
 function RedirectToDashboard() {
   const { authenticated, loading } = useAuth();
@@ -23,7 +23,7 @@ function RedirectToDashboard() {
     );
   }
 
-  return <Navigate to={authenticated ? '/dashboard' : '/login'} replace />;
+  return <Navigate to={authenticated ? "/dashboard" : "/login"} replace />;
 }
 
 function App() {
@@ -52,7 +52,7 @@ function App() {
             path="/item/:recordId"
             element={
               <ProtectedRoute>
-                <Item />
+                <ItemV2 />
               </ProtectedRoute>
             }
           />
@@ -65,4 +65,3 @@ function App() {
 }
 
 export default App;
-

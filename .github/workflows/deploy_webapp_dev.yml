@@ -42,20 +42,20 @@ jobs:
           ssh ${{ vars.SSH_USERNAME }}@${{ vars.SERVER_IP }} << 'EOF'
             # Skip package updates - all required packages are already installed
             echo "Skipping system package updates (run separately during maintenance)"
-            
+
             # Verify required tools are available
             echo "Verifying required tools..."
             python3 --version || { echo "❌ Python3 not found"; exit 1; }
             pip3 --version || { echo "❌ pip3 not found"; exit 1; }
             git --version || { echo "❌ git not found"; exit 1; }
-            
+
             # Update PATH to ensure node and npm are available
             export PATH="/usr/bin:/usr/local/bin:/snap/bin:$PATH"
-            
+
             # Verify Node.js and npm installation
             node --version || { echo "❌ Node.js not found"; exit 1; }
             npm --version || { echo "❌ npm not found"; exit 1; }
-            
+
             echo "✅ All required tools are available"
 
             # Clone or update repository using HTTPS with token
@@ -327,4 +327,3 @@ jobs:
             disown -h $FRONTEND_PID
 
           EOF
-

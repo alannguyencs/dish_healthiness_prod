@@ -13,10 +13,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 # Database configuration from environment variables
-DB_USERNAME = os.getenv('DB_USERNAME')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_NAME = os.getenv('DB_NAME')
-DB_URL = os.getenv('DB_URL')
+DB_USERNAME = os.getenv("DB_USERNAME")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+DB_URL = os.getenv("DB_URL")
 
 
 def build_database_url() -> str:
@@ -31,16 +31,12 @@ def build_database_url() -> str:
     """
     if not all([DB_USERNAME, DB_NAME, DB_URL]):
         raise ValueError(
-            "Missing required database environment variables: "
-            "DB_USERNAME, DB_NAME, DB_URL"
+            "Missing required database environment variables: " "DB_USERNAME, DB_NAME, DB_URL"
         )
 
     if DB_PASSWORD:
-        return (
-            f'postgresql://{DB_USERNAME}:{DB_PASSWORD}@'
-            f'{DB_URL}:5432/{DB_NAME}'
-        )
-    return f'postgresql://{DB_USERNAME}@{DB_URL}:5432/{DB_NAME}'
+        return f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@" f"{DB_URL}:5432/{DB_NAME}"
+    return f"postgresql://{DB_USERNAME}@{DB_URL}:5432/{DB_NAME}"
 
 
 # Build database URL
@@ -71,4 +67,3 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
-

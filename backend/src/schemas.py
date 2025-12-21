@@ -70,6 +70,7 @@ class UserResponse(UserBase):
 
     class Config:
         """Pydantic configuration for ORM mode compatibility."""
+
         from_attributes = True
 
 
@@ -124,6 +125,7 @@ class DishImageQueryResponse(DishImageQueryBase):
 
     class Config:
         """Pydantic configuration for ORM mode compatibility."""
+
         from_attributes = True
 
 
@@ -139,7 +141,7 @@ class MetadataUpdate(BaseModel):
         selected_serving_size (str): Selected or custom serving size
         number_of_servings (float): Quantity consumed (must be positive)
     """
+
     selected_dish: str
     selected_serving_size: str
     number_of_servings: float = Field(..., gt=0)
-

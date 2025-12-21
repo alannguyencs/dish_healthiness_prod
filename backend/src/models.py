@@ -7,9 +7,7 @@ application, including user management and food image query storage.
 
 from typing import Any, Dict
 
-from sqlalchemy import (
-    Column, DateTime, ForeignKey, Integer, JSON, String
-)
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, JSON, String
 
 from src.database import Base
 
@@ -28,7 +26,7 @@ class Users(Base):
         role (str): User role (optional)
     """
 
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
@@ -51,10 +49,7 @@ class Users(Base):
         Returns:
             Dict[str, Any]: Dictionary containing all user attributes
         """
-        return {
-            column.name: getattr(self, column.name)
-            for column in self.__table__.columns
-        }
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
 
 class DishImageQuery(Base):
@@ -75,10 +70,10 @@ class DishImageQuery(Base):
         target_date (datetime): Date when the dish was actually consumed
     """
 
-    __tablename__ = 'dish_image_query_prod_dev'
+    __tablename__ = "dish_image_query_prod_dev"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     image_url = Column(String, nullable=True, default=None)
     result_openai = Column(JSON, nullable=True, default=None)
     result_gemini = Column(JSON, nullable=True, default=None)
@@ -102,7 +97,4 @@ class DishImageQuery(Base):
         Returns:
             Dict[str, Any]: Dictionary containing all query attributes
         """
-        return {
-            column.name: getattr(self, column.name)
-            for column in self.__table__.columns
-        }
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}

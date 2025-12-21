@@ -23,16 +23,16 @@ from sqlalchemy import text
 def migrate_to_dish_position():
     """
     Migrate the database from meal_type to dish_position.
-    
+
     Steps:
     1. Add dish_position column
     2. Migrate existing data (optional - map meal types to positions)
     3. Drop meal_type column
     """
-    
+
     with engine.connect() as conn:
         print("Starting migration to dish_position...")
-        
+
         # Step 1: Add dish_position column (nullable)
         print("Adding dish_position column...")
         try:
@@ -47,7 +47,7 @@ def migrate_to_dish_position():
                 print("✓ dish_position column already exists")
             else:
                 raise
-        
+
         # Step 2: Drop meal_type column (if exists)
         print("Dropping meal_type column...")
         try:
@@ -59,7 +59,7 @@ def migrate_to_dish_position():
             print("✓ Dropped meal_type column")
         except Exception as e:
             print(f"Warning: Could not drop meal_type column: {e}")
-        
+
         print("\n✓ Migration completed successfully!")
         print("Note: Existing records will have dish_position = NULL")
         print("New uploads will use dish_position 1-5")
@@ -67,4 +67,3 @@ def migrate_to_dish_position():
 
 if __name__ == "__main__":
     migrate_to_dish_position()
-

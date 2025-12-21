@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
 /**
  * ServingSizeSelector Component
@@ -11,10 +11,10 @@ const ServingSizeSelector = ({
   selectedOption,
   onSelect,
   disabled = false,
-  dishName = 'this dish'
+  dishName = "this dish",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [customInput, setCustomInput] = useState('');
+  const [customInput, setCustomInput] = useState("");
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -26,8 +26,9 @@ const ServingSizeSelector = ({
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isOpen]);
 
@@ -47,13 +48,13 @@ const ServingSizeSelector = ({
     e.preventDefault();
     if (customInput.trim()) {
       onSelect(customInput.trim());
-      setCustomInput('');
+      setCustomInput("");
       setIsOpen(false);
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       setIsOpen(false);
     }
   };
@@ -69,13 +70,15 @@ const ServingSizeSelector = ({
         </label>
         <input
           type="text"
-          value={selectedOption || ''}
+          value={selectedOption || ""}
           onChange={(e) => onSelect(e.target.value)}
           placeholder="Enter serving size (e.g., 1 piece (85g))"
           disabled={disabled}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
         />
-        <p className="mt-1 text-sm text-gray-500">Enter a custom serving size</p>
+        <p className="mt-1 text-sm text-gray-500">
+          Enter a custom serving size
+        </p>
       </div>
     );
   }
@@ -98,7 +101,7 @@ const ServingSizeSelector = ({
       >
         <div className="flex items-center justify-between">
           <span className="font-medium text-gray-900">
-            {selectedOption || 'Select serving size'}
+            {selectedOption || "Select serving size"}
           </span>
           <div className="flex items-center gap-2">
             {isCustom && (
@@ -107,12 +110,17 @@ const ServingSizeSelector = ({
               </span>
             )}
             <svg
-              className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+              className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </div>
         </div>
@@ -137,8 +145,16 @@ const ServingSizeSelector = ({
               >
                 <span className="font-medium text-gray-900">{option}</span>
                 {selectedOption === option && (
-                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <svg
+                    className="w-5 h-5 text-blue-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 )}
               </button>

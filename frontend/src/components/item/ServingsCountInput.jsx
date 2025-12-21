@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 /**
  * ServingsCountInput Component
@@ -14,7 +14,7 @@ const ServingsCountInput = ({
   min = 0.1,
   max = null, // No maximum limit
   step = 0.5,
-  predictedServings = null // AI predicted number of servings
+  predictedServings = null, // AI predicted number of servings
 }) => {
   const [inputValue, setInputValue] = useState(value.toString());
 
@@ -56,18 +56,19 @@ const ServingsCountInput = ({
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'ArrowUp') {
+    if (e.key === "ArrowUp") {
       e.preventDefault();
       handleIncrement();
-    } else if (e.key === 'ArrowDown') {
+    } else if (e.key === "ArrowDown") {
       e.preventDefault();
       handleDecrement();
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       e.target.blur();
     }
   };
 
-  const isUsingPrediction = predictedServings !== null && Math.abs(value - predictedServings) < 0.01;
+  const isUsingPrediction =
+    predictedServings !== null && Math.abs(value - predictedServings) < 0.01;
 
   return (
     <div className="mb-4">
@@ -91,8 +92,18 @@ const ServingsCountInput = ({
           className="w-10 h-10 flex items-center justify-center bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
           aria-label="Decrease servings"
         >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M20 12H4"
+            />
           </svg>
         </button>
 
@@ -118,19 +129,31 @@ const ServingsCountInput = ({
           className="w-10 h-10 flex items-center justify-center bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
           aria-label="Increase servings"
         >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
           </svg>
         </button>
       </div>
 
       <div className="mt-2 space-y-1">
         <p className="text-sm text-gray-500">
-          How many servings did you eat? {max !== null ? `(Range: ${min} - ${max})` : `(Minimum: ${min})`}
+          How many servings did you eat?{" "}
+          {max !== null ? `(Range: ${min} - ${max})` : `(Minimum: ${min})`}
         </p>
         {predictedServings !== null && !isUsingPrediction && (
           <p className="text-sm text-gray-600">
-            AI estimated: <span className="font-medium">{predictedServings}</span> servings
+            AI estimated:{" "}
+            <span className="font-medium">{predictedServings}</span> servings
           </p>
         )}
       </div>

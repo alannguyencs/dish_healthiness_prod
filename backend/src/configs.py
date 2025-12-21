@@ -59,11 +59,8 @@ class Settings(BaseSettings):
         """
         return self.PROJECT_NAME.lower()
 
-    model_config = {
-        "case_sensitive": True
-    }
+    model_config = {"case_sensitive": True}
 
 
 # Global settings instance
 settings = Settings()
-

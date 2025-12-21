@@ -57,11 +57,7 @@ def get_user_by_id(user_id: int) -> Optional[Users]:
         db.close()
 
 
-def create_user(
-    username: str,
-    hashed_password: str,
-    role: Optional[str] = None
-) -> Users:
+def create_user(username: str, hashed_password: str, role: Optional[str] = None) -> Users:
     """
     Create a new user.
 
@@ -78,11 +74,7 @@ def create_user(
     """
     db = get_db_session()
     try:
-        db_user = Users(
-            username=username,
-            hashed_password=hashed_password,
-            role=role
-        )
+        db_user = Users(username=username, hashed_password=hashed_password, role=role)
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
@@ -94,10 +86,7 @@ def create_user(
         db.close()
 
 
-def update_user_password(
-    user_id: int,
-    new_hashed_password: str
-) -> Optional[Users]:
+def update_user_password(user_id: int, new_hashed_password: str) -> Optional[Users]:
     """
     Update user password.
 
@@ -152,4 +141,3 @@ def delete_user(user_id: int) -> bool:
         raise
     finally:
         db.close()
-

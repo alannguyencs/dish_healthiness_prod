@@ -22,4 +22,3 @@ def format_datetime(dt):
     if dt is None:
         return ""
     return dt.strftime("%Y-%m-%d %H:%M:%S")
-

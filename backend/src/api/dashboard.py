@@ -18,17 +18,14 @@ from src.crud.crud_food_image_query import get_calendar_data
 logger = logging.getLogger(__name__)
 
 # Create router for dashboard endpoints
-router = APIRouter(
-    prefix='/api/dashboard',
-    tags=['dashboard']
-)
+router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
 
 @router.get("/")
 async def dashboard(
     request: Request,
     year: int = Query(None, description="Year to display"),
-    month: int = Query(None, description="Month to display")
+    month: int = Query(None, description="Month to display"),
 ) -> JSONResponse:
     """
     Get dashboard calendar data with user's food analyses.
@@ -69,23 +66,18 @@ async def dashboard(
     for week in month_days:
         week_data = []
         for day in week:
-            day_info = {
-                'day': day,
-                'count': 0,
-                'is_current_month': day != 0,
-                'is_today': False
-            }
+            day_info = {"day": day, "count": 0, "is_current_month": day != 0, "is_today": False}
 
             if day != 0:
                 date_obj = datetime(display_year, display_month, day).date()
 
                 # Check if this is today
                 if date_obj == now.date():
-                    day_info['is_today'] = True
+                    day_info["is_today"] = True
 
                 # Get record count for this date
-                date_str = date_obj.strftime('%Y-%m-%d')
-                day_info['count'] = record_counts.get(date_str, 0)
+                date_str = date_obj.strftime("%Y-%m-%d")
+                day_info["count"] = record_counts.get(date_str, 0)
 
             week_data.append(day_info)
         calendar_data.append(week_data)
@@ -113,7 +105,6 @@ async def dashboard(
             "prev_month": prev_month,
             "next_year": next_year,
             "next_month": next_month,
-            "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+            "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         }
     )
-

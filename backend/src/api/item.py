@@ -9,36 +9,29 @@ metadata update and re-analysis endpoints.
 import logging
 from pathlib import Path
 
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse
 
+from src.api.item_schemas import Step1ConfirmationRequest
+from src.api.item_tasks import trigger_step2_analysis_background
 from src.auth import authenticate_user_from_request
 from src.crud.crud_food_image_query import (
     get_dish_image_query_by_id,
     get_current_iteration,
     update_metadata,
-    add_metadata_reanalysis_iteration,
-    get_latest_iterations
+    update_dish_image_query_results,
 )
 from src.schemas import MetadataUpdate
-from src.service.llm.gemini_analyzer import analyze_with_gemini_brief_async
-from src.service.llm.prompts import get_brief_analysis_prompt
 from src.configs import IMAGE_DIR
 
 logger = logging.getLogger(__name__)
 
 # Create router for item detail endpoints
-router = APIRouter(
-    prefix='/api/item',
-    tags=['item']
-)
+router = APIRouter(prefix="/api/item", tags=["item"])
 
 
 @router.get("/{record_id}")
-async def item_detail(
-    record_id: int,
-    request: Request
-) -> JSONResponse:
+async def item_detail(record_id: int, request: Request) -> JSONResponse:
     """
     Get detailed information for a specific dish image query record.
 
@@ -56,7 +49,7 @@ async def item_detail(
     Raises:
         HTTPException: 401 if not authenticated, 404 if record not found
     """
-    logger.info(f"Item detail request for record_id={record_id}")
+    logger.info("Item detail request for record_id=%s", record_id)
 
     # Authentication
     user = authenticate_user_from_request(request)
@@ -92,20 +85,18 @@ async def item_detail(
 
     # Prepare response data (Gemini only with iterations support)
     item_data = {
-        'id': query_record.id,
-        'image_url': query_record.image_url,
-        'dish_position': query_record.dish_position,
-        'created_at': query_record.created_at.isoformat() if (
-            query_record.created_at
-        ) else None,
-        'target_date': query_record.target_date.isoformat() if (
-            query_record.target_date
-        ) else None,
-        'result_gemini': query_record.result_gemini,
-        'has_gemini_result': query_record.result_gemini is not None,
-        'iterations': iterations,
-        'current_iteration': current_iteration,
-        'total_iterations': total_iterations
+        "id": query_record.id,
+        "image_url": query_record.image_url,
+        "dish_position": query_record.dish_position,
+        "created_at": query_record.created_at.isoformat() if (query_record.created_at) else None,
+        "target_date": (
+            query_record.target_date.isoformat() if (query_record.target_date) else None
+        ),
+        "result_gemini": query_record.result_gemini,
+        "has_gemini_result": query_record.result_gemini is not None,
+        "iterations": iterations,
+        "current_iteration": current_iteration,
+        "total_iterations": total_iterations,
     }
 
     return JSONResponse(content=item_data)
@@ -113,9 +104,7 @@ async def item_detail(
 
 @router.patch("/{record_id}/metadata")
 async def update_item_metadata(
-    record_id: int,
-    request: Request,
-    metadata: MetadataUpdate
+    record_id: int, request: Request, metadata: MetadataUpdate
 ) -> JSONResponse:
     """
     Update metadata (dish, serving size, servings count) for current iteration.
@@ -136,8 +125,8 @@ async def update_item_metadata(
         HTTPException: 401 if not authenticated, 404 if record not found,
                       400 if validation fails
     """
-    logger.info(f"Metadata update request for record_id={record_id}")
-    logger.info(f"Metadata: {metadata.model_dump()}")
+    logger.info("Metadata update request for record_id=%s", record_id)
+    logger.info("Metadata: %s", metadata.model_dump())
 
     # Authentication
     user = authenticate_user_from_request(request)
@@ -160,53 +149,54 @@ async def update_item_metadata(
             record_id,
             metadata.selected_dish,
             metadata.selected_serving_size,
-            metadata.number_of_servings
+            metadata.number_of_servings,
         )
 
         if not success:
-            raise HTTPException(
-                status_code=400,
-                detail="Failed to update metadata"
-            )
+            raise HTTPException(status_code=400, detail="Failed to update metadata")
 
-        return JSONResponse(content={
-            "success": True,
-            "message": "Metadata updated successfully",
-            "metadata_modified": True
-        })
-
-    except Exception as e:
-        logger.error(f"Error updating metadata: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error updating metadata: {str(e)}"
+        return JSONResponse(
+            content={
+                "success": True,
+                "message": "Metadata updated successfully",
+                "metadata_modified": True,
+            }
         )
 
+    except Exception as e:
+        logger.error("Error updating metadata: %s", e)
+        raise HTTPException(status_code=500, detail=f"Error updating metadata: {str(e)}") from e
 
-@router.post("/{record_id}/reanalyze")
-async def reanalyze_item(
+
+@router.post("/{record_id}/confirm-step1")
+async def confirm_step1_and_trigger_step2(
     record_id: int,
-    request: Request
+    request: Request,
+    background_tasks: BackgroundTasks,
+    confirmation: Step1ConfirmationRequest,
 ) -> JSONResponse:
     """
-    Trigger re-analysis with current metadata using FoodHealthAnalysisBrief.
+    Confirm Step 1 data and trigger Step 2 nutritional analysis.
 
-    This endpoint performs a new analysis using the user-selected metadata
-    (dish, serving size, servings count) from the current iteration. It uses
-    the lighter FoodHealthAnalysisBrief model to save 20-30% token usage.
+    This endpoint receives user-confirmed dish name and components,
+    then triggers Step 2 (nutritional analysis) in the background.
 
     Args:
         record_id (int): The ID of the dish image query record
         request (Request): FastAPI request object
+        background_tasks (BackgroundTasks): FastAPI background tasks
+        confirmation (Step1ConfirmationRequest): Confirmed Step 1 data
 
     Returns:
-        JSONResponse: New iteration data with analysis results
+        JSONResponse: Success response with confirmation status
 
     Raises:
         HTTPException: 401 if not authenticated, 404 if record not found,
-                      400 if re-analysis fails
+                      400 if Step 1 not completed
     """
-    logger.info(f"Re-analysis request for record_id={record_id}")
+    logger.info("Step 1 confirmation request for record_id=%s", record_id)
+    logger.info("Confirmed dish: %s", confirmation.selected_dish_name)
+    logger.info("Confirmed components: %s", [c.component_name for c in confirmation.components])
 
     # Authentication
     user = authenticate_user_from_request(request)
@@ -223,91 +213,51 @@ async def reanalyze_item(
     if query_record.user_id != user.id:
         raise HTTPException(status_code=404, detail="Record not found")
 
-    # Get current iteration to extract metadata
-    current_iter = get_current_iteration(query_record)
+    # Verify Step 1 is completed
+    if not query_record.result_gemini:
+        raise HTTPException(status_code=400, detail="Step 1 analysis not completed yet")
 
-    if not current_iter or "metadata" not in current_iter:
-        raise HTTPException(
-            status_code=400,
-            detail="No metadata found for re-analysis"
-        )
+    result_gemini = query_record.result_gemini
+    if result_gemini.get("step") != 1:
+        raise HTTPException(status_code=400, detail="Step 1 must be completed before confirmation")
 
-    metadata = current_iter["metadata"]
-    selected_dish = metadata.get("selected_dish")
-    selected_serving_size = metadata.get("selected_serving_size")
-    number_of_servings = metadata.get("number_of_servings", 1.0)
-
-    if not selected_dish or not selected_serving_size:
-        raise HTTPException(
-            status_code=400,
-            detail="Incomplete metadata for re-analysis"
-        )
-
-    # Load image path
+    # Verify image exists
     if not query_record.image_url:
-        raise HTTPException(
-            status_code=400,
-            detail="No image found for this record"
-        )
+        raise HTTPException(status_code=400, detail="No image found for this record")
 
     image_path = IMAGE_DIR / Path(query_record.image_url).name
 
     if not image_path.exists():
-        raise HTTPException(
-            status_code=404,
-            detail="Image file not found"
-        )
+        raise HTTPException(status_code=404, detail="Image file not found")
 
-    # Perform re-analysis using brief model
-    try:
-        logger.info(f"Starting re-analysis with metadata: {metadata}")
+    # Convert confirmation data to dict for background task
+    components_data = [comp.model_dump() for comp in confirmation.components]
 
-        brief_prompt = get_brief_analysis_prompt()
+    # Mark Step 1 as confirmed (optimistic update)
+    result_gemini_updated = result_gemini.copy()
+    result_gemini_updated["step1_confirmed"] = True
+    result_gemini_updated["confirmed_dish_name"] = confirmation.selected_dish_name
+    result_gemini_updated["confirmed_components"] = components_data
 
-        analysis_result = await analyze_with_gemini_brief_async(
-            image_path=image_path,
-            analysis_prompt=brief_prompt,
-            selected_dish=selected_dish,
-            selected_serving_size=selected_serving_size,
-            number_of_servings=number_of_servings,
-            gemini_model="gemini-2.5-pro",
-            thinking_budget=-1
-        )
+    update_dish_image_query_results(
+        query_id=record_id, result_openai=None, result_gemini=result_gemini_updated
+    )
 
-        logger.info(f"Re-analysis complete: {analysis_result}")
+    # Schedule Step 2 analysis in background
+    background_tasks.add_task(
+        trigger_step2_analysis_background,
+        record_id,
+        image_path,
+        confirmation.selected_dish_name,
+        components_data,
+    )
 
-        # Add new iteration
-        updated_record = add_metadata_reanalysis_iteration(
-            query_id=record_id,
-            analysis_result=analysis_result,
-            metadata={
-                "selected_dish": selected_dish,
-                "selected_serving_size": selected_serving_size,
-                "number_of_servings": number_of_servings
-            }
-        )
-
-        if not updated_record:
-            raise HTTPException(
-                status_code=500,
-                detail="Failed to save re-analysis results"
-            )
-
-        # Get the new iteration
-        new_iteration = get_current_iteration(updated_record)
-
-        return JSONResponse(content={
+    return JSONResponse(
+        content={
             "success": True,
-            "iteration_id": record_id,
-            "iteration_number": updated_record.result_gemini.get("current_iteration"),
-            "analysis_data": analysis_result,
-            "created_at": new_iteration.get("created_at") if new_iteration else None
-        })
-
-    except Exception as e:
-        logger.error(f"Error during re-analysis: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error during re-analysis: {str(e)}"
-        )
-
+            "message": "Step 1 confirmed. Step 2 analysis in progress...",
+            "record_id": record_id,
+            "confirmed_dish_name": confirmation.selected_dish_name,
+            "step2_in_progress": True,
+        }
+    )
