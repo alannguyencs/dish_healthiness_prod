@@ -154,9 +154,9 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
 
     onConfirm(confirmationData);
 
-    // Auto-scroll to show Step 2 loading
+    // Auto-scroll to show Step 2 loading at the bottom
     setTimeout(() => {
-      window.scrollBy({ top: 400, behavior: "smooth" });
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 100);
   };
 
