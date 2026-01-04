@@ -4,33 +4,55 @@ import DishNameSelector from "./DishNameSelector";
 import ComponentListItem from "./ComponentListItem";
 import AddComponentForm from "./AddComponentForm";
 
-const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
+const Step1ComponentEditor = ({
+  step1Data,
+  confirmedData,
+  onConfirm,
+  isConfirming,
+}) => {
   const { dish_predictions = [], components = [] } = step1Data || {};
 
+  const getConfirmedComponent = (name) =>
+    confirmedData?.components?.find((c) => c.component_name === name);
+  const initDishName = confirmedData?.selected_dish_name || "";
+  const isPredictedDish = dish_predictions.some((p) => p.name === initDishName);
+
   const [selectedDishName, setSelectedDishName] = useState(
-    dish_predictions[0]?.name || "",
+    isPredictedDish ? initDishName : dish_predictions[0]?.name || "",
   );
-  const [customDishName, setCustomDishName] = useState("");
-  const [useCustomDish, setUseCustomDish] = useState(false);
+  const [customDishName, setCustomDishName] = useState(
+    initDishName && !isPredictedDish ? initDishName : "",
+  );
+  const [useCustomDish, setUseCustomDish] = useState(
+    initDishName && !isPredictedDish,
+  );
   const [showAllDishPredictions, setShowAllDishPredictions] = useState(false);
   const [componentSelections, setComponentSelections] = useState(() => {
     const initial = {};
     components.forEach((comp) => {
+      const confirmed = getConfirmedComponent(comp.component_name);
       initial[comp.component_name] = {
-        enabled: true,
-        selected_serving_size: comp.serving_sizes[0] || "",
-        number_of_servings: comp.predicted_servings || 1.0,
+        enabled: confirmed ? true : !confirmedData,
+        selected_serving_size:
+          confirmed?.selected_serving_size || comp.serving_sizes[0] || "",
+        number_of_servings:
+          confirmed?.number_of_servings || comp.predicted_servings || 1.0,
         serving_size_options: comp.serving_sizes || [],
       };
     });
     return initial;
   });
-  const [manualComponents, setManualComponents] = useState([]);
+  const [manualComponents, setManualComponents] = useState(() => {
+    if (!confirmedData?.components) return [];
+    const origNames = components.map((c) => c.component_name);
+    return confirmedData.components
+      .filter((c) => !origNames.includes(c.component_name))
+      .map((c, i) => ({ ...c, id: Date.now() + i }));
+  });
   const [showAddComponent, setShowAddComponent] = useState(false);
   const [newComponentName, setNewComponentName] = useState("");
   const [newComponentServingSize, setNewComponentServingSize] = useState("");
   const [newComponentServings, setNewComponentServings] = useState(1.0);
-
   const handleComponentToggle = (componentName) => {
     setComponentSelections((prev) => ({
       ...prev,
@@ -40,7 +62,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
       },
     }));
   };
-
   const handleComponentServingSizeChange = (componentName, servingSize) => {
     setComponentSelections((prev) => ({
       ...prev,
@@ -50,7 +71,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
       },
     }));
   };
-
   const handleComponentServingsChange = (componentName, servings) => {
     setComponentSelections((prev) => ({
       ...prev,
@@ -142,7 +162,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
 
   return (
     <div className="space-y-6">
-      {/* Dish Name Selection */}
       <DishNameSelector
         dishPredictions={dish_predictions}
         selectedDishName={selectedDishName}
@@ -157,7 +176,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
         }
       />
 
-      {/* Individual Dishes (Components) */}
       <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-800">
@@ -173,7 +191,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
         </div>
 
         <div className="space-y-3 mb-4">
-          {/* AI-predicted components */}
           {components.map((comp) => {
             const selection = componentSelections[comp.component_name] || {};
             return (
@@ -191,8 +208,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
               />
             );
           })}
-
-          {/* Manual components */}
           {manualComponents.map((comp) => (
             <ComponentListItem
               key={comp.id}
@@ -208,8 +223,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
             />
           ))}
         </div>
-
-        {/* Add component button/form */}
         {!showAddComponent ? (
           <button
             type="button"
@@ -233,7 +246,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
         )}
       </div>
 
-      {/* Confirm Button */}
       <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
         <button
           onClick={handleConfirm}
@@ -246,8 +258,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
         >
           {isConfirming ? "Confirming..." : "Confirm and Analyze Nutrition"}
         </button>
-
-        {/* Metadata display */}
         {(step1Data.model ||
           step1Data.price_usd ||
           step1Data.analysis_time) && (

@@ -10,13 +10,6 @@ import {
   Step2Results,
 } from "../components/item";
 
-/**
- * Item Page Component (V2 - Two-Step Analysis)
- *
- * Handles the new two-step analysis workflow:
- * - Step 1: Display component identification, allow user to confirm/modify
- * - Step 2: Display nutritional analysis after confirmation
- */
 const ItemV2 = () => {
   const { recordId } = useParams();
   const navigate = useNavigate();
@@ -27,6 +20,7 @@ const ItemV2 = () => {
   const [pollingStep2, setPollingStep2] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [viewStep, setViewStep] = useState(null); // Track which step view to show (null = auto)
+  const [confirmedStep1Data, setConfirmedStep1Data] = useState(null); // Store user's confirmed selections
   const pollingIntervalRef = useRef(null);
 
   useEffect(() => {
@@ -133,6 +127,8 @@ const ItemV2 = () => {
   const handleStep1Confirmation = async (confirmationData) => {
     try {
       setConfirming(true);
+      // Store the user's confirmed selections
+      setConfirmedStep1Data(confirmationData);
       await apiService.confirmStep1(recordId, confirmationData);
 
       // Start polling for Step 2
@@ -273,6 +269,7 @@ const ItemV2 = () => {
                 !pollingStep1)) && (
               <Step1ComponentEditor
                 step1Data={step1Data}
+                confirmedData={confirmedStep1Data}
                 onConfirm={handleStep1Confirmation}
                 isConfirming={confirming}
               />

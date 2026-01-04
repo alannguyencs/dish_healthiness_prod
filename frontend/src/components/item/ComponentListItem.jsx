@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 /**
  * ComponentListItem Component
@@ -17,6 +17,12 @@ const ComponentListItem = ({
   onServingsChange,
   onRemove,
 }) => {
+  const isCustomValue =
+    servingSizeOptions.length > 0 && !servingSizeOptions.includes(servingSize);
+  const [showCustomInput, setShowCustomInput] = useState(isCustomValue);
+  const [customValue, setCustomValue] = useState(
+    isCustomValue ? servingSize : "",
+  );
   return (
     <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
       {/* Component header with checkbox/remove button */}
@@ -62,27 +68,65 @@ const ComponentListItem = ({
           <span className="text-gray-700 font-medium">Serving Size:</span>
 
           {servingSizeOptions.length > 0 ? (
-            <select
-              value={servingSize}
-              onChange={(e) =>
-                onServingSizeChange &&
-                onServingSizeChange(componentName, e.target.value)
-              }
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            >
-              {servingSizeOptions.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              {!showCustomInput ? (
+                <>
+                  <select
+                    value={servingSize}
+                    onChange={(e) => {
+                      if (e.target.value === "__custom__") {
+                        setShowCustomInput(true);
+                        setCustomValue("");
+                      } else {
+                        onServingSizeChange?.(componentName, e.target.value);
+                      }
+                    }}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    {servingSizeOptions.map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                    <option value="__custom__">Custom...</option>
+                  </select>
+                </>
+              ) : (
+                <>
+                  <input
+                    type="text"
+                    value={customValue}
+                    onChange={(e) => {
+                      setCustomValue(e.target.value);
+                      onServingSizeChange?.(componentName, e.target.value);
+                    }}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., 1.5 cups"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCustomInput(false);
+                      onServingSizeChange?.(
+                        componentName,
+                        servingSizeOptions[0],
+                      );
+                    }}
+                    className="px-2 py-1 text-gray-500 hover:text-gray-700 text-sm"
+                    title="Back to dropdown"
+                  >
+                    ✕
+                  </button>
+                </>
+              )}
+            </div>
           ) : (
             <input
               type="text"
               value={servingSize}
               onChange={(e) =>
-                onServingSizeChange &&
-                onServingSizeChange(componentName, e.target.value)
+                onServingSizeChange?.(componentName, e.target.value)
               }
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               placeholder="e.g., 1 cup (100g)"
