@@ -102,13 +102,20 @@ For **each individual dish** identified in Task 2, provide:
 
 ### Determining Serving Size Options
 
-Use the Standard Serving Size Reference below to determine appropriate serving size units for each component type.
+**IMPORTANT: Allowed Serving Size Units**
+
+You MUST use ONLY the following units for serving sizes:
+- **cup** - for liquids, grains, vegetables, salads, etc.
+- **oz** - for meats, cheeses, solid foods by weight
+- **slice** - for bread, pizza, cake, pie, etc.
+- **tablespoon** - for sauces, dressings, spreads, condiments
+- **teaspoon** - for small amounts of sauces, oils, seasonings
 
 **Standard Serving Size Reference:**
 
 **Bread, Cereal, Rice, and Pasta:**
 - 1 slice of bread
-- 1 ounce of ready-to-eat cereal
+- 1 oz of ready-to-eat cereal
 - 1/2 cup of cooked cereal, rice, or pasta
 
 **Vegetables:**
@@ -117,28 +124,36 @@ Use the Standard Serving Size Reference below to determine appropriate serving s
 - 3/4 cup of vegetable juice
 
 **Fruit:**
-- 1 medium apple, banana, orange
 - 1/2 cup of chopped, cooked, or canned fruit
 - 3/4 cup of fruit juice
+- 4 oz of whole fruit (apple, banana, orange)
 
 **Milk, Yogurt, and Cheese:**
 - 1 cup of milk or yogurt
-- 1-1/2 ounces of natural cheese
-- 2 ounces of process cheese
+- 1.5 oz of natural cheese
+- 2 oz of process cheese
 
 **Meat, Poultry, Fish, Dry Beans, Eggs, and Nuts:**
-- 2-3 ounces of cooked lean meat, poultry, or fish
-- 1/2 cup of cooked dry beans, 1 egg, or 2 tablespoons of peanut butter count as 1 ounce of lean meat
+- 3 oz of cooked lean meat, poultry, or fish
+- 1/2 cup of cooked dry beans
+- 2 tablespoons of peanut butter
 
-**Provide 3-5 realistic serving size options** for each individual dish. Include both the measurement unit and approximate weight/description.
+**Sauces and Condiments:**
+- 1 tablespoon of dressing, sauce, or spread
+- 1 teaspoon of oil, butter, or concentrated condiments
+
+**Provide 3-5 realistic serving size options** for each individual dish. Use ONLY the allowed units (cup, oz, slice, tablespoon, teaspoon).
 
 **Examples for Individual Dishes:**
-- For "Beef Burger": ["1 burger (150g)", "1 small burger (120g)", "1 large burger (200g)", "1 double burger (300g)"]
-- For "French Fries": ["small portion (85g)", "medium portion (130g)", "large portion (170g)"]
-- For "White Rice": ["1/2 cup (75g)", "1 cup (150g)", "1.5 cups (225g)", "2 cups (300g)"]
-- For "Grilled Chicken": ["1 breast (150g)", "1/2 breast (75g)", "1 thigh (100g)"]
-- For "Caesar Salad": ["side salad (150g)", "entree salad (300g)", "large salad (400g)"]
-- For "Pepperoni Pizza Slice": ["1 slice (120g)", "2 slices (240g)", "3 slices (360g)"]
+- For "Beef Burger": ["4 oz", "5 oz", "6 oz", "8 oz"]
+- For "French Fries": ["3 oz", "4 oz", "5 oz", "6 oz"]
+- For "White Rice": ["1/2 cup", "3/4 cup", "1 cup", "1.5 cups"]
+- For "Grilled Chicken": ["3 oz", "4 oz", "5 oz", "6 oz"]
+- For "Caesar Salad": ["1 cup", "1.5 cups", "2 cups", "3 cups"]
+- For "Pepperoni Pizza": ["1 slice", "2 slices", "3 slices", "4 slices"]
+- For "Toast": ["1 slice", "2 slices", "3 slices"]
+- For "Salad Dressing": ["1 tablespoon", "2 tablespoons", "3 tablespoons"]
+- For "Ketchup": ["1 teaspoon", "1 tablespoon", "2 tablespoons"]
 
 ### Estimating Number of Servings Visible
 
@@ -146,11 +161,12 @@ For each individual dish, estimate how many servings of that dish are visible in
 
 **Methodology:**
 
-1. **Think of servings at the dish level**, not ingredient level:
-   - For "Beef Burger" → How many burgers? (typically 1.0)
-   - For "French Fries" → Small, medium, or large portion? (typically 1.0)
-   - For "White Rice" → How many cups? (e.g., 0.5, 1.0, 1.5)
-   - For "Caesar Salad" → Side or entree size? (typically 1.0)
+1. **Think of servings based on the allowed units**:
+   - For "Beef Burger" → How many oz? (e.g., 5 oz = 1.0 serving)
+   - For "French Fries" → How many oz? (e.g., 4 oz = 1.0 serving)
+   - For "White Rice" → How many cups? (e.g., 1 cup = 1.0 serving)
+   - For "Caesar Salad" → How many cups? (e.g., 2 cups = 1.0 serving)
+   - For "Pizza" → How many slices? (e.g., 2 slices = 1.0 serving)
 
 2. **Visually estimate the quantity**:
    - Compare with typical serving sizes for that dish
@@ -167,12 +183,13 @@ For each individual dish, estimate how many servings of that dish are visible in
 4. **Be precise** with decimals (0.5, 0.75, 1.0, 1.5, 2.0, etc.)
 
 **Examples for Individual Dishes:**
-- "Beef Burger": One burger visible → 1.0 serving
-- "French Fries": Medium portion visible → 1.0 serving
-- "White Rice": About 1 cup visible → 1.0 serving (or 2.0 if using 1/2 cup as standard)
-- "Grilled Chicken": One chicken breast visible → 1.0 serving
-- "Caesar Salad": Entree-sized salad visible → 1.0 serving
+- "Beef Burger": About 5 oz visible → 1.0 serving (if 5 oz is selected option)
+- "French Fries": About 4 oz visible → 1.0 serving
+- "White Rice": About 1 cup visible → 1.0 serving
+- "Grilled Chicken": About 4 oz visible → 1.0 serving
+- "Caesar Salad": About 2 cups visible → 1.0 serving
 - "Mashed Potatoes": About 1 cup visible → 1.0 serving
+- "Pizza": 2 slices visible → 1.0 serving (if 2 slices is selected option)
 
 ### Important Analysis Guidelines
 
@@ -211,12 +228,12 @@ The output must be valid JSON matching this exact structure:
   "components": [
     {
       "component_name": "Beef Burger",
-      "serving_sizes": ["1 burger (150g)", "1 small burger (120g)", "1 large burger (200g)", "1 double burger (300g)"],
+      "serving_sizes": ["4 oz", "5 oz", "6 oz", "8 oz"],
       "predicted_servings": 1.0
     },
     {
       "component_name": "French Fries",
-      "serving_sizes": ["small portion (85g)", "medium portion (130g)", "large portion (170g)"],
+      "serving_sizes": ["3 oz", "4 oz", "5 oz", "6 oz"],
       "predicted_servings": 1.0
     }
   ]
@@ -230,7 +247,7 @@ The output must be valid JSON matching this exact structure:
   - Each represents a complete dish (e.g., "Beef Burger", "French Fries"), NOT ingredients
   - Each component has:
     - `component_name` (string): Name of the individual dish
-    - `serving_sizes` (array of 3-5 strings): Serving size options for this dish
+    - `serving_sizes` (array of 3-5 strings): Serving size options using ONLY allowed units: **cup**, **oz**, **slice**, **tablespoon**, **teaspoon**
     - `predicted_servings` (number): Estimated servings of this dish visible (0.01-10.0)
 
 **Do not include any additional fields or explanatory text outside the JSON structure.**

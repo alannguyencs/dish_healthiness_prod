@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import DateView from "./pages/DateView";
 import ItemV2 from "./pages/ItemV2";
+import ServingSizeReference from "./pages/ServingSizeReference";
 
 function RedirectToDashboard() {
   const { authenticated, loading } = useAuth();
@@ -55,6 +56,10 @@ function App() {
                 <ItemV2 />
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="/reference/serving-size"
+            element={<ServingSizeReference />}
           />
           <Route path="/" element={<RedirectToDashboard />} />
           <Route path="*" element={<Navigate to="/" replace />} />

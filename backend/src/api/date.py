@@ -7,6 +7,7 @@ specific date.
 
 import io
 import logging
+import os
 from datetime import datetime, timezone
 from typing import Dict, Any
 
@@ -229,6 +230,9 @@ async def upload_dish(  # pylint: disable=too-many-locals
         img = rgb_img
     elif img.mode != "RGB":
         img = img.convert("RGB")
+
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     img.save(file_path, "JPEG")
 

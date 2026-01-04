@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import DishNameSelector from "./DishNameSelector";
 import ComponentListItem from "./ComponentListItem";
 import AddComponentForm from "./AddComponentForm";
@@ -6,15 +7,12 @@ import AddComponentForm from "./AddComponentForm";
 const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
   const { dish_predictions = [], components = [] } = step1Data || {};
 
-  // State for dish name selection
   const [selectedDishName, setSelectedDishName] = useState(
     dish_predictions[0]?.name || "",
   );
   const [customDishName, setCustomDishName] = useState("");
   const [useCustomDish, setUseCustomDish] = useState(false);
   const [showAllDishPredictions, setShowAllDishPredictions] = useState(false);
-
-  // State for AI-predicted component selections
   const [componentSelections, setComponentSelections] = useState(() => {
     const initial = {};
     components.forEach((comp) => {
@@ -27,15 +25,12 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     });
     return initial;
   });
-
-  // State for manual components
   const [manualComponents, setManualComponents] = useState([]);
   const [showAddComponent, setShowAddComponent] = useState(false);
   const [newComponentName, setNewComponentName] = useState("");
   const [newComponentServingSize, setNewComponentServingSize] = useState("");
   const [newComponentServings, setNewComponentServings] = useState(1.0);
 
-  // Toggle component enabled/disabled
   const handleComponentToggle = (componentName) => {
     setComponentSelections((prev) => ({
       ...prev,
@@ -46,7 +41,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     }));
   };
 
-  // Update serving size for a component
   const handleComponentServingSizeChange = (componentName, servingSize) => {
     setComponentSelections((prev) => ({
       ...prev,
@@ -57,7 +51,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     }));
   };
 
-  // Update number of servings for a component
   const handleComponentServingsChange = (componentName, servings) => {
     setComponentSelections((prev) => ({
       ...prev,
@@ -68,7 +61,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     }));
   };
 
-  // Add manual component
   const handleAddManualComponent = () => {
     if (!newComponentName.trim() || !newComponentServingSize.trim()) {
       alert("Please enter both component name and serving size");
@@ -83,15 +75,12 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     };
 
     setManualComponents((prev) => [...prev, newComp]);
-
-    // Reset form and hide
     setNewComponentName("");
     setNewComponentServingSize("");
     setNewComponentServings(1.0);
     setShowAddComponent(false);
   };
 
-  // Update manual component serving size
   const handleManualServingSizeChange = (componentName, servingSize) => {
     setManualComponents((prev) =>
       prev.map((comp) =>
@@ -102,7 +91,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     );
   };
 
-  // Update manual component servings
   const handleManualServingsChange = (componentName, servings) => {
     setManualComponents((prev) =>
       prev.map((comp) =>
@@ -113,16 +101,13 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     );
   };
 
-  // Remove manual component
   const handleRemoveManualComponent = (componentName) => {
     setManualComponents((prev) =>
       prev.filter((comp) => comp.component_name !== componentName),
     );
   };
 
-  // Handle confirm button
   const handleConfirm = () => {
-    // Get final dish name
     const finalDishName = useCustomDish ? customDishName : selectedDishName;
 
     if (!finalDishName.trim()) {
@@ -130,7 +115,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
       return;
     }
 
-    // Collect enabled AI components
     const enabledComponents = Object.entries(componentSelections)
       .filter(([, data]) => data.enabled)
       .map(([name, data]) => ({
@@ -138,8 +122,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
         selected_serving_size: data.selected_serving_size,
         number_of_servings: data.number_of_servings,
       }));
-
-    // Combine with manual components
     const allComponents = [...enabledComponents, ...manualComponents];
 
     if (allComponents.length === 0) {
@@ -153,8 +135,6 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
     };
 
     onConfirm(confirmationData);
-
-    // Auto-scroll to show Step 2 loading at the bottom
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 100);
@@ -179,9 +159,18 @@ const Step1ComponentEditor = ({ step1Data, onConfirm, isConfirming }) => {
 
       {/* Individual Dishes (Components) */}
       <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Individual Dishes
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">
+            Individual Dishes
+          </h3>
+          <Link
+            to="/reference/serving-size"
+            target="_blank"
+            className="text-sm text-blue-600 hover:text-blue-700"
+          >
+            ⓘ Serving Size Guide
+          </Link>
+        </div>
 
         <div className="space-y-3 mb-4">
           {/* AI-predicted components */}
