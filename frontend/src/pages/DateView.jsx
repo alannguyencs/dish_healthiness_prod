@@ -60,6 +60,33 @@ const DateView = () => {
     }
   };
 
+  const handleUrlUpload = async (dishPosition, imageUrl) => {
+    if (!imageUrl) return;
+
+    setUploading(dishPosition);
+    try {
+      const response = await apiService.uploadDishImageFromUrl(
+        year,
+        month,
+        day,
+        dishPosition,
+        imageUrl,
+      );
+      if (response.query && response.query.id) {
+        navigate(`/item/${response.query.id}`, {
+          state: {
+            uploadedImage: response.query.image_url,
+            uploadedDishPosition: dishPosition,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading from URL:", error);
+      alert("Failed to upload image from URL");
+      setUploading(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -88,6 +115,7 @@ const DateView = () => {
           dateData={dateData}
           uploading={uploading}
           onFileUpload={handleFileUpload}
+          onUrlUpload={handleUrlUpload}
         />
       </div>
     </div>

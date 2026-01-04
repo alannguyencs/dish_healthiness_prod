@@ -61,6 +61,17 @@ const apiService = {
     return response.data;
   },
 
+  uploadDishImageFromUrl: async (year, month, day, dishPosition, imageUrl) => {
+    const response = await api.post(
+      `/api/date/${year}/${month}/${day}/upload-url`,
+      {
+        dish_position: dishPosition,
+        image_url: imageUrl,
+      },
+    );
+    return response.data;
+  },
+
   // Item endpoints
   getItem: async (recordId) => {
     const response = await api.get(`/api/item/${recordId}`);

@@ -19,17 +19,14 @@ const ItemV2 = () => {
   const [pollingStep1, setPollingStep1] = useState(false);
   const [pollingStep2, setPollingStep2] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const [viewStep, setViewStep] = useState(null); // Track which step view to show (null = auto)
-  const [confirmedStep1Data, setConfirmedStep1Data] = useState(null); // Store user's confirmed selections
+  const [viewStep, setViewStep] = useState(null);
+  const [confirmedStep1Data, setConfirmedStep1Data] = useState(null);
   const pollingIntervalRef = useRef(null);
 
   useEffect(() => {
     loadItem();
     return () => {
-      // Clean up polling on unmount
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
+      if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
     };
   }, [recordId]);
 
@@ -40,15 +37,21 @@ const ItemV2 = () => {
       setItem(data);
       setError(null);
 
-      // Determine current step and polling state
       const resultGemini = data.result_gemini;
+      if (
+        resultGemini?.confirmed_components &&
+        resultGemini?.confirmed_dish_name
+      ) {
+        setConfirmedStep1Data({
+          selected_dish_name: resultGemini.confirmed_dish_name,
+          components: resultGemini.confirmed_components,
+        });
+      }
 
       if (!resultGemini) {
-        // No analysis yet - waiting for Step 1
         setPollingStep1(true);
         startPolling();
       } else if (resultGemini.step === 1 && !resultGemini.step1_confirmed) {
-        // Step 1 complete, waiting for user confirmation
         setPollingStep1(false);
         setPollingStep2(false);
         stopPolling();
@@ -57,12 +60,10 @@ const ItemV2 = () => {
         resultGemini.step1_confirmed &&
         !resultGemini.step2_data
       ) {
-        // Step 1 confirmed, waiting for Step 2
         setPollingStep1(false);
         setPollingStep2(true);
         startPolling();
       } else if (resultGemini.step === 2 && resultGemini.step2_data) {
-        // Step 2 complete - all done
         setPollingStep1(false);
         setPollingStep2(false);
         stopPolling();

@@ -1,7 +1,12 @@
 import React from "react";
 import { MealUploadSlot } from "./MealUploadSlot";
 
-export const MealUploadGrid = ({ dateData, uploading, onFileUpload }) => {
+export const MealUploadGrid = ({
+  dateData,
+  uploading,
+  onFileUpload,
+  onUrlUpload,
+}) => {
   const maxDishes = dateData.max_dishes || 5;
   const dishPositions = Array.from({ length: maxDishes }, (_, i) => i + 1);
 
@@ -19,6 +24,7 @@ export const MealUploadGrid = ({ dateData, uploading, onFileUpload }) => {
             dishData={dateData.dish_data[`dish_${position}`]}
             uploading={uploading}
             onFileUpload={onFileUpload}
+            onUrlUpload={onUrlUpload}
           />
         ))}
       </div>
