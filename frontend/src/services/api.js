@@ -114,6 +114,12 @@ const apiService = {
     const response = await api.post(`/api/item/${recordId}/retry-step2`);
     return response.data;
   },
+
+  // Retry Step 1 component identification after a prior failure
+  retryStep1: async (recordId) => {
+    const response = await api.post(`/api/item/${recordId}/retry-step1`);
+    return response.data;
+  },
 };
 
 export default apiService;

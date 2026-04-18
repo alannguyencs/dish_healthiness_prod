@@ -7,7 +7,7 @@
 
 ## Architecture
 
-Phase 1 is a single Gemini vision call triggered as a FastAPI `BackgroundTasks` coroutine immediately after `Meal Upload` creates the row. It writes the structured output into `result_gemini.step1_data` and leaves `step1_confirmed=false` so the frontend poller can pick it up and route the user into the editor.
+Phase 1 is a single Gemini vision call triggered as a FastAPI `BackgroundTasks` coroutine immediately after `Meal Upload` creates the row. The task lives in `backend/src/api/item_step1_tasks.py` (relocated from `date.py` to keep that file under the 300-line cap). On success it writes the structured output into `result_gemini.step1_data` and leaves `step1_confirmed=false` so the frontend poller can pick it up and route the user into the editor. On failure it classifies the exception and persists `result_gemini.step1_error` via the shared `persist_phase_error` helper in `src.api._phase_errors`; the frontend stops polling and renders `<PhaseErrorCard>` with a retry button.
 
 ```
 +---------------------+     +-----------------------+     +------------------+
@@ -85,6 +85,19 @@ The Pydantic schema enforced on the Gemini response is `Step1ComponentIdentifica
 | `components[].serving_sizes[]` | `List[str]` | min 1, max 5 |
 | `components[].predicted_servings` | float | 0.01 ≤ x ≤ 10.0, default 1.0 |
 
+### `step1_error` (failure path)
+
+Written to `result_gemini.step1_error` by `persist_phase_error` when the background task catches an exception. Cleared on the next successful Phase 1 completion or by the retry-step1 endpoint dispatch.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `error_type` | `str` | One of `config_error \| image_missing \| parse_error \| api_error \| unknown` |
+| `message` | `str` | Pre-canned, user-facing string from `ERROR_USER_MESSAGE` |
+| `occurred_at` | `str` | ISO-8601 UTC timestamp |
+| `retry_count` | `int` | 0 on first failure; incremented by retry-step1 each manual retry |
+
+If `result_gemini` was `NULL` at the time of failure, the helper initializes it as `{"step": 0, "step1_data": null, "step1_error": {...}}`.
+
 ## Pipeline
 
 ```
@@ -145,17 +158,32 @@ update_dish_image_query_results(
                    current_iteration:1})
   │
   ▼
-(Any exception here is caught in analyze_image_background → log only)
+(On exception → persist_phase_error(query_id, exc, retry_count, "step1_error"):
+   classify → write result_gemini.step1_error)
+
+---- Retry path ----
+
+POST /api/item/{record_id}/retry-step1   (item_retry.py)
+  │
+  ├── auth + ownership checks
+  ├── guard: result_gemini.step1_data is null   (Phase 1 not yet succeeded)
+  ├── guard: result_gemini.step1_error present  (else 400 — "nothing to retry")
+  ├── guard: image file still on disk
+  ├── clear result_gemini.step1_error
+  ├── persist cleared blob
+  └── BackgroundTasks.add_task(
+        analyze_image_background, record_id, str(image_path), retry_count + 1)
 
 ---- Frontend side ----
 
-ItemV2.jsx on mount
+ItemV2.jsx (via useItemPolling hook)
   │
   ▼
 apiService.getItem(recordId) every 3 s (setInterval)
   │
   ▼
 if result_gemini == null:                        → keep polling
+if result_gemini.step1_error:                    → stop polling, render PhaseErrorCard
 if result_gemini.step == 1 && !step1_confirmed:  → stop polling, render Step1ComponentEditor
 ```
 
@@ -184,10 +212,18 @@ Phase 1 has **no dedicated HTTP endpoint** — it runs inside the `/api/date/{Y}
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/api/item/{record_id}` | Frontend polls this to detect Phase 1 completion; returns the full record including `result_gemini` |
+| GET | `/api/item/{record_id}` | Frontend polls this to detect Phase 1 completion (success or error); returns the full record including `result_gemini` |
+| POST | `/api/item/{record_id}/retry-step1` | Clears `step1_error`, increments `retry_count`, re-schedules `analyze_image_background`. 400 if Step 1 already complete or no prior error to retry. 404 if record not found or image file missing on disk. |
 
 ## Backend — Service Layer
 
+- `api/item_step1_tasks.py`
+  - `analyze_image_background(query_id, file_path, retry_count=0)` — Phase 1 background coroutine. Imported by `date.py`'s upload endpoints and by `item_retry.py`'s `retry_step1_analysis`.
+- `api/_phase_errors.py` — shared with Phase 2:
+  - `classify_phase_error(exc)` — buckets exceptions into `config_error | image_missing | parse_error | api_error | unknown`.
+  - `persist_phase_error(query_id, exc, retry_count, error_key)` — writes `error_key` (e.g. `step1_error`) into `result_gemini`; initializes the blob if it was `NULL`.
+  - `ERROR_USER_MESSAGE` dict — single source of user-facing strings for each `error_type`.
+- `api/item_retry.py#retry_step1_analysis` — POST endpoint handler that clears `step1_error`, increments `retry_count`, and re-schedules the background task.
 - `service/llm/gemini_analyzer.py`
   - `analyze_step1_component_identification_async(image_path, analysis_prompt, gemini_model, thinking_budget)` — the Phase 1 entry point.
   - `enrich_result_with_metadata(result, model, start_time)` — appends `model`, `price_usd`, `analysis_time`.
@@ -262,12 +298,14 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 ## Frontend — Components
 
 - `components/item/AnalysisLoading.jsx` — loading spinner shown while `pollingStep1 === true`.
+- `components/item/PhaseErrorCard.jsx` — generic error card shared with Phase 2 (`headline` prop differentiates). Rendered when `result_gemini.step1_error` is present and `step1_data` is null. Hides the retry button for `error_type === "config_error"` and shows a "Try Anyway" warning at `retry_count >= 5` (soft cap).
 - `components/item/Step1ComponentEditor.jsx` — rendered once `step1_data` is present; the editor proper is documented on [User Customization](./user_customization.md). The "proposals view" portion (dish predictions list, per-component name/serving/count) is part of the same component.
 
 ## Frontend — Services & Hooks
 
 - `services/api.js#getItem(recordId)` — GET `/api/item/{id}`; returns the whole record including `result_gemini`.
-- Polling is inline inside `ItemV2.jsx`: `setInterval(loadItem, 3000)` that clears itself when `result_gemini.step === 1 && !step1_confirmed` (or `step === 2 && step2_data`).
+- `services/api.js#retryStep1(recordId)` — POST `/api/item/{id}/retry-step1`; called by `ItemV2.handleStep1Retry` from the error card.
+- `hooks/useItemPolling.js` — owns the GET + 3-second polling lifecycle. Stops polling when any of: `step1_data`, `step1_error`, `step2_data`, `step2_error` lands, or when `step === 1 && !step1_confirmed`.
 
 ## External Integrations
 
@@ -275,8 +313,8 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 
 ## Constraints & Edge Cases
 
-- `GEMINI_API_KEY` missing → `ValueError` inside the background task; the record stays at `result_gemini = NULL`, the frontend polls forever. **Same gap exists today on Phase 1 that Phase 2 already fixed via `step2_error` + retry endpoint** (see `nutritional_analysis.md`). A follow-up will mirror that pattern with `step1_error` + `POST /retry-step1`; tracked in `docs/issues/260414.md`.
-- Prompt file missing → `FileNotFoundError`; same failure mode as above.
+- `GEMINI_API_KEY` missing → `ValueError` inside the background task; classified as `config_error` and persisted to `result_gemini.step1_error`. The frontend renders `PhaseErrorCard`; the retry button is hidden because retrying a missing API key won't fix anything.
+- Prompt file missing → `FileNotFoundError`; classified as `image_missing` (or `unknown` depending on the error message). Same failure UI flow.
 - Gemini returns a response the Pydantic schema can't parse → `response.parsed` is `None`, falls back to `json.loads(response.text)`. If that still fails → `ValueError`.
 - Schema guard: the analyzer explicitly checks that `dish_predictions` and `components` keys exist in the parsed dict and raises if not — guards against the fallback path returning an unrelated JSON shape.
 - `thinking_budget=-1` means Gemini can use unbounded thinking tokens. Cost per call is therefore unbounded in theory; in practice it's dominated by the `output` rate ($10/M tokens for pro).
@@ -285,7 +323,12 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 
 ## Component Checklist
 
-- [x] `analyze_image_background(query_id, file_path)` — background task entry
+- [x] `analyze_image_background(query_id, file_path, retry_count=0)` — background task entry (lives in `item_step1_tasks.py`)
+- [x] `_phase_errors.py` — `classify_phase_error`, `persist_phase_error`, `ERROR_USER_MESSAGE` (shared with Phase 2)
+- [x] `POST /api/item/{record_id}/retry-step1` — `item_retry.py#retry_step1_analysis`
+- [x] `PhaseErrorCard.jsx` — error UI with retry button + soft-cap warning (shared with Phase 2)
+- [x] `useItemPolling.js` — polling hook with stop conditions for all four terminal states
+- [x] `apiService.retryStep1()` — retry call
 - [x] `analyze_step1_component_identification_async()` — Gemini call with structured output
 - [x] `get_step1_component_identification_prompt()` — prompt loader
 - [x] `Step1ComponentIdentification` Pydantic schema

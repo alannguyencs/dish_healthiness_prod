@@ -20,59 +20,17 @@ from fastapi.responses import JSONResponse
 from PIL import Image
 from pydantic import BaseModel
 
+from src.api.item_step1_tasks import analyze_image_background
 from src.auth import authenticate_user_from_request
 from src.configs import IMAGE_DIR
 from src.crud.crud_food_image_query import (
     get_dish_image_queries_by_user_and_date,
     create_dish_image_query,
-    update_dish_image_query_results,
 )
-from src.service.llm.gemini_analyzer import analyze_step1_component_identification_async
-from src.service.llm.prompts import get_step1_component_identification_prompt
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/date", tags=["date"])
 MAX_DISHES_PER_DATE = 5
-
-
-async def analyze_image_background(query_id: int, file_path: str):
-    """Background task to analyze food image with Gemini (Step 1: Component Identification)."""
-    logger.info("Starting Step 1 background analysis for query %s", query_id)
-
-    try:
-        step1_prompt = get_step1_component_identification_prompt()
-        step1_result = await analyze_step1_component_identification_async(
-            image_path=file_path,
-            analysis_prompt=step1_prompt,
-            gemini_model="gemini-2.5-pro",
-            thinking_budget=-1,
-        )
-
-        result_gemini = {
-            "step": 1,
-            "step1_data": step1_result,
-            "step2_data": None,
-            "step1_confirmed": False,
-            "iterations": [
-                {
-                    "iteration_number": 1,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "step": 1,
-                    "step1_data": step1_result,
-                    "step2_data": None,
-                    "metadata": {},
-                }
-            ],
-            "current_iteration": 1,
-        }
-
-        update_dish_image_query_results(
-            query_id=query_id, result_openai=None, result_gemini=result_gemini
-        )
-        logger.info("Query %s Step 1 completed successfully", query_id)
-
-    except Exception as e:  # pylint: disable=broad-exception-caught
-        logger.error("Failed to analyze image (Step 1): %s", e, exc_info=True)
 
 
 def _serialize_query(query) -> Dict[str, Any]:

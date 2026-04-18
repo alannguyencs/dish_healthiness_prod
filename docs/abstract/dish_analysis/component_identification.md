@@ -20,6 +20,8 @@ Right after the user uploads a photo, the system runs a first-pass AI analysis t
 
 The proposals are displayed on the Component Identification screen, where the user then edits and confirms them (see [User Customization](./user_customization.md) for the editing capability).
 
+If the AI call fails, the user sees a clear error message with a one-click **Try Again** button instead of an indefinite loading spinner.
+
 ## User Flow
 
 ```
@@ -31,19 +33,26 @@ Dish Analysis page opens with a loading indicator
   v
 AI first pass runs in the background
   |
-  v
-AI returns:
-   - Overall meal name predictions (up to 5, each with confidence)
-   - Per-component suggestions:
-       * component name
-       * 3-5 serving size options
-       * predicted servings count
+  +--> AI returns:
+  |       - Overall meal name predictions (up to 5, each with confidence)
+  |       - Per-component suggestions:
+  |           * component name
+  |           * 3-5 serving size options
+  |           * predicted servings count
+  |       |
+  |       v
+  |   Proposals are shown on the Component Identification screen
+  |       |
+  |       v
+  |   User proceeds to review and customize the proposals --> see User Customization
   |
-  v
-Proposals are shown on the Component Identification screen
-  |
-  v
-User proceeds to review and customize the proposals --> see User Customization
+  +--> AI call fails
+         |
+         v
+       Error card with reason + "Try Again" button
+         |
+         +--> Click Try Again --> Loading indicator --> AI re-runs
+         +--> "Try Anyway" warning appears after 5 failed attempts
 ```
 
 ## Scope
@@ -54,6 +63,7 @@ User proceeds to review and customize the proposals --> see User Customization
   - 3-5 serving size options per component
   - Predicted servings count per component
   - Loading indicator until the first pass completes
+  - Visible error state with a one-click retry when the AI call fails (no auto-retry)
   - Visibility into the AI model used, time taken, and cost for this phase
 - **Not included:**
   - Any editing of the proposals (see [User Customization](./user_customization.md))
@@ -69,6 +79,7 @@ User proceeds to review and customize the proposals --> see User Customization
 - [x] Every detected component appears with its name, a list of serving size options, and a predicted servings count
 - [x] The phase's model, elapsed time, and cost are visible on the same screen
 - [x] If the first pass fails, an error state is shown instead of hanging on the loading indicator
+- [x] The user can retry from the error card; on success the component proposals appear as normal
 
 ---
 

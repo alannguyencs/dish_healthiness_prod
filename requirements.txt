@@ -26,3 +26,8 @@ opencv-python-headless
 # others
 tqdm
 pytz
+
+# testing
+pytest>=8.0
+pytest-asyncio>=0.23
+httpx>=0.27

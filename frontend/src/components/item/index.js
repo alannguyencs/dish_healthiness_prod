@@ -11,5 +11,5 @@ export { default as ServingsCountInput } from "./ServingsCountInput";
 // Two-step analysis components
 export { default as Step1ComponentEditor } from "./Step1ComponentEditor";
 export { default as Step2Results } from "./Step2Results";
-export { default as Step2ErrorCard } from "./Step2ErrorCard";
+export { default as PhaseErrorCard } from "./PhaseErrorCard";
 export { default as ItemStepTabs } from "./ItemStepTabs";

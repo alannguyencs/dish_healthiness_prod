@@ -183,6 +183,27 @@ repos:
         exclude: '(node_modules/.*|venv/.*)'
         pass_filenames: true
 
+  # ============================================================================
+  # TEST SUITES (Backend pytest + Frontend Jest)
+  # ============================================================================
+  - repo: local
+    hooks:
+      - id: pytest-backend
+        name: pytest (backend)
+        entry: bash -c 'cd backend && ../venv/bin/pytest -q'
+        language: system
+        files: ^backend/.*\.py$
+        exclude: '(venv/.*$|__pycache__/.*$)'
+        pass_filenames: false
+
+      - id: jest-frontend
+        name: jest (frontend)
+        entry: bash -c 'cd frontend && CI=true npm test -- --watchAll=false --passWithNoTests'
+        language: system
+        files: ^frontend/src/.*\.(js|jsx)$
+        exclude: '(node_modules/.*$|build/.*$)'
+        pass_filenames: false
+
 ci:
   autofix_commit_msg: 'style: auto fixes from pre-commit hooks'
   autoupdate_commit_msg: 'chore: pre-commit autoupdate'

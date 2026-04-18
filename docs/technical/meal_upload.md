@@ -146,7 +146,7 @@ The URL-upload variant (`/upload-url`) is identical except it first downloads th
 ## Backend — Service Layer
 
 - `api/date.py#_process_and_save_image(content, file_path)` — PIL-based normalization.
-- `api/date.py#analyze_image_background(query_id, file_path)` — background entry point for Step 1; logs outcome, swallows all exceptions to prevent background task crashes.
+- `api/item_step1_tasks.py#analyze_image_background(query_id, file_path, retry_count=0)` — background entry point for Step 1. Imported by `date.py`'s upload endpoints. On failure, classifies the exception and persists `result_gemini.step1_error` via the shared `persist_phase_error` helper (see [Component Identification](./dish_analysis/component_identification.md)).
 - Static file mount in `main.py`: `app.mount("/images", StaticFiles(directory=IMAGE_DIR), name="images")` — the same path stored as `image_url`.
 
 ## Backend — CRUD Layer
@@ -187,7 +187,7 @@ Live under `components/dateview/` and are re-exported via `components/dateview/i
 - Re-uploading the same slot is **not** deduplicated or rejected at the DB level — a second POST creates a second row with the same `dish_position`. The GET endpoint only shows one of them (the first returned by the ordered CRUD query), so the duplicate becomes orphaned. There is no delete endpoint exposed.
 - `IMAGE_DIR` is a local path (`backend/data/images/`). The app assumes a single-server deployment for image serving; no cloud storage integration.
 - Image filenames are generated with second-level UTC precision; two uploads in the same second would collide. Collisions are not currently guarded.
-- Background task failures in `analyze_image_background` only log; the record is left with `result_gemini = NULL`, and the frontend will poll forever unless the user navigates away.
+- Background task failures in `analyze_image_background` are now classified and persisted to `result_gemini.step1_error`. The frontend stops polling and renders `<PhaseErrorCard>` with a retry button. See [Component Identification](./dish_analysis/component_identification.md).
 - `SessionMiddleware` and CORS are configured in `main.py`; see [Authentication](./authentication.md) for details that affect upload behaviour (cookies + `withCredentials`).
 
 ## Component Checklist

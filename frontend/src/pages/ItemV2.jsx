@@ -1,132 +1,45 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import apiService from "../services/api";
+import useItemPolling from "../hooks/useItemPolling";
 import {
   ItemHeader,
   ItemImage,
   AnalysisLoading,
   Step1ComponentEditor,
   Step2Results,
-  Step2ErrorCard,
+  PhaseErrorCard,
   ItemStepTabs,
 } from "../components/item";
 
 const ItemV2 = () => {
   const { recordId } = useParams();
   const navigate = useNavigate();
-  const [item, setItem] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [pollingStep1, setPollingStep1] = useState(false);
-  const [pollingStep2, setPollingStep2] = useState(false);
+  const {
+    item,
+    loading,
+    error,
+    pollingStep1,
+    pollingStep2,
+    confirmedStep1Data,
+    setConfirmedStep1Data,
+    reload,
+    startPollingStep1,
+    startPollingStep2,
+  } = useItemPolling(recordId);
+
   const [confirming, setConfirming] = useState(false);
   const [retryingStep2, setRetryingStep2] = useState(false);
+  const [retryingStep1, setRetryingStep1] = useState(false);
   const [viewStep, setViewStep] = useState(null);
-  const [confirmedStep1Data, setConfirmedStep1Data] = useState(null);
-  const pollingIntervalRef = useRef(null);
-
-  useEffect(() => {
-    loadItem();
-    return () => {
-      if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recordId]);
-
-  const loadItem = async () => {
-    try {
-      setLoading(true);
-      const data = await apiService.getItem(recordId);
-      setItem(data);
-      setError(null);
-
-      const resultGemini = data.result_gemini;
-      if (
-        resultGemini?.confirmed_components &&
-        resultGemini?.confirmed_dish_name
-      ) {
-        setConfirmedStep1Data({
-          selected_dish_name: resultGemini.confirmed_dish_name,
-          components: resultGemini.confirmed_components,
-        });
-      }
-
-      if (!resultGemini) {
-        setPollingStep1(true);
-        startPolling();
-      } else if (resultGemini.step === 1 && !resultGemini.step1_confirmed) {
-        setPollingStep1(false);
-        setPollingStep2(false);
-        stopPolling();
-      } else if (
-        resultGemini.step1_confirmed &&
-        !resultGemini.step2_data &&
-        !resultGemini.step2_error
-      ) {
-        setPollingStep1(false);
-        setPollingStep2(true);
-        startPolling();
-      } else {
-        // Step 2 either completed (step2_data) or failed (step2_error)
-        setPollingStep1(false);
-        setPollingStep2(false);
-        stopPolling();
-      }
-    } catch (err) {
-      setError("Failed to load item details");
-      console.error(err);
-      setPollingStep1(false);
-      setPollingStep2(false);
-      stopPolling();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const startPolling = () => {
-    if (pollingIntervalRef.current) return;
-    pollingIntervalRef.current = setInterval(async () => {
-      try {
-        const data = await apiService.getItem(recordId);
-        setItem(data);
-
-        const resultGemini = data.result_gemini;
-        if (!resultGemini) return;
-
-        // Stop polling if Step 1 is complete and awaiting confirmation
-        if (resultGemini.step === 1 && !resultGemini.step1_confirmed) {
-          setPollingStep1(false);
-          setPollingStep2(false);
-          stopPolling();
-        }
-
-        // Stop polling if Step 2 succeeded OR failed (error surfaced)
-        if (resultGemini.step2_data || resultGemini.step2_error) {
-          setPollingStep1(false);
-          setPollingStep2(false);
-          stopPolling();
-        }
-      } catch (err) {
-        console.error("Polling error:", err);
-      }
-    }, 3000);
-  };
-
-  const stopPolling = () => {
-    if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current);
-      pollingIntervalRef.current = null;
-    }
-  };
 
   const handleStep1Confirmation = async (confirmationData) => {
     try {
       setConfirming(true);
       setConfirmedStep1Data(confirmationData);
       await apiService.confirmStep1(recordId, confirmationData);
-      setPollingStep2(true);
-      startPolling();
-      await loadItem();
+      startPollingStep2();
+      await reload();
     } catch (err) {
       console.error("Failed to confirm Step 1:", err);
       alert("Failed to confirm Step 1. Please try again.");
@@ -139,14 +52,27 @@ const ItemV2 = () => {
     try {
       setRetryingStep2(true);
       await apiService.retryStep2(recordId);
-      setPollingStep2(true);
-      startPolling();
-      await loadItem();
+      startPollingStep2();
+      await reload();
     } catch (err) {
       console.error("Failed to retry Step 2:", err);
       alert("Failed to retry. Please try again in a moment.");
     } finally {
       setRetryingStep2(false);
+    }
+  };
+
+  const handleStep1Retry = async () => {
+    try {
+      setRetryingStep1(true);
+      await apiService.retryStep1(recordId);
+      startPollingStep1();
+      await reload();
+    } catch (err) {
+      console.error("Failed to retry Step 1:", err);
+      alert("Failed to retry. Please try again in a moment.");
+    } finally {
+      setRetryingStep1(false);
     }
   };
 
@@ -183,6 +109,7 @@ const ItemV2 = () => {
 
   const resultGemini = item?.result_gemini;
   const step1Data = resultGemini?.step1_data;
+  const step1Error = resultGemini?.step1_error;
   const step2Data = resultGemini?.step2_data;
   const step2Error = resultGemini?.step2_error;
   const currentStep = resultGemini?.step || 0;
@@ -223,6 +150,15 @@ const ItemV2 = () => {
               <AnalysisLoading message="Analyzing dish components..." />
             )}
 
+            {step1Error && !step1Data && viewStep === null && (
+              <PhaseErrorCard
+                headline="Component identification failed"
+                error={step1Error}
+                onRetry={handleStep1Retry}
+                isRetrying={retryingStep1}
+              />
+            )}
+
             {((viewStep === 1 && step1Data) ||
               (viewStep === null &&
                 currentStep === 1 &&
@@ -245,7 +181,8 @@ const ItemV2 = () => {
               )}
 
             {step2Error && !step2Data && viewStep === null && (
-              <Step2ErrorCard
+              <PhaseErrorCard
+                headline="Nutritional analysis failed"
                 error={step2Error}
                 onRetry={handleStep2Retry}
                 isRetrying={retryingStep2}

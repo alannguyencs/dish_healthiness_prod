@@ -3,14 +3,15 @@ import React from "react";
 const SOFT_RETRY_CAP = 5;
 
 /**
- * Step2ErrorCard
+ * PhaseErrorCard
  *
- * Renders the surfaced error state for a failed Phase 2 (nutritional analysis)
- * call. Shows a human-readable message, a retry button (hidden for
- * config_error since retrying won't help), and a soft warning once the user
- * has retried many times.
+ * Renders the surfaced error state for a failed Phase 1 (component
+ * identification) or Phase 2 (nutritional analysis) call. Caller passes the
+ * `headline` so this component is phase-agnostic. Hides the retry button for
+ * `error_type === "config_error"` and swaps to a "Try Anyway" warning once the
+ * user has retried at least SOFT_RETRY_CAP times.
  */
-const Step2ErrorCard = ({ error, onRetry, isRetrying }) => {
+const PhaseErrorCard = ({ headline, error, onRetry, isRetrying }) => {
   if (!error) return null;
 
   const { error_type, message, retry_count = 0 } = error;
@@ -41,9 +42,7 @@ const Step2ErrorCard = ({ error, onRetry, isRetrying }) => {
           />
         </svg>
         <div className="flex-1">
-          <h3 className="text-base font-semibold text-red-800">
-            Nutritional analysis failed
-          </h3>
+          <h3 className="text-base font-semibold text-red-800">{headline}</h3>
           <p className="mt-1 text-sm text-red-700">{message}</p>
 
           {exceededSoftCap && canRetry && (
@@ -78,4 +77,4 @@ const Step2ErrorCard = ({ error, onRetry, isRetrying }) => {
   );
 };
 
-export default Step2ErrorCard;
+export default PhaseErrorCard;

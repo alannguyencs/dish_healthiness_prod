@@ -237,9 +237,8 @@ elif result_gemini.step2_error:
 
 ## Backend — Service Layer
 
-- `api/item_tasks.py#trigger_step2_analysis_background(query_id, image_path, dish_name, components, retry_count=0)` — the Phase 2 background coroutine. On success clears any prior `step2_error`; on exception delegates to `_persist_step2_error`.
-- `api/item_tasks.py#_persist_step2_error(query_id, exc, retry_count)` — classifies the exception via `_classify_step2_error`, looks up a user-facing message in `ERROR_USER_MESSAGE`, and writes a `step2_error` block to `result_gemini`.
-- `api/item_tasks.py#_classify_step2_error(exc) -> str` — buckets exceptions into `config_error | image_missing | parse_error | api_error | unknown` based on substring matching against `str(exc).lower()`.
+- `api/item_tasks.py#trigger_step2_analysis_background(query_id, image_path, dish_name, components, retry_count=0)` — the Phase 2 background coroutine. On success clears any prior `step2_error`; on exception delegates to the shared `persist_phase_error(query_id, exc, retry_count, "step2_error")` helper.
+- `api/_phase_errors.py` — shared with Phase 1. Owns `classify_phase_error`, `persist_phase_error`, and the `ERROR_USER_MESSAGE` table. Single source of truth for error classification + persistence across both phases.
 - `api/item_retry.py#retry_step2_analysis(...)` — POST endpoint handler that clears `step2_error`, increments retry count, and re-schedules the background task.
 - `service/llm/gemini_analyzer.py#analyze_step2_nutritional_analysis_async(...)` — Gemini call.
 - `service/llm/prompts.py#get_step2_nutritional_analysis_prompt(dish_name, components)` — prompt loader + confirmed-data injection.
@@ -315,7 +314,7 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 
 - `components/item/AnalysisLoading.jsx` — shown while `pollingStep2 && !step2_data && !step2_error`.
 - `components/item/Step2Results.jsx` — renders the confirmed dish name, the healthiness score with a category badge and rationale, the five core macros, the micronutrients list, and the model/cost/time footer.
-- `components/item/Step2ErrorCard.jsx` — red-tinted card rendered when `result_gemini.step2_error` is present. Shows the user-facing message, hides the **Try Again** button for `error_type === "config_error"`, and swaps the button label to **Try Anyway** with a warning paragraph once `retry_count >= 5` (soft cap).
+- `components/item/PhaseErrorCard.jsx` — generic red-tinted card shared with Phase 1 (`headline` prop differentiates). Rendered when `result_gemini.step2_error` is present. Shows the user-facing message, hides the **Try Again** button for `error_type === "config_error"`, and swaps the button label to **Try Anyway** with a warning paragraph once `retry_count >= 5` (soft cap).
 - `components/item/ItemStepTabs.jsx` — Step 1 ↔ Step 2 progress tab row. Extracted from `ItemV2.jsx` to keep the page under the 300-line cap.
 - `components/item/ItemImage.jsx` / `ItemHeader.jsx` / `ItemNavigation.jsx` — chrome shared across the item page.
 
@@ -345,7 +344,7 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 ## Component Checklist
 
 - [x] `trigger_step2_analysis_background()` — background task entry (now accepts `retry_count`)
-- [x] `_persist_step2_error()` + `_classify_step2_error()` + `ERROR_USER_MESSAGE` table
+- [x] Shared `_phase_errors.py` (`classify_phase_error`, `persist_phase_error`, `ERROR_USER_MESSAGE`) — used by both Phase 1 and Phase 2
 - [x] `analyze_step2_nutritional_analysis_async()` — Gemini call with structured output
 - [x] `get_step2_nutritional_analysis_prompt(dish_name, components)` — prompt loader + injection
 - [x] `Step2NutritionalAnalysis` Pydantic schema
@@ -357,7 +356,7 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 - [x] `ItemV2.jsx` polling stop condition (`step2_data || step2_error`)
 - [x] `AnalysisLoading.jsx` — Phase 2 loading UI
 - [x] `Step2Results.jsx` — score badge, rationale, macros, micros, footer
-- [x] `Step2ErrorCard.jsx` — error UI with retry button + soft-cap warning
+- [x] `PhaseErrorCard.jsx` — error UI with retry button + soft-cap warning (shared with Phase 1)
 - [x] `ItemStepTabs.jsx` — extracted Step 1 / Step 2 progress tabs
 - [x] `apiService.getItem()` — polling call
 - [x] `apiService.retryStep2()` — retry call
