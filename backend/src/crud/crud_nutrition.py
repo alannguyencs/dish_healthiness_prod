@@ -37,6 +37,20 @@ def _chunked(rows: List[Dict[str, Any]], size: int):
         yield rows[start : start + size]
 
 
+def _dedupe_last(rows: List[Dict[str, Any]], key_fields: tuple) -> List[Dict[str, Any]]:
+    """
+    Collapse duplicate rows on the composite `key_fields`, keeping the
+    last occurrence. Postgres's ON CONFLICT DO UPDATE rejects two rows
+    with the same conflict key in a single statement, and the source
+    CSVs occasionally carry duplicates (CIQUAL has one), so the upsert
+    helpers dedupe before chunking.
+    """
+    by_key: Dict[tuple, Dict[str, Any]] = {}
+    for row in rows:
+        by_key[tuple(row[k] for k in key_fields)] = row
+    return list(by_key.values())
+
+
 def _insert_for(bind) -> Any:
     """
     Pick the dialect-specific `insert` whose `.on_conflict_do_update` we need.
@@ -71,6 +85,7 @@ def bulk_upsert_foods(rows: List[Dict[str, Any]]) -> int:
     if not rows:
         return 0
 
+    rows = _dedupe_last(rows, ("source", "source_food_id"))
     now = datetime.now(timezone.utc)
     payload = [{**row, "created_at": now, "updated_at": now} for row in rows]
 
@@ -122,6 +137,7 @@ def bulk_upsert_myfcd_nutrients(rows: List[Dict[str, Any]]) -> int:
     if not rows:
         return 0
 
+    rows = _dedupe_last(rows, ("ndb_id", "nutrient_name"))
     db = SessionLocal()
     try:
         insert_ = _insert_for(db.get_bind())
