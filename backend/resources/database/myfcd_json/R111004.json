@@ -1,0 +1,252 @@
+{
+  "ndb_id": "R111004",
+  "food_name": "CHEESE SPREAD (KEJU SAPUAN)",
+  "serving_unit": "1 cube",
+  "serving_size_grams": 10.1055,
+  "nutrients": {
+    "Fat": {
+      "value_per_100g": 23.09,
+      "value_per_serving": 2.33,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 697.62657605,
+      "value_per_serving": 70.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 40.47,
+      "value_per_serving": 4.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 33.468,
+      "value_per_serving": 3.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Fatty acids, total saturated": {
+      "value_per_100g": 19.721,
+      "value_per_serving": 1.993,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total monounsaturated": {
+      "value_per_100g": 2.611,
+      "value_per_serving": 0.264,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total polyunsaturated": {
+      "value_per_100g": 0.683,
+      "value_per_serving": 0.069,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total trans": {
+      "value_per_100g": 0.076,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "C 4:0": {
+      "value_per_100g": 0.47764034,
+      "value_per_serving": 0.048,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 13:0": {
+      "value_per_100g": 0.063010043,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 6:0": {
+      "value_per_100g": 0.323048833,
+      "value_per_serving": 0.033,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 8:0": {
+      "value_per_100g": 0.257626838,
+      "value_per_serving": 0.026,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 10:0": {
+      "value_per_100g": 0.77054548,
+      "value_per_serving": 0.078,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 12:0": {
+      "value_per_100g": 1.14212599,
+      "value_per_serving": 0.115,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:0": {
+      "value_per_100g": 0.282518796,
+      "value_per_serving": 0.029,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:0": {
+      "value_per_100g": 3.84397519,
+      "value_per_serving": 0.388,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 15:0": {
+      "value_per_100g": 0.459519834,
+      "value_per_serving": 0.046,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 7.85159695,
+      "value_per_serving": 0.793,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:0": {
+      "value_per_100g": 0.049180343,
+      "value_per_serving": 0.005,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 23:0": {
+      "value_per_100g": 0.018569145,
+      "value_per_serving": 0.002,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 24:0": {
+      "value_per_100g": 0.007629314,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 21:0": {
+      "value_per_100g": 0.014639354,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 22:0": {
+      "value_per_100g": 0.027298982,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 4.132253839,
+      "value_per_serving": 0.418,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:1": {
+      "value_per_100g": 0.094670509,
+      "value_per_serving": 0.01,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 14:1": {
+      "value_per_100g": 0.293968121,
+      "value_per_serving": 0.03,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 16:1": {
+      "value_per_100g": 0.662402141,
+      "value_per_serving": 0.067,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:1, cis n-9": {
+      "value_per_100g": 1.504503642,
+      "value_per_serving": 0.152,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:1, n-9": {
+      "value_per_100g": 0.041863242,
+      "value_per_serving": 0.004,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 22:1, n-9": {
+      "value_per_100g": 0.008136766,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 24:1, n-9": {
+      "value_per_100g": 0.005315496,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:2": {
+      "value_per_100g": 0.004796341,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 20:3": {
+      "value_per_100g": 0.018683065,
+      "value_per_serving": 0.002,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 22:2": {
+      "value_per_100g": 0.038873009,
+      "value_per_serving": 0.004,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:2, cis, n-6": {
+      "value_per_100g": 0.412470468,
+      "value_per_serving": 0.042,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:3, cis, n-3": {
+      "value_per_100g": 0.189050228,
+      "value_per_serving": 0.019,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 20:5, n-3": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "Energy": {
+      "value_per_100g": 515.45,
+      "value_per_serving": 52.09,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 76.91,
+      "value_per_serving": 7.77,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Vitamins",
+    "Lipids",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated",
+    "Fatty Acids, Poly Unsaturated"
+  ],
+  "total_nutrients": 39
+}

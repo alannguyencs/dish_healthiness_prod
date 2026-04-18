@@ -8,7 +8,14 @@ Pricing is per 1 million tokens (input and output separately).
 Prices are in USD.
 """
 
-from typing import Any, Tuple
+import logging
+from typing import Any, Set, Tuple
+
+logger = logging.getLogger(__name__)
+
+# Tracks which (vendor, key) pairs have already produced a fallback warning
+# so we don't spam the log on every Gemini call when a model is mis-named.
+_LOGGED_FALLBACK_KEYS: Set[Tuple[str, str]] = set()
 
 # Pricing table (USD per 1 million tokens)
 PRICING = {
@@ -84,7 +91,23 @@ def compute_price_usd(
         float: Price in USD rounded to 4 decimals
     """
     key = normalize_model_key(model, vendor)
-    pricing = PRICING.get(key, DEFAULT_PRICING)
+    pricing = PRICING.get(key)
+    if pricing is None:
+        # Cost numbers will be quietly wrong if we keep silently using the
+        # cheapest defaults — log once per (vendor, key) so it shows up in
+        # ops dashboards rather than rotting in the data.
+        cache_key = (vendor, key)
+        if cache_key not in _LOGGED_FALLBACK_KEYS:
+            _LOGGED_FALLBACK_KEYS.add(cache_key)
+            logger.warning(
+                "No pricing entry for model=%r vendor=%r (normalized key=%r); "
+                "falling back to DEFAULT_PRICING %s. Cost figures will be approximate.",
+                model,
+                vendor,
+                key,
+                DEFAULT_PRICING,
+            )
+        pricing = DEFAULT_PRICING
 
     # Calculate cost (pricing is per 1 million tokens)
     input_cost = (input_tokens / 1_000_000) * pricing["input"]

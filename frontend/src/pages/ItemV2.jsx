@@ -41,8 +41,16 @@ const ItemV2 = () => {
       startPollingStep2();
       await reload();
     } catch (err) {
-      console.error("Failed to confirm Step 1:", err);
-      alert("Failed to confirm Step 1. Please try again.");
+      // 409 = the server has already accepted a prior confirmation for this
+      // record (e.g. a double-tapped Confirm). Phase 2 is already running, so
+      // treat it as success: just resume polling and refetch state.
+      if (err?.response?.status === 409) {
+        startPollingStep2();
+        await reload();
+      } else {
+        console.error("Failed to confirm Step 1:", err);
+        alert("Failed to confirm Step 1. Please try again.");
+      }
     } finally {
       setConfirming(false);
     }

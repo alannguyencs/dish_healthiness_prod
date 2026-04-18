@@ -1,0 +1,61 @@
+{
+  "ndb_id": "R215004",
+  "food_name": "KELEDEK GORENG",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 8.0,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 234.709637824,
+      "value_per_serving": 18.78,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 47.85,
+      "value_per_serving": 3.83,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 1.9,
+      "value_per_serving": 0.15,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 10.45,
+      "value_per_serving": 0.84,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 33.264909456,
+      "value_per_serving": 2.66,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 6.535090544,
+      "value_per_serving": 0.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 47.345113495,
+      "value_per_serving": 4.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 28.0095,
+      "value_per_serving": 2.0,
+      "unit": "μg",
+      "category": "Minerals"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals"
+  ],
+  "total_nutrients": 8
+}

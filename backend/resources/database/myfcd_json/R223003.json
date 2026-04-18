@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R223003",
+  "food_name": "ANCHOVY, DRIED, FRIED IN CHILLI (IKAN BILIS SAMBAL)",
+  "serving_unit": "1/2 cup",
+  "serving_size_grams": 40.0,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 364.74333333333,
+      "value_per_serving": 146.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 22.033333333333,
+      "value_per_serving": 8.81,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 16.206666666667,
+      "value_per_serving": 6.48,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 21.383333333333,
+      "value_per_serving": 8.55,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 26.866666666667,
+      "value_per_serving": 10.75,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 12.11,
+      "value_per_serving": 4.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.4,
+      "value_per_serving": 0.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 17.723333333333,
+      "value_per_serving": 7.09,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.6233333333333,
+      "value_per_serving": 0.65,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.4633333333333,
+      "value_per_serving": 0.59,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 14.633333333333,
+      "value_per_serving": 5.85,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

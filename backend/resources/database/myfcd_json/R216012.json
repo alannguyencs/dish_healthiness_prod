@@ -1,0 +1,61 @@
+{
+  "ndb_id": "R216012",
+  "food_name": "SAMOSA",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 29.5,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 218.04117762,
+      "value_per_serving": 64.32,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 36.05,
+      "value_per_serving": 10.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 5.4,
+      "value_per_serving": 1.59,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 17.5,
+      "value_per_serving": 5.16,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 9.735294405,
+      "value_per_serving": 2.87,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 31.314705595,
+      "value_per_serving": 9.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 70.23856879,
+      "value_per_serving": 21.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 23.8275,
+      "value_per_serving": 7.0,
+      "unit": "μg",
+      "category": "Minerals"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals"
+  ],
+  "total_nutrients": 8
+}

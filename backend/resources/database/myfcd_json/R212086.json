@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R212086",
+  "food_name": "DESSERT, HONEYCOMB CAKE (KEK GULA HANGUS)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 88.16,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 10.266666666667,
+      "value_per_serving": 9.05,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 5.0066666666667,
+      "value_per_serving": 4.41,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 3.0933333333333,
+      "value_per_serving": 2.73,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.67,
+      "value_per_serving": 1.47,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.31,
+      "value_per_serving": 0.27,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.18666666666667,
+      "value_per_serving": 0.16,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

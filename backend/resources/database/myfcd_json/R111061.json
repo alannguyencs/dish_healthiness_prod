@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R111061",
+  "food_name": "YOGURT, FLAVOURED (STRAWBERRY, ETC)",
+  "serving_unit": "1 cup",
+  "serving_size_grams": 120.0,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 8.6066666666667,
+      "value_per_serving": 10.33,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 2.8733333333333,
+      "value_per_serving": 3.45,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.43,
+      "value_per_serving": 1.72,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.88333333333333,
+      "value_per_serving": 1.06,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 3.42,
+      "value_per_serving": 4.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

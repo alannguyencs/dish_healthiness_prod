@@ -25,7 +25,7 @@ from src.auth import authenticate_user_from_request
 from src.configs import IMAGE_DIR
 from src.crud.crud_food_image_query import (
     get_dish_image_queries_by_user_and_date,
-    create_dish_image_query,
+    replace_slot_atomic,
 )
 
 logger = logging.getLogger(__name__)
@@ -44,6 +44,30 @@ def _serialize_query(query) -> Dict[str, Any]:
         "result_openai": query.result_openai,
         "result_gemini": query.result_gemini,
     }
+
+
+def _build_image_filename(user_id: int, dish_position: int) -> str:
+    """
+    Filename pattern: `{yymmdd_HHMMSS}_u{user_id}_dish{N}.jpg`.
+
+    Including `user_id` prevents cross-user collisions when two accounts
+    upload to slot N within the same second; including `dish_position`
+    prevents same-user collisions across slots in the same second.
+    """
+    timestamp = datetime.now(timezone.utc).strftime("%y%m%d_%H%M%S")
+    return f"{timestamp}_u{user_id}_dish{dish_position}.jpg"
+
+
+def _delete_old_image_files(image_urls: list) -> None:
+    """Best-effort cleanup of orphaned image files from a slot replacement."""
+    for url in image_urls:
+        if not url:
+            continue
+        old_path = IMAGE_DIR / os.path.basename(url)
+        try:
+            old_path.unlink(missing_ok=True)
+        except OSError as exc:
+            logger.warning("Failed to remove orphaned image %s: %s", old_path, exc)
 
 
 def _process_and_save_image(content: bytes, file_path: str) -> Image.Image:
@@ -128,29 +152,28 @@ async def upload_dish(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail="Invalid date") from exc
 
-    timestamp = datetime.now(timezone.utc).strftime("%y%m%d_%H%M%S")
-    filename = f"{timestamp}_dish{dish_position}.jpg"
+    filename = _build_image_filename(user.id, dish_position)
     file_path = IMAGE_DIR / filename
     content = await file.read()
     _process_and_save_image(content, str(file_path))
     target_datetime = datetime.combine(meal_date, datetime.min.time()).replace(tzinfo=timezone.utc)
 
-    query = create_dish_image_query(
+    query, old_image_urls = replace_slot_atomic(
         user_id=user.id,
-        image_url=f"/images/{filename}",
-        result_openai=None,
-        result_gemini=None,
-        created_at=datetime.now(timezone.utc),
         target_date=target_datetime,
         dish_position=dish_position,
+        image_url=f"/images/{filename}",
     )
+    _delete_old_image_files(old_image_urls)
 
     logger.info(
-        "Created query ID=%s for user %s, dish_position=%s, target_date=%s",
+        "Created query ID=%s for user %s, dish_position=%s, target_date=%s "
+        "(replaced %s prior row(s))",
         query.id,
         user.id,
         dish_position,
         target_datetime,
+        len(old_image_urls),
     )
 
     background_tasks.add_task(analyze_image_background, query.id, str(file_path))
@@ -211,8 +234,7 @@ async def upload_dish_from_url(
         ) from exc
 
     # Generate filename and process image
-    timestamp = datetime.now(timezone.utc).strftime("%y%m%d_%H%M%S")
-    filename = f"{timestamp}_dish{dish_position}.jpg"
+    filename = _build_image_filename(user.id, dish_position)
     file_path = IMAGE_DIR / filename
 
     try:
@@ -224,22 +246,22 @@ async def upload_dish_from_url(
     # Create query record
     target_datetime = datetime.combine(meal_date, datetime.min.time()).replace(tzinfo=timezone.utc)
 
-    query = create_dish_image_query(
+    query, old_image_urls = replace_slot_atomic(
         user_id=user.id,
-        image_url=f"/images/{filename}",
-        result_openai=None,
-        result_gemini=None,
-        created_at=datetime.now(timezone.utc),
         target_date=target_datetime,
         dish_position=dish_position,
+        image_url=f"/images/{filename}",
     )
+    _delete_old_image_files(old_image_urls)
 
     logger.info(
-        "Created query ID=%s from URL for user %s, dish_position=%s, target_date=%s",
+        "Created query ID=%s from URL for user %s, dish_position=%s, target_date=%s "
+        "(replaced %s prior row(s))",
         query.id,
         user.id,
         dish_position,
         target_datetime,
+        len(old_image_urls),
     )
 
     # Schedule analysis in background

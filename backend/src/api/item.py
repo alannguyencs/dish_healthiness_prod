@@ -19,7 +19,7 @@ from src.crud.crud_food_image_query import (
     get_dish_image_query_by_id,
     get_current_iteration,
     update_metadata,
-    update_dish_image_query_results,
+    confirm_step1_atomic,
 )
 from src.schemas import MetadataUpdate
 from src.configs import IMAGE_DIR
@@ -213,37 +213,35 @@ async def confirm_step1_and_trigger_step2(
     if query_record.user_id != user.id:
         raise HTTPException(status_code=404, detail="Record not found")
 
-    # Verify Step 1 is completed
-    if not query_record.result_gemini:
-        raise HTTPException(status_code=400, detail="Step 1 analysis not completed yet")
-
-    result_gemini = query_record.result_gemini
-    if result_gemini.get("step") != 1:
-        raise HTTPException(status_code=400, detail="Step 1 must be completed before confirmation")
-
-    # Verify image exists
+    # Verify image exists before mutating any state.
     if not query_record.image_url:
         raise HTTPException(status_code=400, detail="No image found for this record")
 
     image_path = IMAGE_DIR / Path(query_record.image_url).name
-
     if not image_path.exists():
         raise HTTPException(status_code=404, detail="Image file not found")
 
-    # Convert confirmation data to dict for background task
     components_data = [comp.model_dump() for comp in confirmation.components]
 
-    # Mark Step 1 as confirmed (optimistic update)
-    result_gemini_updated = result_gemini.copy()
-    result_gemini_updated["step1_confirmed"] = True
-    result_gemini_updated["confirmed_dish_name"] = confirmation.selected_dish_name
-    result_gemini_updated["confirmed_components"] = components_data
-
-    update_dish_image_query_results(
-        query_id=record_id, result_openai=None, result_gemini=result_gemini_updated
+    # Atomic check-and-set: row-locks the record and only flips
+    # step1_confirmed once, so a double-tapped Confirm cannot enqueue two
+    # Phase-2 background tasks.
+    outcome = confirm_step1_atomic(
+        record_id,
+        confirmed_dish_name=confirmation.selected_dish_name,
+        confirmed_components=components_data,
     )
+    if outcome == "not_found":
+        raise HTTPException(status_code=404, detail="Record not found")
+    if outcome == "no_step1":
+        raise HTTPException(status_code=400, detail="Step 1 must be completed before confirmation")
+    if outcome == "duplicate":
+        raise HTTPException(
+            status_code=409,
+            detail="Step 1 already confirmed; Step 2 is in progress.",
+        )
 
-    # Schedule Step 2 analysis in background
+    # outcome == "confirmed" — we are the unique scheduler for Phase 2.
     background_tasks.add_task(
         trigger_step2_analysis_background,
         record_id,

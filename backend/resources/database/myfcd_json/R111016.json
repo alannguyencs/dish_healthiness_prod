@@ -1,0 +1,135 @@
+{
+  "ndb_id": "R111016",
+  "food_name": "CHEESE, PARMESAN (KEJU PARMESAN)",
+  "serving_unit": "1 cube",
+  "serving_size_grams": 17.7875,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 640.0575,
+      "value_per_serving": 114.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 182.88,
+      "value_per_serving": 33.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 29.7074,
+      "value_per_serving": 5.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 10.8378,
+      "value_per_serving": 2.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Cholesterol": {
+      "value_per_100g": 78.352579588333,
+      "value_per_serving": 14.0,
+      "unit": "mg",
+      "category": "Lipids"
+    },
+    "Threonine": {
+      "value_per_100g": 0.0695,
+      "value_per_serving": 0.012,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Isoleucine": {
+      "value_per_100g": 0.0535,
+      "value_per_serving": 0.01,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Leucine": {
+      "value_per_100g": 0.1095,
+      "value_per_serving": 0.019,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Lysine": {
+      "value_per_100g": 0.0335,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Tyrosine": {
+      "value_per_100g": 0.0635,
+      "value_per_serving": 0.011,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Phenylalanine": {
+      "value_per_100g": 0.122,
+      "value_per_serving": 0.022,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Valine": {
+      "value_per_100g": 0.0695,
+      "value_per_serving": 0.012,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Serine": {
+      "value_per_100g": 0.081,
+      "value_per_serving": 0.014,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Arginine": {
+      "value_per_100g": 0.05,
+      "value_per_serving": 0.009,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Histidine": {
+      "value_per_100g": 0.0645,
+      "value_per_serving": 0.011,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Alanine": {
+      "value_per_100g": 0.0235,
+      "value_per_serving": 0.004,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Aspartic acid": {
+      "value_per_100g": 0.0355,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glutamic acid": {
+      "value_per_100g": 0.136,
+      "value_per_serving": 0.024,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glycine": {
+      "value_per_100g": 0.0245,
+      "value_per_serving": 0.004,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Proline": {
+      "value_per_100g": 0.099,
+      "value_per_serving": 0.018,
+      "unit": "g",
+      "category": "Amino Acids"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Lipids",
+    "Amino Acids"
+  ],
+  "total_nutrients": 20
+}

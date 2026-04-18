@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R113007",
+  "food_name": "DESSERT, CHILLED COCONUT MILK- & PALM SUGAR-BASED, WITH PANDAN JELLY NOODLES AND RED BEAN (CENDOL)",
+  "serving_unit": "Unknown serving",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 16.856666666667,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 15.283333333333,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.54333333333333,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.59333333333333,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.43666666666667,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

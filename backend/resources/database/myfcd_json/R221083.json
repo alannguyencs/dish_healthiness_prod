@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R221083",
+  "food_name": "RICE, BRIYANI (RICE ONLY) (BASMATHI RICE)",
+  "serving_unit": "1 cup",
+  "serving_size_grams": 116.11,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 190.45333333333,
+      "value_per_serving": 221.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 57.133333333333,
+      "value_per_serving": 66.34,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 2.5933333333333,
+      "value_per_serving": 3.01,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 5.96,
+      "value_per_serving": 6.92,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 31.61,
+      "value_per_serving": 36.7,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 1.2666666666667,
+      "value_per_serving": 1.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.4366666666667,
+      "value_per_serving": 1.7,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 0.70666666666667,
+      "value_per_serving": 0.82,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.16,
+      "value_per_serving": 0.19,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.25666666666667,
+      "value_per_serving": 0.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.29333333333333,
+      "value_per_serving": 0.34,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

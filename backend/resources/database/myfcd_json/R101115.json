@@ -1,0 +1,84 @@
+{
+  "ndb_id": "R101115",
+  "food_name": "CEREAL, BREAKFAST, BRAN FLAKES",
+  "serving_unit": "1 bowl",
+  "serving_size_grams": 120.8,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 280.15,
+      "value_per_serving": 338.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 14.595,
+      "value_per_serving": 17.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 1.59,
+      "value_per_serving": 1.92,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 51.865,
+      "value_per_serving": 62.65,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 27.52,
+      "value_per_serving": 33.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 4.43,
+      "value_per_serving": 5.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 22.53,
+      "value_per_serving": 27.22,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 21.18,
+      "value_per_serving": 25.59,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.35,
+      "value_per_serving": 1.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 12
+}

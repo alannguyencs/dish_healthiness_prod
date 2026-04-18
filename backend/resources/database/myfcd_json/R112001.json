@@ -1,0 +1,148 @@
+{
+  "ndb_id": "R112001",
+  "food_name": "FISH OIL, COD LIVER OIL (MINYAK IKAN KOD)",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 10.719,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 154.8474925,
+      "value_per_serving": 17.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 159.9695,
+      "value_per_serving": 17.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin A (Retinol)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "β-Carotene": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Lycopene": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Lutein": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Alpha-tocopherol (Vitamin E)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Vitamin K": {
+      "value_per_100g": 0.67,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Ergocalciferol (D2)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "C 14:0": {
+      "value_per_100g": 9.84994,
+      "value_per_serving": 1.056,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 15:0": {
+      "value_per_100g": 0.8791,
+      "value_per_serving": 0.094,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:0": {
+      "value_per_100g": 1.09335,
+      "value_per_serving": 0.117,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 22.6173,
+      "value_per_serving": 2.424,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 3.91713,
+      "value_per_serving": 0.42,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 21:0": {
+      "value_per_100g": 1.8794,
+      "value_per_serving": 0.201,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:1": {
+      "value_per_100g": 0.61871,
+      "value_per_serving": 0.066,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 16:1": {
+      "value_per_100g": 11.80891,
+      "value_per_serving": 1.266,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:1, cis n-9": {
+      "value_per_100g": 24.50721,
+      "value_per_serving": 2.627,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:1, n-9": {
+      "value_per_100g": 1.21246,
+      "value_per_serving": 0.13,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:2": {
+      "value_per_100g": 0.38101,
+      "value_per_serving": 0.041,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:2, cis, n-6": {
+      "value_per_100g": 2.42662,
+      "value_per_serving": 0.26,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:3, cis, n-3": {
+      "value_per_100g": 10.9469,
+      "value_per_serving": 1.173,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated",
+    "Fatty Acids, Poly Unsaturated"
+  ],
+  "total_nutrients": 22
+}

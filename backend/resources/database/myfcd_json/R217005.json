@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R217005",
+  "food_name": "DESSERT, COCONUT MILK BASED, SWEET POTATOES AND TARO IN COCONUT MILK (BUBUR CHA CHA)",
+  "serving_unit": "1 BOWL",
+  "serving_size_grams": 334.33,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 218.73,
+      "value_per_serving": 731.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 48.800333333333,
+      "value_per_serving": 163.15,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 2.52,
+      "value_per_serving": 8.43,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 5.61,
+      "value_per_serving": 18.76,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 39.54,
+      "value_per_serving": 132.19,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.5833333333333,
+      "value_per_serving": 8.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.94666666666667,
+      "value_per_serving": 3.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 11.763333333333,
+      "value_per_serving": 39.33,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 10.04,
+      "value_per_serving": 33.57,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.22,
+      "value_per_serving": 0.74,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.096666666666667,
+      "value_per_serving": 0.32,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.44,
+      "value_per_serving": 1.47,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.97,
+      "value_per_serving": 3.24,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

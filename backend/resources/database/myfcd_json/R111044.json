@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R111044",
+  "food_name": "MILK, SWEETENED, CONDENSED",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 13.17,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 43.57,
+      "value_per_serving": 5.74,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 34.936666666667,
+      "value_per_serving": 4.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 8.6333333333333,
+      "value_per_serving": 1.14,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

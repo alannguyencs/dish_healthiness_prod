@@ -1,0 +1,234 @@
+ndb_id,food_name,serving_unit,serving_size_grams,source_file,categories,total_nutrients
+R101061,"BISCUIT, COCONUT",1 piece,13.02,R101061.json,"[""Proximates""]",13
+R101069,"BISCUIT, LEMON PUFF",1 piece,50.76,R101069.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",89
+R101070,"BISCUIT, MARIE",1 piece,5.13,R101070.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",89
+R101071,"BISCUIT, MILK (BISKUT SUSU)",5 pieces,29.0,R101071.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",89
+R101081,CROISSANT,1 piece,61.65,R101081.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",54
+R101086,"BREAD, RAISIN (ROTI KISMIS)",1 piece,32.85,R101086.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",88
+R101094,"BUN, CHEESE (BAN KEJU)",1 piece,55.0,R101094.json,"[""Proximates""]",13
+R101096,"BUN, COCONUT (BAN KELAPA)",1 bun,41.15,R101096.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",77
+R101099,"BUN, KAYA (BAN KAYA)",1 bun,37.8,R101099.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",76
+R101100,"BUN, POTATO (BAN KENTANG)",1 bun,36.266666666667,R101100.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",78
+R101102,"BUN, RED BEANS (BAN KACANG MERAH)",1 bun,42.7,R101102.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",76
+R101109,"COOKIES, PEANUT",1 piece,34.47,R101109.json,"[""Proximates""]",12
+R101112,"MUFFIN, CHOCOLATE",1 piece,60.93,R101112.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",59
+R101113,"MUFFIN, VANILLA",1 piece,58.82,R101113.json,"[""Proximates""]",6
+R101115,"CEREAL, BREAKFAST, BRAN FLAKES",1 bowl,120.8,R101115.json,"[""Proximates""]",12
+R101116,"CEREAL, BREAKFAST, CHOCOLATE FLAVOURED",1 bowl,71.57,R101116.json,"[""Proximates""]",6
+R101117,"CEREAL, BREAKFAST, GRANOLA",1 bowl,205.35,R101117.json,"[""Proximates""]",12
+R101118,"CEREAL, BREAKFAST, MULTICOLOURED, SUGAR-FILLED RING SHAPED",1 bowl,73.66,R101118.json,"[""Proximates""]",6
+R101119,"CEREAL, BREAKFAST, OAT/MULTIGRAIN",1 bowl,61.18,R101119.json,"[""Proximates""]",6
+R101121,"COOKIES/CRACKERS, SANDWICH WITH FLAVOURED CREAM OREO",1 piece,9.65,R101121.json,"[""Proximates""]",12
+R102002,BREADFRUITS CHIPS (KEREPEK SUKUN),Unknown serving,,R102002.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",54
+R102004,"FLOUR, SAGO (TEPUNG SAGU)",Unknown serving,,R102004.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",36
+R102007,"POTATO CHIPS, SPICY (KEROPOK UBI KENTANG BERPERISA REMPAH PEDAS)",Unknown serving,,R102007.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",57
+R102012,"SWEET POTATO, RED, CHIPS (KEREPEK UBI KELEDEK)",Unknown serving,,R102012.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",54
+R102015,"TAPIOCA CHIPS, BARBEQUE (KEREPEK UBI KAYU PERISA BARBEQUE)",1 bowl,94.48,R102015.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",57
+R102016,"TAPIOCA CHIPS, BLACK PEPPER (KEREPEK UBI KAYU PERISA LADA HITAM)",1 bowl,83.933333,R102016.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",54
+R102017,"TAPIOCA CHIPS, PLAIN, SALTED (KEREPEK UBI KAYU, BERGARAM)",1 bowl,90.466666,R102017.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",48
+R102018,"TAPIOCA CHIPS, PLAIN, UNSALTED (KEREPEK UBI KAYU, TANPA GARAM)",1 bowl,103.23333,R102018.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",56
+R102019,"TAPIOCA CHIPS, SPICY (KEREPEK UBI KAYU PEDAS)",1 bowl,120.916,R102019.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",63
+R103003,BLACK EYE BEAN (KACANG MATA HITAM),1 cup,176.01866,R103003.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",55
+R103004,CAROB FLOUR (TEPUNG KACANG KUDA),1 cup,131.05616,R103004.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",46
+R103033,"SAUCE, SOYA, DARK",1 cup,119.07233,R103033.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",42
+R103034,"SAUCE, SOYA, LIGHT",1 tablespoon,6.07,R103034.json,"[""Proximates""]",13
+R104034,PEANUT BUTTER CHOCOLATE STRIPES,1 cup,70.1835,R104034.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",42
+R105006,BABY CORN (JAGUNG SAYUR),1 whole,12.5195,R105006.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",61
+R105022,"CAPSICUM, GREEN (LADA BENGALA, HIJAU)",1 whole,47.0038333,R105022.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",58
+R105023,"CAPSICUM, RED (LADA BENGALA, MERAH)",1 whole,158.391,R105023.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",59
+R105024,"CAPSICUM, YELLOW (LADA BENGALA, KUNING)",1 whole,40.516916,R105024.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",44
+R105150,"SAUCE, CHILI THAI",1 tablespoon,12.43,R105150.json,"[""Proximates""]",6
+R106035,"DRAGON FRUIT, RED (BUAH NAGA, ISI MERAH)",1 half,406.2833,R106035.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",47
+R106036,"DRAGON FRUIT, WHITE (BUAH NAGA, ISI PUTIH)",1 half,246.355,R106036.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",47
+R106051,HONEYDEW (TEMBIKAI SUSU),1 slice,165.7475,R106051.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",47
+R106073,LYCHEE IN TIN,1 BOWL,337.1,R106073.json,"[""Proximates""]",6
+R106113,POMEGRANATE (DELIMA),1 half,174.6933,R106113.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",46
+R107001,ASPARTAME (ASPARTAM),1 piece,3.63,R107001.json,"[""Minerals"", ""Vitamins""]",13
+R107002,ORANGE FLAVOURED CANDY (GULA-GULA PERISA OREN),1 piece,3.598625,R107002.json,"[""Minerals"", ""Vitamins""]",12
+R107004,STRAWBERRY FLAVOURED CANDY (GULA-GULA PERISA STRAWBERI),1 piece,3.740333333,R107004.json,"[""Minerals"", ""Vitamins""]",12
+R107005,CORDIAL ROOT BEER (KORDIAL RUT BIR),1 tablespoon,11.5339,R107005.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",28
+R107006,"CORDIAL, SOURSOP (KORDIAL DURIAN BELANDA)",1 tablespoon,10.05533333,R107006.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",40
+R107007,"CORDIAL, GRAPE (KORDIAL ANGGUR)",1 tablespoon,7.472866667,R107007.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",39
+R107008,"CORDIAL, GUAVA (KORDIAL JAMBU BATU)",1 tablespoon,11.602875,R107008.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",37
+R107009,"CORDIAL, KIWI (KORDIAL KIWI)",1 tablespoon,10.825,R107009.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",38
+R107010,"CORDIAL, LIME (KORDIAL LIMAU NIPIS)",1 tablespoon,11.1818,R107010.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",39
+R107011,"CORDIAL, MANGO (KORDIAL MANGGA)",1 tablespoon,10.48216667,R107011.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",40
+R107012,"CORDIAL, ORANGE (KORDIAL OREN)",1 tablespoon,9.67508,R107012.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",38
+R107013,"CORDIAL, PINEAPPLE(KORDIAL NENAS)",1 tablespoon,7.32015,R107013.json,"[""Proximates"", ""Minerals"", ""Amino Acids""]",36
+R107014,"CORDIAL, ROSELLE (KORDIAL ROSEL)",1 tablespoon,8.285566667,R107014.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",40
+R107015,"CORDIAL, SARSI (KORDIAL SARSI)",1 tablespoon,9.553783333,R107015.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Amino Acids""]",29
+R107016,GLUCOSE (GLUKOSA),1 tablespoon,15.1627,R107016.json,"[""Minerals"", ""Vitamins""]",13
+R107017,HONEY,1 tablespoon,11.63,R107017.json,"[""Proximates""]",12
+R107018,"JAM, APRICOT (JEM APRIKOT)",1 tablespoon,23.1795,R107018.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",86
+R107019,"JAM, BLUEBERRY (JEM BLUEBERI)",1 tablespoon,28.35116667,R107019.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",82
+R107021,"JAM, BLACKCURRENT (JEM ANGGUR HITAM)",1 tablespoon,28.53766667,R107021.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",64
+R107023,"JAM, MANGO (JEM MEMPELAM)",1 tablespoon,31.34,R107023.json,"[""Proximates""]",6
+R107025,"JAM, PINEAPPLE (JEM NENAS)",1 tablespoon,18.2,R107025.json,"[""Proximates""]",6
+R107029,"JAM, STRAWBERRY (JEM STRAWBERI)",1 tablespoon,31.71966667,R107029.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",82
+R107041,"JAM, ORANGE MARMALADE",1 tablespoon,25.07,R107041.json,"[""Proximates""]",6
+R107042,GRAPE FLAVOURED CANDY (GULA-GULA PERISA ANGGUR),1 piece,3.5634,R107042.json,"[""Minerals"", ""Vitamins""]",13
+R107046,"SUGAR, ICING (GULA ISING)",1 tablespoon,14.56804,R107046.json,"[""Minerals"", ""Vitamins""]",13
+R107047,Unknown Food,1 piece,4.0733,R107047.json,"[""Minerals"", ""Vitamins""]",8
+R108014,"BEEF, SAUSAGE (SOSEJ DAGING LEMBU)",1 piece,32.295,R108014.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",43
+R108040,"CHICKEN, SAUSAGE (SOSEJ DAGING AYAM)",1 piece,3.2266666,R108040.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",43
+R109009,"HEN EGG, LOWER CHOLESTROL, WITH VITAMIN E (TELUR AYAM RENDAH KOLESTROL, DENGAN VITAMIN E)",1 whole,48.71,R109009.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",42
+R109010,"HEN EGG, OMEGA 3 (TELUR AYAM OMEGA 3)",1 whole,55.445,R109010.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",42
+R110064,"EEEL, SWAMP, RAW (BELUT)",Unknown serving,,R110064.json,"[""Proximates"", ""Minerals""]",14
+R110126,"SAUCE, OYSTER FLAVOURED",1 tablespoon,11.37,R110126.json,"[""Proximates""]",6
+R111001,Unknown Food,1 tablespoon,11.993,R111001.json,"[""Minerals"", ""Vitamins""]",3
+R111004,CHEESE SPREAD (KEJU SAPUAN),1 cube,10.1055,R111004.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",39
+R111005,"CHEESE, BLUE (KEJU, BIRU)",1 cubic inch,27.251333,R111005.json,"[""Proximates"", ""Minerals"", ""Vitamins""]",27
+R111007,Unknown Food,1 cube,21.2015,R111007.json,"[""Minerals"", ""Vitamins""]",3
+R111008,"CHEESE, CAMEMBERT (KEJU, CAMEMBERT)",1 cube,18.429,R111008.json,"[""Minerals"", ""Vitamins""]",4
+R111010,"CHEESE, CHEDDAR, REDUCED FAT (KEJU CHEDDAR, KURANG LEMAK)",1 cup,68.9895,R111010.json,"[""Minerals"", ""Vitamins""]",4
+R111011,Unknown Food,1 slice,19.63641667,R111011.json,"[""Minerals"", ""Vitamins""]",3
+R111013,"CHEESE, COLBY (KEJU, COLBY)",1 cube,23.197,R111013.json,"[""Minerals"", ""Vitamins"", ""Lipids""]",4
+R111015,Unknown Food,Unknown serving,,R111015.json,"[""Minerals"", ""Vitamins""]",5
+R111016,"CHEESE, PARMESAN (KEJU PARMESAN)",1 cube,17.7875,R111016.json,"[""Minerals"", ""Vitamins"", ""Lipids"", ""Amino Acids""]",20
+R111019,"CHEESE, RICOTTA (KEJU, RICOTTA)",1 tablespoon,19.29533333,R111019.json,"[""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",23
+R111020,"CREAM, WHIPPED (KRIM PUTAR)",1 tablespoon,10.58283333,R111020.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",21
+R111021,CREAM CHEESE (KRIM KEJU),1 tablespoon,25.98866667,R111021.json,"[""Minerals"", ""Vitamins"", ""Lipids""]",4
+R111023,"CREAMER, POWDER (KRIMER SERBUK)",1 tablespoon,9.77035,R111023.json,"[""Minerals"", ""Vitamins""]",12
+R111026,"MILK, PASTEURISED, CHOCOLATE FLAVOUR",1 cup,,R111026.json,"[""Proximates""]",6
+R111028,"MILK, COW, FRESH",1 cup,,R111028.json,"[""Proximates""]",6
+R111029,"MILK DRINK, CULTURED",1 cup,,R111029.json,"[""Proximates""]",6
+R111044,"MILK, SWEETENED, CONDENSED",1 tablespoon,13.17,R111044.json,"[""Proximates""]",6
+R111045,"MILK, UHT, CHOCOLATE FLAVOUR",1 cup,,R111045.json,"[""Proximates""]",6
+R111047,"MILK, UHT, FULL CREAM",1 cup,,R111047.json,"[""Proximates""]",12
+R111048,"MILK, UHT, LOW FAT",1 cup,,R111048.json,"[""Proximates""]",12
+R111054,"YOGURT, DRINKING, PASTEURISED, NATURAL FLAVOUR",1 Glass,250.0,R111054.json,"[""Proximates""]",6
+R111057,"YOGURT, LOW FAT, NATURAL",1 cup,140.0,R111057.json,"[""Proximates""]",6
+R111059,"ICE-CREAM, VANILLA",Unknown serving,,R111059.json,"[""Proximates""]",5
+R111060,"YOGURT, DRINKING, PASTEURISED, MIX FRUIT FLAVOURS",1 cup,250.0,R111060.json,"[""Proximates""]",3
+R111061,"YOGURT, FLAVOURED (STRAWBERRY, ETC)",1 cup,120.0,R111061.json,"[""Proximates""]",6
+R111062,CONDENSED/EVAPORATED MILK WITH ROSE CORDIAL (SIRAP BANDUNG),1 Glass,,R111062.json,"[""Proximates""]",13
+R112001,"FISH OIL, COD LIVER OIL (MINYAK IKAN KOD)",1 tablespoon,10.719,R112001.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",22
+R112003,"MARGARINE SPREAD, WITH SALT (SAPUAN MERJERIN BERGARAM)",1 tablespoon,13.79575,R112003.json,"[""Minerals"", ""Vitamins"", ""Amino Acids""]",20
+R112004,"MARGARINE SPREAD, WITHOUT SALT (SAPUAN MERJERIN TANPA GARAM)",1 tablespoon,16.488,R112004.json,"[""Minerals"", ""Vitamins"", ""Amino Acids""]",8
+R112005,MAYONNAISE (MAYONIS),1 tablespoon,9.118366667,R112005.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated"", ""Amino Acids""]",81
+R112009,"OIL, BLEND (MINYAK CAMPURAN)",1 tablespoon,2.793666667,R112009.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",38
+R112011,"OIL, CANOLA (MINYAK CANOLA)",1 tablespoon,4.674833333,R112011.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",40
+R112013,"OIL, COCONUT (MINYAK KELAPA)",1 tablespoon,3.8986,R112013.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",33
+R112021,"OIL, SUNFLOWER (MINYAK BUNGA MATAHARI)",1 tablespoon,3.2925,R112021.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",39
+R112022,"OIL, VEGETABLE (MINYAK SAYURAN)",1 tablespoon,3.308,R112022.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",38
+R112023,"SAUCE, THOUSAND ISLAND",1 tablespoon,14.9834,R112023.json,"[""Minerals"", ""Vitamins"", ""Amino Acids""]",21
+R112024,SOFT MARGARINE (MARJERIN LEMBUT),1 tablespoon,18.6059,R112024.json,"[""Minerals"", ""Vitamins"", ""Amino Acids""]",20
+R113007,"DESSERT, CHILLED COCONUT MILK- & PALM SUGAR-BASED, WITH PANDAN JELLY NOODLES AND RED BEAN (CENDOL)",Unknown serving,,R113007.json,"[""Proximates""]",6
+R113009,"HOT CHOCOLATE, INSTANT PREMIX (WITH SUGAR, COCOA POWDER, CREAMER)",1 sachet,40.0,R113009.json,"[""Proximates""]",12
+R113020,ENERGY DRINK,1 cup,,R113020.json,"[""Proximates""]",6
+R113024,ISOTONIC DRINK,1 cup,,R113024.json,"[""Proximates""]",13
+R113026,"DESSERT, SWEET LOTUS SEED SOUP (LIN-CHI-KANG)",1 bowl,,R113026.json,"[""Proximates""]",6
+R113039,FRUIT JUICE ORANGE,Unknown serving,,R113039.json,"[""Proximates""]",13
+R113050,"TEA, CHRYSANTHEMUM, PACKET, WITH ADDED SUGAR",1 cup,,R113050.json,"[""Proximates""]",12
+R113051,"TEA, GREEN, WITH ADDED SUGAR",1 cup,,R113051.json,"[""Proximates""]",12
+R113052,"TEA, KUNDUR, PACKET, WITH ADDED SUGAR",1 cup,,R113052.json,"[""Proximates""]",6
+R113055,Unknown Food,1 tea bag,2.1736666666667,R113055.json,"[""Minerals"", ""Vitamins""]",4
+R113056,CANNED COFFEE,1 cup,,R113056.json,"[""Proximates""]",6
+R113057,"MILK, MALTED (CHOCOLATE FLAVOUR)",1 cup,,R113057.json,"[""Proximates""]",6
+R113058,"SOYA BEAN DRINK, PACKET, WITH REGULAR ADDED SUGAR",1 cup,,R113058.json,"[""Proximates""]",12
+R113059,"TEA MIX, INSTANT",1 SACHET,14.5,R113059.json,"[""Proximates""]",6
+R113060,"TEA, ICE LEMON, PACKET, WITH ADDED SUGAR",1 cup,,R113060.json,"[""Proximates""]",12
+R113061,"FLAVOURED DRINK, COLA TYPE",1 cup,,R113061.json,"[""Proximates""]",6
+R113062,"FRUIT JUICE DRINK, ORANGE",Unknown serving,,R113062.json,"[""Proximates""]",6
+R113063,"FRUIT DRINK, ORANGE",1 Glass,,R113063.json,"[""Proximates""]",6
+R113064,"FRUIT JUICE, FRESH, ORANGE",Unknown serving,,R113064.json,"[""Proximates""]",13
+R114007,CHOCOLATE (COKLAT BERTIH),1 piece,11.0,R114007.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated""]",16
+R114012,"CHOCOLATE, BREAD SPREAD",1 tablespoon,30.0,R114012.json,"[""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated""]",11
+R114013,"CHOCOLATE, CASHEW NUT (COKLAT KACANG GAJUS)",1 small bar,4.17,R114013.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated""]",15
+R114015,"CHOCOLATE, HAZELNUT (COKLAT KACANG BADAM)",1 small bar,5.2405,R114015.json,"[""Proximates"", ""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",28
+R114016,"CHOCOLATE, MILK (COKLAT SUSU)",1 small bar,4.2,R114016.json,"[""Proximates""]",6
+R114017,"CHOCOLATE, RAISIN (COKLAT BERKISMIS)",1 piece,2.81,R114017.json,"[""Proximates""]",12
+R114018,"CHOCOLATE, ROASTED ALMOND (COKLAT DENGAN KACANG BADAM)",1 small bar,5.43825,R114018.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",26
+R114019,"CHOCOLATE, WHITE (COKLAT PUTIH)",1 small bar,5.81094,R114019.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",21
+R114025,"CHOCOLATE, MIXED NUTS (COKLAT KACANG CAMPURAN)",1 small bar,4.2022,R114025.json,"[""Minerals"", ""Vitamins"", ""Lipids"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",25
+R114047,Unknown Food,1 piece,9.566683333,R114047.json,"[""Minerals"", ""Vitamins""]",3
+R114053,VANILLA WAFER (WAFER VANILLA),1 piece,9.6641,R114053.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",27
+R114056,"WAFER, ORANGE FLAVOR (WAFER BERPERISA OREN)",1 piece,4.12725,R114056.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",28
+R114057,"WAFER, STRAWBERRY FLAVOR (WAFER BERPERISA STRAWBERI)",1 piece,2.98084,R114057.json,"[""Minerals"", ""Vitamins"", ""Fatty Acids, Saturated"", ""Fatty Acids, Mono Unsaturated"", ""Fatty Acids, Poly Unsaturated""]",26
+R114062,CHOCOLATE SPREAD,1 tablespoon,25.48,R114062.json,"[""Proximates""]",6
+R211005,"TRADITIONAL MALAYSIAN KUIH, STEAMED GLUTINOUS RICE BALLS COATED WITH SESAME/PEANUT SUGAR CRUMBS (MOCHI@CHEE-PAH)",1 piece,13.32,R211005.json,"[""Proximates""]",13
+R211018,"TRADITIONAL MALAYSIAN KUIH, STEAMED RICE FLOUR WITH COCONUT MILK AND SUGAR IN SMALL MOULD, SERVED WITH GRATED COCONUT (KUIH LOMPANG)",Unknown serving,,R211018.json,"[""Proximates""]",13
+R211037,"TRADITIONAL MALAYSIAN KUIH, TWO LAYERED STEAMED CAKE, TARO AND COCONUT MILK (KUIH TALAM KELADI)",1 slice,38.47,R211037.json,"[""Proximates""]",6
+R211039,KUIH TALAM LABU,1 piece,51.5,R211039.json,"[""Proximates""]",6
+R211044,"TRADITIONAL MALAYSIAN KUIH, SWEET GLUTINOUS RICE CAKE (WAJIK)",1 slice,20.0,R211044.json,"[""Proximates""]",6
+R211045,"DESSERT, RED TORTOISE CAKE (KUIH ANG KOO)",1 piece,60.63,R211045.json,"[""Proximates""]",6
+R212003,BAHULU KEMBOJA,1 piece,236.5,R212003.json,"[""Proximates"", ""Minerals"", ""Amino Acids""]",30
+R212005,KEK PISANG,1 piece,15.0,R212005.json,"[""Proximates"", ""Minerals"", ""Amino Acids""]",37
+R212007,"DESSERT, FRUIT CAKE (KEK BUAH)",1 slice,25.3,R212007.json,"[""Proximates""]",6
+R212009,"CAKE, SPONGE (KEK SPAN)",1 slice,18.78,R212009.json,"[""Proximates""]",12
+R212010,"CAKE, SWISS ROLL (KEK SWISS ROLL)",1 slice,28.63,R212010.json,"[""Proximates""]",6
+R212011,"CAKE, SWISS ROLL, CHOCOLATE FLAVOUR (KEK SWISS ROLL PERASA COKLAT)",1 slice,52.15,R212011.json,"[""Proximates""]",12
+R212017,CUCUR BAWANG,1 piece,27.0,R212017.json,"[""Proximates"", ""Minerals"", ""Amino Acids""]",37
+R212026,"CAKE, CUP, WITH FROSTING/GLAZE (KEK CAWAN)",1 piece,48.36,R212026.json,"[""Proximates""]",6
+R212032,KARIPAP SARDIN,1 piece,26.0,R212032.json,"[""Proximates"", ""Minerals"", ""Amino Acids""]",36
+R212056,"TRADITIONAL MALAYSIAN KUIH, CINNAMON ROLLS  (KUIH CEMPIANG)",1 piece,72.31,R212056.json,"[""Proximates""]",6
+R212057,CARA BERLAUK,1 piece,13.5,R212057.json,"[""Proximates"", ""Minerals"", ""Amino Acids""]",37
+R212058,CARA MANIS,1 piece,27.0,R212058.json,"[""Proximates"", ""Minerals"", ""Amino Acids""]",36
+R212071,LEPAT LABU,1 piece,65.0,R212071.json,"[""Proximates"", ""Minerals""]",14
+R212074,"DESSERT, MOON CAKES RED BEAN",1 piece,180.0,R212074.json,"[""Proximates""]",6
+R212078,ROTI JALA,1 piece,23.0,R212078.json,"[""Proximates"", ""Minerals""]",16
+R212084,"CAKE, CHEESE (KEK KEJU)",1 slice,129.63,R212084.json,"[""Proximates""]",6
+R212085,"CAKE, CHOCOLATE (KEK COKLAT)",1 slice,74.74,R212085.json,"[""Proximates""]",6
+R212086,"DESSERT, HONEYCOMB CAKE (KEK GULA HANGUS)",1 piece,88.16,R212086.json,"[""Proximates""]",6
+R212087,"DESSERT, LAYER CAKE (KEK LAPIS SARAWAK)",1 slice,29.6,R212087.json,"[""Proximates""]",6
+R212088,"PASTRY, DANISH",1 piece,77.26,R212088.json,"[""Proximates""]",6
+R212089,"PASTRY, PUFF, APPLE FILLING",1 piece,84.34,R212089.json,"[""Proximates""]",13
+R212090,"PASTRY, PUFF, CHOCOLATE FILLING",1 piece,31.08,R212090.json,"[""Proximates""]",6
+R212091,"TRADITIONAL MALAYSIAN KUIH, MINI EGG SPONGE CAKE (BAHULU CERMAI)",1 piece,7.47,R212091.json,"[""Proximates""]",12
+R212092,"DESSERT, MOON CAKES PURE LOTUS",1 piece,180.0,R212092.json,"[""Proximates""]",6
+R213004,KOLEH KACANG,1 piece,49.0,R213004.json,"[""Proximates"", ""Minerals""]",10
+R213007,"TRADITIONAL MALAYSIAN KUIH, FLOUR AND GHEE SUGAR BASED, SPHERE-SHAPED SWEETS (LADDU)",1 piece,63.05,R213007.json,"[""Proximates""]",6
+R214002,"TRADITIONAL MALAYSIAN KUIH, GLUTINOUS RICE BALLS IN COCONUT MILK (BADAK BERENDAM)",1 piece,38.72,R214002.json,"[""Proximates""]",6
+R214006,"TRADITIONAL MALAYSIAN KUIH, GLUTINOUS RICE FLOUR AND COCONUT MILK BASED, BOILED PALM SUGAR TOFFEE-LIKE SWEET (DODOL)",1 piece,15.68,R214006.json,"[""Proximates""]",6
+R214010,"TRADITIONAL MALAYSIAN KUIH, SESAME BALLS (KUIH BOM)",1 piece,33.48,R214010.json,"[""Proximates""]",13
+R214016,"TRADITIONAL MALAYSIAN KUIH, SWEET BLACK GLUTINOUS RICE DUMPLING STUFFED WITH GRATED COCONUT FILLING (KUIH KOCI PULUT HITAM)",1 piece,35.81,R214016.json,"[""Proximates""]",6
+R214032,"TRADITIONAL MALAYSIAN KUIH, SWEET FERMENTED GLUTINOUS RICE (TAPAI PULUT)",1 piece,26.76,R214032.json,"[""Proximates""]",6
+R214034,"TRADITIONAL MALAYSIAN KUIH, GLUTINUOS RICE FLOUR BASED STUFFED WITH GRATED COCONUT COATED WITH MUNG BEAN POWDER (KUIH TEPUNG GOMAK)",1 piece,48.82,R214034.json,"[""Proximates""]",6
+R215003,CAKAR AYAM,1 piece,37.5,R215003.json,"[""Proximates"", ""Minerals""]",10
+R215004,KELEDEK GORENG,1 piece,8.0,R215004.json,"[""Proximates"", ""Minerals""]",8
+R216012,SAMOSA,1 piece,29.5,R216012.json,"[""Proximates"", ""Minerals""]",8
+R217005,"DESSERT, COCONUT MILK BASED, SWEET POTATOES AND TARO IN COCONUT MILK (BUBUR CHA CHA)",1 BOWL,334.33,R217005.json,"[""Proximates""]",13
+R217007,"DESSERT, CORN IN SWEETENED COCONUT MILK (BUBUR JAGUNG)",1 BOWL,342.21,R217007.json,"[""Proximates""]",13
+R217021,"DESSERT, BLACK GLUTINOUS RICE PORRIDGE (BUBUR PULUT HITAM)",1 BOWL,396.96,R217021.json,"[""Proximates""]",13
+R217022,"DESSERT, SAGO PORRIDGE (BUBUR SAGU)",1 BOWL,371.07,R217022.json,"[""Proximates""]",13
+R218004,"DESEERT, COCONUT MILK JELLY (AGAR-AGAR SANTAN)",1 slice,38.09,R218004.json,"[""Proximates""]",6
+R218007,"DESSERT , CARAMEL PUDDING",1 slice,36.89,R218007.json,"[""Proximates""]",6
+R218011,"CREAM ROLL, VANILLA FLAVOUR",1 piece,40.13,R218011.json,"[""Proximates""]",13
+R218019,"TRADITIONAL MALAYSIAN KUIH, COCONUT CREAM COOKIES (KUIH BANGKIT)",1 piece,2.61,R218019.json,"[""Proximates""]",6
+R218023,"TRADITIONAL MALAYSIAN KUIH, FLOUR BASED, WITH RED PALM SUGAR  (KUIH CINCIN)",Unknown serving,,R218023.json,"[""Proximates""]",10
+R218036,"DESSERT, BREAD PUDDING",1 SLICE,132.68,R218036.json,"[""Proximates""]",6
+R218037,"DESSERT, PUDDING, MILK (PUDING SUSU)",1 piece,39.06,R218037.json,"[""Proximates""]",13
+R218048,"DESSERT, BROWNIES, CHOCOLATE",1 piece,20.68,R218048.json,"[""Proximates""]",6
+R218049,"DESSERT, CHEESE TART",1 piece,14.92,R218049.json,"[""Proximates""]",6
+R218050,"DESSERT, SHAVED ICE, ABC (AIR BATU CAMPUR/AIS KACANG)",1 BOWL,250.0,R218050.json,"[""Proximates""]",6
+R218051,"DOUGHNUT, WITH FROSTING/GLAZE (DONUT)",Unknown serving,,R218051.json,"[""Proximates""]",6
+R218052,"DESSERT, SOY MILK CUSTARD (TAUFU-FAH)",1 BOWL,297.37,R218052.json,"[""Proximates""]",11
+R221079,"RICE, ""DAGANG"" (NASI DAGANG)(COMPLETE SET)",1 set,214.0,R221079.json,"[""Proximates""]",13
+R221081,"RICE, ARAB (NASI ARAB)",1 cup,117.46,R221081.json,"[""Proximates""]",13
+R221083,"RICE, BRIYANI (RICE ONLY) (BASMATHI RICE)",1 cup,116.11,R221083.json,"[""Proximates""]",13
+R221088,"RICE, KERABU (NASI KERABU)(COMPLETE SET)",1 set,168.47,R221088.json,"[""Proximates""]",13
+R221107,"RICE, BRIYANI (AYAM)",1 set,404.76,R221107.json,"[""Proximates""]",13
+R221108,"RICE, BRIYANI (DAGING)",1 set,271.62,R221108.json,"[""Proximates""]",13
+R221109,NASI ARAB SET KHABSYAH (KAMBING),1 set,319.63,R221109.json,"[""Proximates""]",13
+R221110,NASI ARAB SET MANDY (AYAM),1 set,468.26,R221110.json,"[""Proximates""]",13
+R221113,"RICE, ""DAGANG"" (NASI DAGANG)(RICE ONLY)",1 cup,115.1,R221113.json,"[""Proximates""]",13
+R222004,BEEF RENDANG (RENDANG DAGING LEMBU),1 bowl,293.15,R222004.json,"[""Proximates""]",13
+R222008,"BEEF, FLOSS (SERUNDING DAGING)",1 bowl,35.4,R222008.json,"[""Proximates""]",11
+R222022,CHICKEN CHOP (BELAHAN AYAM TANPA TULANG),1 piece,172.8,R222022.json,"[""Proximates""]",13
+R222029,CHICKEN SATAY (SATAY AYAM),1 stick,16.99,R222029.json,"[""Proximates""]",13
+R223003,"ANCHOVY, DRIED, FRIED IN CHILLI (IKAN BILIS SAMBAL)",1/2 cup,40.0,R223003.json,"[""Proximates""]",13
+R223015,"CATFISH, FRIED IN CHILLI (IKAN KELI GORENG BERLADA)",1 whole,174.64,R223015.json,"[""Proximates""]",13
+R223019,"COCKLES, BOILED (KERANG REBUS)",Unknown serving,,R223019.json,"[""Proximates""]",13
+R223027,"CRAB, IN COCONUT MILK (KETAM MASAK LEMAK CILI API)",1 whole,121.7,R223027.json,"[""Proximates""]",13
+R223030,"CUTTLEFISH, DRIED, FRIED IN CHILLI (SAMBAL SOTONG KERING)",1 bowl,290.5,R223030.json,"[""Proximates""]",13
+R223080,"STINGRAY, COOKED IN TAMARIND (IKAN PARI MASAK ASAM PEDAS)",1 piece,108.98,R223080.json,"[""Proximates""]",13
+R224014,"CABBAGE, FRIED (KOBIS GORENG)",1 cup,145.62,R224014.json,"[""Proximates""]",13
+R224026,KALE WITH SALTED FISH (KAILAN IKAN MASIN),1 cup,121.67,R224026.json,"[""Proximates""]",13
+R224034,"MIX VEGETABLES, STIR FRIED (SAYUR CAMPUR GORENG)",1 cup,164.3,R224034.json,"[""Proximates""]",13
+R224046,"SPINACH, (BAYAM MASAK AIR)",Unknown serving,,R224046.json,"[""Proximates""]",13
+R224048,"SWAMP CABBAGE, FRIED WITH BELACAN (KANGKUNG GORENG BELACAN)",1 cup,142.7,R224048.json,"[""Proximates""]",13
+R224049,"TRADITIONAL MALAYSIAN KUIH, SWEET FERMENTED TAPIOCA (TAPAI UBI KAYU)",1 bowl,272.26,R224049.json,"[""Proximates""]",13
+R225015,ROJAK PASTE,1 tablespoon,23.13,R225015.json,"[""Proximates""]",6
+R225024,"COFFEE, WITH MILK AND SUGAR, FROM MAMAK STALLS",1 cup,,R225024.json,"[""Proximates""]",12
+R237013,"PEARL MILK TEA (WITH BREWED TEA, MILK, SUGAR SYRUP, TAPIOCA PEARLS), NORMAL SUGAR",1 cup,,R237013.json,"[""Proximates""]",6
+R237014,"ICE CHOCHOLATE BLENDED, WITH WHIPPING CREAM",Unknown serving,,R237014.json,"[""Proximates""]",13

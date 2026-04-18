@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R101119",
+  "food_name": "CEREAL, BREAKFAST, OAT/MULTIGRAIN",
+  "serving_unit": "1 bowl",
+  "serving_size_grams": 61.18,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 20.79,
+      "value_per_serving": 12.72,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 20.79,
+      "value_per_serving": 12.72,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

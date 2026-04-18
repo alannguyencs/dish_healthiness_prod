@@ -1,0 +1,30 @@
+{
+  "ndb_id": "R111060",
+  "food_name": "YOGURT, DRINKING, PASTEURISED, MIX FRUIT FLAVOURS",
+  "serving_unit": "1 cup",
+  "serving_size_grams": 250.0,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 4.6,
+      "value_per_serving": 11.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 3.21,
+      "value_per_serving": 8.03,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 1.39,
+      "value_per_serving": 3.48,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 3
+}

@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R212074",
+  "food_name": "DESSERT, MOON CAKES RED BEAN",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 180.0,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 10.996666666667,
+      "value_per_serving": 19.79,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 8.6966666666667,
+      "value_per_serving": 15.65,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.0633333333333,
+      "value_per_serving": 1.91,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.99333333333333,
+      "value_per_serving": 1.79,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.24333333333333,
+      "value_per_serving": 0.44,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

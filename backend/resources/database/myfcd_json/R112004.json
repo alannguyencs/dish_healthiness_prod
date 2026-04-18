@@ -1,0 +1,62 @@
+{
+  "ndb_id": "R112004",
+  "food_name": "MARGARINE SPREAD, WITHOUT SALT (SAPUAN MERJERIN TANPA GARAM)",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 16.488,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 7.424804787,
+      "value_per_serving": 1.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 38.485,
+      "value_per_serving": 6.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Selenium, Se": {
+      "value_per_100g": 13.09,
+      "value_per_serving": 2.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Manganese, Mn": {
+      "value_per_100g": 0.03,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 5.615,
+      "value_per_serving": 1.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 7.1575,
+      "value_per_serving": 1.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Methionine": {
+      "value_per_100g": 0.00275,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Cystine": {
+      "value_per_100g": 0.04525,
+      "value_per_serving": 0.007,
+      "unit": "g",
+      "category": "Amino Acids"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Amino Acids"
+  ],
+  "total_nutrients": 8
+}

@@ -1,0 +1,61 @@
+food_item,category,calories,rice_bowl_equivalent,portion_size,source,source_file
+"Ang Koo Kuih, Mungbean",Traditional Malaysian Kuih,111.0,0.5,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,ang_koo_kuih_mungbean.json
+"Ang Koo Kuih, Peanut",Traditional Malaysian Kuih,194.0,0.9,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,ang_koo_kuih_peanut.json
+"Apple, Red",Fruits,63.0,0.3,1 medium fruit,health.family.my - Malaysian Food Calories Breakfast & Teatime,apple_red.json
+Banana,Fruits,60.0,0.3,1 medium,health.family.my - Malaysian Food Calories Breakfast & Teatime,banana.json
+Butter/Margarine/Mayonnaise,Spreads,45.0,0.2,1 teaspoon,health.family.my - Malaysian Food Calories Breakfast & Teatime,buttermargarinemayonnaise.json
+"Cake, Plain",Traditional Malaysian Kuih,100.0,0.5,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,cake_plain.json
+Capati & Green Gravy,"Bread, Crackers, and Cakes",166.0,0.8,1 piece + 1/2 cup gravy,health.family.my - Malaysian Food Calories Breakfast & Teatime,capati_green_gravy.json
+Chee Cheong Fun,"Bread, Crackers, and Cakes",236.0,1.0,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,chee_cheong_fun.json
+Cheesecake,"Bread, Crackers, and Cakes",400.0,2.0,1 slice,health.family.my - Malaysian Food Calories Breakfast & Teatime,cheesecake.json
+Chicken Curry Bun,"Bread, Crackers, and Cakes",204.0,1.0,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,chicken_curry_bun.json
+Chinese Glutinous Rice (Lor Mai Kai),Traditional Malaysian Kuih,422.0,2.0,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,chinese_glutinous_rice_lor_mai_kai.json
+Chocolate Chip Cookies,"Bread, Crackers, and Cakes",200.0,1.0,4 pieces,health.family.my - Malaysian Food Calories Breakfast & Teatime,chocolate_chip_cookies.json
+Cucur Udang,Traditional Malaysian Kuih,144.0,0.7,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,cucur_udang.json
+Curry Laksa,Noodles,589.0,3.0,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,curry_laksa.json
+Curry Puff,"Bread, Crackers, and Cakes",256.0,1.0,2 pieces,health.family.my - Malaysian Food Calories Breakfast & Teatime,curry_puff.json
+Doughnut,Traditional Malaysian Kuih,268.0,1.5,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,doughnut.json
+"Dumpling, Chicken",Traditional Malaysian Kuih,203.0,1.0,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,dumpling_chicken.json
+Durian,Fruits,60.0,0.3,2 medium seeds,health.family.my - Malaysian Food Calories Breakfast & Teatime,durian.json
+Fried Kuay Teow + Cockles,Noodles,743.0,3.5,1 plate,health.family.my - Malaysian Food Calories Breakfast & Teatime,fried_kuay_teow_cockles.json
+Fried Noodle/Meehoon,Noodles,510.0,2.5,1 plate,health.family.my - Malaysian Food Calories Breakfast & Teatime,fried_noodlemeehoon.json
+Fried Spring Roll,Traditional Malaysian Kuih,91.0,0.4,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,fried_spring_roll.json
+Fruit Jam,Spreads,20.0,0.1,1 teaspoon,health.family.my - Malaysian Food Calories Breakfast & Teatime,fruit_jam.json
+Grape,Fruits,60.0,0.3,8 pieces,health.family.my - Malaysian Food Calories Breakfast & Teatime,grape.json
+Guava,Fruits,60.0,0.3,1/2 small fruit,health.family.my - Malaysian Food Calories Breakfast & Teatime,guava.json
+Ham Chi Peng,Traditional Malaysian Kuih,233.0,1.0,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,ham_chi_peng.json
+Hard Boiled Egg,Miscellaneous,76.0,0.4,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,hard_boiled_egg.json
+Kaya,Spreads,39.0,0.2,1 dessert spoon,health.family.my - Malaysian Food Calories Breakfast & Teatime,kaya.json
+Kaya/Coconut Bun,"Bread, Crackers, and Cakes",219.0,1.0,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,kayacoconut_bun.json
+Kuih Apam Balik,Traditional Malaysian Kuih,282.0,1.5,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,kuih_apam_balik.json
+"Kuih Koci, Pulut Putih",Traditional Malaysian Kuih,183.0,0.9,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,kuih_koci_pulut_putih.json
+Kuih Talam Seri Kaya,Traditional Malaysian Kuih,183.0,0.9,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,kuih_talam_seri_kaya.json
+Langsat,Fruits,31.0,0.2,10 pieces,health.family.my - Malaysian Food Calories Breakfast & Teatime,langsat.json
+Lor Mee,Noodles,383.0,2.0,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,lor_mee.json
+Mamak Mee Goreng,Noodles,660.0,3.0,1 plate,health.family.my - Malaysian Food Calories Breakfast & Teatime,mamak_mee_goreng.json
+Mango,Fruits,67.0,0.3,1/2 large fruit,health.family.my - Malaysian Food Calories Breakfast & Teatime,mango.json
+Mee Hailam,Noodles,277.0,1.0,1 plate,health.family.my - Malaysian Food Calories Breakfast & Teatime,mee_hailam.json
+Mee Rebus,Noodles,556.0,2.5,1 plate,health.family.my - Malaysian Food Calories Breakfast & Teatime,mee_rebus.json
+"Murtabak, Mutton","Bread, Crackers, and Cakes",722.0,3.5,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,murtabak_mutton.json
+Nasi Lemak (gravy added),Noodles,644.0,3.0,1 plate,health.family.my - Malaysian Food Calories Breakfast & Teatime,nasi_lemak_gravy_added.json
+Noodle Soup,Noodles,381.0,2.0,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,noodle_soup.json
+"Oatmeal, Plain",Miscellaneous,225.0,1.0,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,oatmeal_plain.json
+"Oatmeal, with Fat Milk",Miscellaneous,356.0,1.5,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,oatmeal_with_fat_milk.json
+Papadam,"Bread, Crackers, and Cakes",26.0,0.1,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,papadam.json
+Papaya,Fruits,56.0,0.3,1 slice,health.family.my - Malaysian Food Calories Breakfast & Teatime,papaya.json
+Peanut Butter,Spreads,33.0,0.2,1 teaspoon,health.family.my - Malaysian Food Calories Breakfast & Teatime,peanut_butter.json
+Penang Laksa,Noodles,436.0,2.0,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,penang_laksa.json
+Pisang Goreng,Traditional Malaysian Kuih,129.0,0.6,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,pisang_goreng.json
+Plain Bread,"Bread, Crackers, and Cakes",75.0,0.4,1 slice,health.family.my - Malaysian Food Calories Breakfast & Teatime,plain_bread.json
+Plain Roti Canai & Dhal,"Bread, Crackers, and Cakes",359.0,1.5,1 piece + 1/2 cup dhal,health.family.my - Malaysian Food Calories Breakfast & Teatime,plain_roti_canai_dhal.json
+Prawn Mee Soup,Noodles,293.0,1.5,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,prawn_mee_soup.json
+Red Bean Bun,"Bread, Crackers, and Cakes",223.0,1.0,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,red_bean_bun.json
+Roti Telur & Dhal,"Bread, Crackers, and Cakes",414.0,2.0,1 piece + 1/2 cup dhal,health.family.my - Malaysian Food Calories Breakfast & Teatime,roti_telur_dhal.json
+"Sandwiches, Sardine","Bread, Crackers, and Cakes",71.0,0.3,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,sandwiches_sardine.json
+Siew Mai,Miscellaneous,105.0,0.5,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,siew_mai.json
+Vadai,Traditional Malaysian Kuih,194.0,0.9,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,vadai.json
+Wanton Mee Dry,Noodles,409.0,2.0,1 plate,health.family.my - Malaysian Food Calories Breakfast & Teatime,wanton_mee_dry.json
+Wanton Mee Soup,Noodles,217.0,1.0,1 bowl,health.family.my - Malaysian Food Calories Breakfast & Teatime,wanton_mee_soup.json
+Watermelon,Fruits,60.0,0.3,1 small slice,health.family.my - Malaysian Food Calories Breakfast & Teatime,watermelon.json
+Yam Cake,Traditional Malaysian Kuih,174.0,0.8,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,yam_cake.json
+Yau Char Kueh,Traditional Malaysian Kuih,292.0,1.5,1 piece,health.family.my - Malaysian Food Calories Breakfast & Teatime,yau_char_kueh.json

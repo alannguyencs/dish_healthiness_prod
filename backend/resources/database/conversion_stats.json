@@ -1,0 +1,20 @@
+{
+  "malaysian": {
+    "json_files": 60,
+    "rows": 60,
+    "errors": 0
+  },
+  "anuvaad": {
+    "json_files": 1014,
+    "rows": 1014,
+    "errors": 0
+  },
+  "myfcd": {
+    "json_files": 233,
+    "basic_rows": 233,
+    "nutrient_rows": 5037,
+    "errors": 0
+  },
+  "duration_seconds": 0.387816,
+  "timestamp": "2025-10-13T19:01:23.866831"
+}

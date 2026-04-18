@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R113059",
+  "food_name": "TEA MIX, INSTANT",
+  "serving_unit": "1 SACHET",
+  "serving_size_grams": 14.5,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 73.566666666667,
+      "value_per_serving": 10.67,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 73.566666666667,
+      "value_per_serving": 10.67,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

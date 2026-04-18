@@ -1,0 +1,84 @@
+{
+  "ndb_id": "R114017",
+  "food_name": "CHOCOLATE, RAISIN (COKLAT BERKISMIS)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 2.81,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 538.9,
+      "value_per_serving": 15.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 7.78,
+      "value_per_serving": 0.22,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 32.633333333333,
+      "value_per_serving": 0.92,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 53.52,
+      "value_per_serving": 1.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 3.9166666666667,
+      "value_per_serving": 0.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 2.15,
+      "value_per_serving": 0.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 11.463333333333,
+      "value_per_serving": 0.32,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 7.15,
+      "value_per_serving": 0.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.15,
+      "value_per_serving": 0.03,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.95333333333333,
+      "value_per_serving": 0.03,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 1.2633333333333,
+      "value_per_serving": 0.04,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.94666666666667,
+      "value_per_serving": 0.03,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 12
+}

@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R214010",
+  "food_name": "TRADITIONAL MALAYSIAN KUIH, SESAME BALLS (KUIH BOM)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 33.48,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 335.34333333333,
+      "value_per_serving": 112.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 22.015333333333,
+      "value_per_serving": 7.37,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 6.5433333333333,
+      "value_per_serving": 2.19,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 11.59,
+      "value_per_serving": 3.88,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 51.213333333333,
+      "value_per_serving": 17.15,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 7.38,
+      "value_per_serving": 2.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.2566666666667,
+      "value_per_serving": 0.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 8.9266666666667,
+      "value_per_serving": 2.99,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 7.8966666666667,
+      "value_per_serving": 2.64,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.0333333333333,
+      "value_per_serving": 0.35,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

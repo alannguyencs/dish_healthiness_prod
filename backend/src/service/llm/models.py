@@ -4,7 +4,7 @@ Pydantic models for LLM analysis.
 This module defines the data structures used for dish analysis.
 """
 
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
@@ -36,7 +36,7 @@ class ComponentServingPrediction(BaseModel):
 
     Attributes:
         component_name (str): Name of the individual dish (e.g., "Beef Burger", "French Fries")
-        serving_sizes (List[str]): Top 3-5 serving size options for this dish
+        serving_sizes (List[str]): 3-5 serving size options for this dish (enforced)
         predicted_servings (float): Estimated number of servings for this dish
     """
 
@@ -45,12 +45,12 @@ class ComponentServingPrediction(BaseModel):
     )
     serving_sizes: List[str] = Field(
         ...,
-        min_length=1,
+        min_length=3,
         max_length=5,
         description="Top 3-5 serving size options for this individual dish",
     )
     predicted_servings: float = Field(
-        default=1.0, ge=0.01, le=10.0, description="Estimated number of servings for this dish"
+        default=1.0, ge=0.1, le=10.0, description="Estimated number of servings for this dish"
     )
 
 
@@ -101,6 +101,21 @@ class Step1ComponentIdentification(BaseModel):
 # ============================================================
 
 
+class Micronutrient(BaseModel):
+    """
+    A single micronutrient or vitamin with an optional mg quantity.
+
+    `amount_mg` is `None` when the LLM cannot estimate a quantity reliably;
+    the frontend then renders just the name. Legacy rows stored as plain
+    strings are still tolerated by the frontend (see Step2Results.jsx).
+    """
+
+    name: str = Field(..., description="Nutrient name, e.g. 'Vitamin C', 'Iron'")
+    amount_mg: Optional[float] = Field(
+        default=None, ge=0, description="Quantity in milligrams, if known"
+    )
+
+
 class Step2NutritionalAnalysis(BaseModel):
     """
     Step 2: Detailed nutritional analysis.
@@ -113,22 +128,24 @@ class Step2NutritionalAnalysis(BaseModel):
         dish_name (str): Confirmed dish name (from user selection/input)
         healthiness_score (int): Overall healthiness score (0-100)
         healthiness_score_rationale (str): Explanation for the healthiness score
-        calories_kcal (int): Total calories in kcal
-        fiber_g (int): Fiber content in grams
-        carbs_g (int): Carbohydrate content in grams
-        protein_g (int): Protein content in grams
-        fat_g (int): Fat content in grams
-        micronutrients (List[str]): Notable micronutrients and vitamins
+        calories_kcal (float): Total calories in kcal (decimals allowed)
+        fiber_g (float): Fiber content in grams (decimals allowed)
+        carbs_g (float): Carbohydrate content in grams (decimals allowed)
+        protein_g (float): Protein content in grams (decimals allowed)
+        fat_g (float): Fat content in grams (decimals allowed)
+        micronutrients (List[Micronutrient | str]): Notable micronutrients and vitamins.
+            New rows use the structured form; legacy rows may still be List[str].
     """
 
     dish_name: str = Field(..., description="Confirmed dish name")
     healthiness_score: int = Field(..., ge=0, le=100, description="Healthiness score 0-100")
     healthiness_score_rationale: str = Field(..., description="Rationale for healthiness score")
-    calories_kcal: int = Field(..., ge=0, description="Total calories in kcal")
-    fiber_g: int = Field(..., ge=0, description="Fiber in grams")
-    carbs_g: int = Field(..., ge=0, description="Carbohydrates in grams")
-    protein_g: int = Field(..., ge=0, description="Protein in grams")
-    fat_g: int = Field(..., ge=0, description="Fat in grams")
-    micronutrients: List[str] = Field(
-        default_factory=list, description="Notable micronutrients and vitamins"
+    calories_kcal: float = Field(..., ge=0, description="Total calories in kcal")
+    fiber_g: float = Field(..., ge=0, description="Fiber in grams")
+    carbs_g: float = Field(..., ge=0, description="Carbohydrates in grams")
+    protein_g: float = Field(..., ge=0, description="Protein in grams")
+    fat_g: float = Field(..., ge=0, description="Fat in grams")
+    micronutrients: List["Micronutrient"] = Field(
+        default_factory=list,
+        description="Notable micronutrients with optional mg quantities",
     )

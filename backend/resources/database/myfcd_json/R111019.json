@@ -1,0 +1,155 @@
+{
+  "ndb_id": "R111019",
+  "food_name": "CHEESE, RICOTTA (KEJU, RICOTTA)",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 19.29533333,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 123.38266666667,
+      "value_per_serving": 24.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 19.218160783333,
+      "value_per_serving": 4.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Cholesterol": {
+      "value_per_100g": 46.487987156667,
+      "value_per_serving": 9.0,
+      "unit": "mg",
+      "category": "Lipids"
+    },
+    "C 13:0": {
+      "value_per_100g": 0.014745,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 6:0": {
+      "value_per_100g": 0.057395,
+      "value_per_serving": 0.011,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 8:0": {
+      "value_per_100g": 0.07624,
+      "value_per_serving": 0.015,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 10:0": {
+      "value_per_100g": 0.114484,
+      "value_per_serving": 0.022,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 12:0": {
+      "value_per_100g": 0.253975,
+      "value_per_serving": 0.049,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:0": {
+      "value_per_100g": 0.803015,
+      "value_per_serving": 0.155,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 15:0": {
+      "value_per_100g": 0.084453,
+      "value_per_serving": 0.016,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:0": {
+      "value_per_100g": 0.033219,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:0": {
+      "value_per_100g": 0.01043,
+      "value_per_serving": 0.002,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 2.1717,
+      "value_per_serving": 0.419,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 21:0": {
+      "value_per_100g": 0.0267215,
+      "value_per_serving": 0.005,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 0.68213,
+      "value_per_serving": 0.132,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:1": {
+      "value_per_100g": 0.0121085,
+      "value_per_serving": 0.002,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 14:1": {
+      "value_per_100g": 0.06411,
+      "value_per_serving": 0.012,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 16:1": {
+      "value_per_100g": 0.120701,
+      "value_per_serving": 0.023,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:1, cis n-9": {
+      "value_per_100g": 1.26323,
+      "value_per_serving": 0.244,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:1, n-9": {
+      "value_per_100g": 0.0233715,
+      "value_per_serving": 0.005,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:2, cis, n-6": {
+      "value_per_100g": 0.120676,
+      "value_per_serving": 0.023,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:3, cis, n-3": {
+      "value_per_100g": 0.01547,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Lipids",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated",
+    "Fatty Acids, Poly Unsaturated"
+  ],
+  "total_nutrients": 23
+}

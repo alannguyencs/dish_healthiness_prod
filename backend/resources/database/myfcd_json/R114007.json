@@ -1,0 +1,111 @@
+{
+  "ndb_id": "R114007",
+  "food_name": "CHOCOLATE (COKLAT BERTIH)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 11.0,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 162.4,
+      "value_per_serving": 18.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 484.86333333333,
+      "value_per_serving": 53.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 30.07,
+      "value_per_serving": 3.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin K": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 35.192333333333,
+      "value_per_serving": 4.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Ergocalciferol (D2)": {
+      "value_per_100g": 0.020333333333333,
+      "value_per_serving": 0.002,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "C 8:0": {
+      "value_per_100g": 0.261878,
+      "value_per_serving": 0.029,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 10:0": {
+      "value_per_100g": 0.45464666666667,
+      "value_per_serving": 0.05,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 12:0": {
+      "value_per_100g": 7.0420666666667,
+      "value_per_serving": 0.775,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:0": {
+      "value_per_100g": 0.08359,
+      "value_per_serving": 0.009,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:0": {
+      "value_per_100g": 3.1044,
+      "value_per_serving": 0.341,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:0": {
+      "value_per_100g": 0.435145,
+      "value_per_serving": 0.048,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 4.81539,
+      "value_per_serving": 0.53,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 4.7028866666667,
+      "value_per_serving": 0.517,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:1": {
+      "value_per_100g": 0.15323,
+      "value_per_serving": 0.017,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:1, cis n-9": {
+      "value_per_100g": 3.5647,
+      "value_per_serving": 0.392,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated"
+  ],
+  "total_nutrients": 16
+}

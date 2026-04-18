@@ -1,0 +1,338 @@
+{
+  "conversion_summary": {
+    "total_files_created": 60,
+    "successful_conversions": 60,
+    "failed_conversions": 0,
+    "categories": [
+      "Bread, Crackers, and Cakes",
+      "Noodles",
+      "Spreads",
+      "Fruits",
+      "Miscellaneous",
+      "Traditional Malaysian Kuih"
+    ],
+    "category_breakdown": {
+      "Bread, Crackers, and Cakes": 14,
+      "Noodles": 13,
+      "Spreads": 4,
+      "Fruits": 9,
+      "Miscellaneous": 4,
+      "Traditional Malaysian Kuih": 16
+    }
+  },
+  "files_by_category": {
+    "Bread, Crackers, and Cakes": [
+      {
+        "file": "chicken_curry_bun.json",
+        "food_item": "Chicken Curry Bun",
+        "calories": 204.0
+      },
+      {
+        "file": "sandwiches_sardine.json",
+        "food_item": "Sandwiches, Sardine",
+        "calories": 71.0
+      },
+      {
+        "file": "kayacoconut_bun.json",
+        "food_item": "Kaya/Coconut Bun",
+        "calories": 219.0
+      },
+      {
+        "file": "red_bean_bun.json",
+        "food_item": "Red Bean Bun",
+        "calories": 223.0
+      },
+      {
+        "file": "papadam.json",
+        "food_item": "Papadam",
+        "calories": 26.0
+      },
+      {
+        "file": "murtabak_mutton.json",
+        "food_item": "Murtabak, Mutton",
+        "calories": 722.0
+      },
+      {
+        "file": "chocolate_chip_cookies.json",
+        "food_item": "Chocolate Chip Cookies",
+        "calories": 200.0
+      },
+      {
+        "file": "cheesecake.json",
+        "food_item": "Cheesecake",
+        "calories": 400.0
+      },
+      {
+        "file": "plain_roti_canai_dhal.json",
+        "food_item": "Plain Roti Canai & Dhal",
+        "calories": 359.0
+      },
+      {
+        "file": "roti_telur_dhal.json",
+        "food_item": "Roti Telur & Dhal",
+        "calories": 414.0
+      },
+      {
+        "file": "capati_green_gravy.json",
+        "food_item": "Capati & Green Gravy",
+        "calories": 166.0
+      },
+      {
+        "file": "chee_cheong_fun.json",
+        "food_item": "Chee Cheong Fun",
+        "calories": 236.0
+      },
+      {
+        "file": "plain_bread.json",
+        "food_item": "Plain Bread",
+        "calories": 75.0
+      },
+      {
+        "file": "curry_puff.json",
+        "food_item": "Curry Puff",
+        "calories": 256.0
+      }
+    ],
+    "Noodles": [
+      {
+        "file": "mamak_mee_goreng.json",
+        "food_item": "Mamak Mee Goreng",
+        "calories": 660.0
+      },
+      {
+        "file": "prawn_mee_soup.json",
+        "food_item": "Prawn Mee Soup",
+        "calories": 293.0
+      },
+      {
+        "file": "lor_mee.json",
+        "food_item": "Lor Mee",
+        "calories": 383.0
+      },
+      {
+        "file": "mee_rebus.json",
+        "food_item": "Mee Rebus",
+        "calories": 556.0
+      },
+      {
+        "file": "mee_hailam.json",
+        "food_item": "Mee Hailam",
+        "calories": 277.0
+      },
+      {
+        "file": "wanton_mee_soup.json",
+        "food_item": "Wanton Mee Soup",
+        "calories": 217.0
+      },
+      {
+        "file": "wanton_mee_dry.json",
+        "food_item": "Wanton Mee Dry",
+        "calories": 409.0
+      },
+      {
+        "file": "fried_kuay_teow_cockles.json",
+        "food_item": "Fried Kuay Teow + Cockles",
+        "calories": 743.0
+      },
+      {
+        "file": "fried_noodlemeehoon.json",
+        "food_item": "Fried Noodle/Meehoon",
+        "calories": 510.0
+      },
+      {
+        "file": "curry_laksa.json",
+        "food_item": "Curry Laksa",
+        "calories": 589.0
+      },
+      {
+        "file": "nasi_lemak_gravy_added.json",
+        "food_item": "Nasi Lemak (gravy added)",
+        "calories": 644.0
+      },
+      {
+        "file": "penang_laksa.json",
+        "food_item": "Penang Laksa",
+        "calories": 436.0
+      },
+      {
+        "file": "noodle_soup.json",
+        "food_item": "Noodle Soup",
+        "calories": 381.0
+      }
+    ],
+    "Spreads": [
+      {
+        "file": "buttermargarinemayonnaise.json",
+        "food_item": "Butter/Margarine/Mayonnaise",
+        "calories": 45.0
+      },
+      {
+        "file": "peanut_butter.json",
+        "food_item": "Peanut Butter",
+        "calories": 33.0
+      },
+      {
+        "file": "kaya.json",
+        "food_item": "Kaya",
+        "calories": 39.0
+      },
+      {
+        "file": "fruit_jam.json",
+        "food_item": "Fruit Jam",
+        "calories": 20.0
+      }
+    ],
+    "Fruits": [
+      {
+        "file": "grape.json",
+        "food_item": "Grape",
+        "calories": 60.0
+      },
+      {
+        "file": "langsat.json",
+        "food_item": "Langsat",
+        "calories": 31.0
+      },
+      {
+        "file": "guava.json",
+        "food_item": "Guava",
+        "calories": 60.0
+      },
+      {
+        "file": "mango.json",
+        "food_item": "Mango",
+        "calories": 67.0
+      },
+      {
+        "file": "durian.json",
+        "food_item": "Durian",
+        "calories": 60.0
+      },
+      {
+        "file": "banana.json",
+        "food_item": "Banana",
+        "calories": 60.0
+      },
+      {
+        "file": "apple_red.json",
+        "food_item": "Apple, Red",
+        "calories": 63.0
+      },
+      {
+        "file": "watermelon.json",
+        "food_item": "Watermelon",
+        "calories": 60.0
+      },
+      {
+        "file": "papaya.json",
+        "food_item": "Papaya",
+        "calories": 56.0
+      }
+    ],
+    "Miscellaneous": [
+      {
+        "file": "oatmeal_plain.json",
+        "food_item": "Oatmeal, Plain",
+        "calories": 225.0
+      },
+      {
+        "file": "oatmeal_with_fat_milk.json",
+        "food_item": "Oatmeal, with Fat Milk",
+        "calories": 356.0
+      },
+      {
+        "file": "siew_mai.json",
+        "food_item": "Siew Mai",
+        "calories": 105.0
+      },
+      {
+        "file": "hard_boiled_egg.json",
+        "food_item": "Hard Boiled Egg",
+        "calories": 76.0
+      }
+    ],
+    "Traditional Malaysian Kuih": [
+      {
+        "file": "cucur_udang.json",
+        "food_item": "Cucur Udang",
+        "calories": 144.0
+      },
+      {
+        "file": "vadai.json",
+        "food_item": "Vadai",
+        "calories": 194.0
+      },
+      {
+        "file": "yau_char_kueh.json",
+        "food_item": "Yau Char Kueh",
+        "calories": 292.0
+      },
+      {
+        "file": "doughnut.json",
+        "food_item": "Doughnut",
+        "calories": 268.0
+      },
+      {
+        "file": "pisang_goreng.json",
+        "food_item": "Pisang Goreng",
+        "calories": 129.0
+      },
+      {
+        "file": "ham_chi_peng.json",
+        "food_item": "Ham Chi Peng",
+        "calories": 233.0
+      },
+      {
+        "file": "kuih_apam_balik.json",
+        "food_item": "Kuih Apam Balik",
+        "calories": 282.0
+      },
+      {
+        "file": "cake_plain.json",
+        "food_item": "Cake, Plain",
+        "calories": 100.0
+      },
+      {
+        "file": "dumpling_chicken.json",
+        "food_item": "Dumpling, Chicken",
+        "calories": 203.0
+      },
+      {
+        "file": "kuih_koci_pulut_putih.json",
+        "food_item": "Kuih Koci, Pulut Putih",
+        "calories": 183.0
+      },
+      {
+        "file": "kuih_talam_seri_kaya.json",
+        "food_item": "Kuih Talam Seri Kaya",
+        "calories": 183.0
+      },
+      {
+        "file": "ang_koo_kuih_mungbean.json",
+        "food_item": "Ang Koo Kuih, Mungbean",
+        "calories": 111.0
+      },
+      {
+        "file": "ang_koo_kuih_peanut.json",
+        "food_item": "Ang Koo Kuih, Peanut",
+        "calories": 194.0
+      },
+      {
+        "file": "yam_cake.json",
+        "food_item": "Yam Cake",
+        "calories": 174.0
+      },
+      {
+        "file": "fried_spring_roll.json",
+        "food_item": "Fried Spring Roll",
+        "calories": 91.0
+      },
+      {
+        "file": "chinese_glutinous_rice_lor_mai_kai.json",
+        "food_item": "Chinese Glutinous Rice (Lor Mai Kai)",
+        "calories": 422.0
+      }
+    ]
+  },
+  "source": "Malaysian Food Calories - health.family.my"
+}

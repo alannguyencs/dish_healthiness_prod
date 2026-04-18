@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R214002",
+  "food_name": "TRADITIONAL MALAYSIAN KUIH, GLUTINOUS RICE BALLS IN COCONUT MILK (BADAK BERENDAM)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 38.72,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 6.55,
+      "value_per_serving": 2.54,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 6.55,
+      "value_per_serving": 2.54,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

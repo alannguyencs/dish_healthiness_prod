@@ -1,0 +1,105 @@
+{
+  "ndb_id": "R114013",
+  "food_name": "CHOCOLATE, CASHEW NUT (COKLAT KACANG GAJUS)",
+  "serving_unit": "1 small bar",
+  "serving_size_grams": 4.17,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 250.08333333333,
+      "value_per_serving": 10.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 21.91,
+      "value_per_serving": 1.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin K": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 32.456,
+      "value_per_serving": 1.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Ergocalciferol (D2)": {
+      "value_per_100g": 0.035666666666667,
+      "value_per_serving": 0.001,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "C 8:0": {
+      "value_per_100g": 0.050133666666667,
+      "value_per_serving": 0.002,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 10:0": {
+      "value_per_100g": 0.12266666666667,
+      "value_per_serving": 0.005,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 12:0": {
+      "value_per_100g": 0.31473333333333,
+      "value_per_serving": 0.013,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:0": {
+      "value_per_100g": 0.54058333333333,
+      "value_per_serving": 0.023,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 8.3690033333333,
+      "value_per_serving": 0.349,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:0": {
+      "value_per_100g": 1.6254566666667,
+      "value_per_serving": 0.068,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 9.60959,
+      "value_per_serving": 0.401,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:1": {
+      "value_per_100g": 0.13643133333333,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:1, cis n-9": {
+      "value_per_100g": 11.319043333333,
+      "value_per_serving": 0.472,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:1, n-9": {
+      "value_per_100g": 0.19995,
+      "value_per_serving": 0.008,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated"
+  ],
+  "total_nutrients": 15
+}

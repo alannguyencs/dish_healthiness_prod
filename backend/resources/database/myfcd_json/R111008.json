@@ -1,0 +1,37 @@
+{
+  "ndb_id": "R111008",
+  "food_name": "CHEESE, CAMEMBERT (KEJU, CAMEMBERT)",
+  "serving_unit": "1 cube",
+  "serving_size_grams": 18.429,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 341.53016666667,
+      "value_per_serving": 63.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 245.438,
+      "value_per_serving": 45.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 9.6827210103333,
+      "value_per_serving": 2.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins"
+  ],
+  "total_nutrients": 4
+}

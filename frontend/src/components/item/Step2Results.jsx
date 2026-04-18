@@ -1,5 +1,7 @@
 import React from "react";
 
+import { resolveHealthinessTier } from "../../utils/healthiness";
+
 /**
  * Step2Results Component
  *
@@ -26,22 +28,7 @@ const Step2Results = ({ step2Data }) => {
     micronutrients = [],
   } = step2Data;
 
-  // Color coding for healthiness score
-  const getScoreColor = (score) => {
-    if (score >= 81) return "text-green-600 bg-green-100";
-    if (score >= 61) return "text-green-500 bg-green-50";
-    if (score >= 41) return "text-yellow-600 bg-yellow-100";
-    if (score >= 21) return "text-orange-600 bg-orange-100";
-    return "text-red-600 bg-red-100";
-  };
-
-  const getScoreLabel = (score) => {
-    if (score >= 81) return "Very Healthy";
-    if (score >= 61) return "Healthy";
-    if (score >= 41) return "Moderate";
-    if (score >= 21) return "Unhealthy";
-    return "Very Unhealthy";
-  };
+  const tier = resolveHealthinessTier(healthiness_score);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
@@ -57,9 +44,9 @@ const Step2Results = ({ step2Data }) => {
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-semibold text-gray-800">Healthiness</h3>
           <div
-            className={`px-3 py-1.5 rounded-lg text-base font-semibold ${getScoreColor(healthiness_score)}`}
+            className={`px-3 py-1.5 rounded-lg text-base font-semibold ${tier.color}`}
           >
-            {getScoreLabel(healthiness_score)}
+            {tier.label}
           </div>
         </div>
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
@@ -126,14 +113,22 @@ const Step2Results = ({ step2Data }) => {
               <span className="text-gray-700">Micronutrients</span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {micronutrients.map((nutrient, idx) => (
-                <span
-                  key={idx}
-                  className="px-2 py-1 bg-purple-50 border border-purple-200 text-purple-700 rounded text-xs font-medium"
-                >
-                  {nutrient}
-                </span>
-              ))}
+              {micronutrients.map((nutrient, idx) => {
+                // New rows: { name, amount_mg }. Legacy rows: bare string.
+                const name =
+                  typeof nutrient === "string" ? nutrient : nutrient?.name;
+                const amount_mg =
+                  typeof nutrient === "string" ? null : nutrient?.amount_mg;
+                if (!name) return null;
+                return (
+                  <span
+                    key={idx}
+                    className="px-2 py-1 bg-purple-50 border border-purple-200 text-purple-700 rounded text-xs font-medium"
+                  >
+                    {amount_mg != null ? `${name} (${amount_mg}mg)` : name}
+                  </span>
+                );
+              })}
             </div>
           </div>
         </div>

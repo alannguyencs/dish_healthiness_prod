@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R212088",
+  "food_name": "PASTRY, DANISH",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 77.26,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 5.89,
+      "value_per_serving": 4.55,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 2.61,
+      "value_per_serving": 2.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.68,
+      "value_per_serving": 1.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.6,
+      "value_per_serving": 1.24,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R211005",
+  "food_name": "TRADITIONAL MALAYSIAN KUIH, STEAMED GLUTINOUS RICE BALLS COATED WITH SESAME/PEANUT SUGAR CRUMBS (MOCHI@CHEE-PAH)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 13.32,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 392.49,
+      "value_per_serving": 52.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 17.226,
+      "value_per_serving": 2.29,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 8.74,
+      "value_per_serving": 1.16,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 15.58,
+      "value_per_serving": 2.08,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 68.926666666667,
+      "value_per_serving": 9.18,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 4.255,
+      "value_per_serving": 0.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.81,
+      "value_per_serving": 0.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 4.75,
+      "value_per_serving": 0.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 4.75,
+      "value_per_serving": 0.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

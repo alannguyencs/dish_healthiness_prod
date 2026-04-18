@@ -1,0 +1,176 @@
+{
+  "ndb_id": "R111005",
+  "food_name": "CHEESE, BLUE (KEJU, BIRU)",
+  "serving_unit": "1 cubic inch",
+  "serving_size_grams": 27.251333,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 372.0,
+      "value_per_serving": 101.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 41.753333333333,
+      "value_per_serving": 11.38,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 18.063333333333,
+      "value_per_serving": 4.92,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 27.856666666667,
+      "value_per_serving": 7.59,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 20.95,
+      "value_per_serving": 5.71,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 4.1666666666667,
+      "value_per_serving": 1.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.8,
+      "value_per_serving": 0.49,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.26666666666667,
+      "value_per_serving": 0.07,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Calcium": {
+      "value_per_100g": 450.0,
+      "value_per_serving": 123.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iron, Fe": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Magnesium, Mg": {
+      "value_per_100g": 17.333333333333,
+      "value_per_serving": 5.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 388.8096259,
+      "value_per_serving": 106.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Sodium, Na": {
+      "value_per_100g": 1013.0,
+      "value_per_serving": 276.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Zinc, Zn": {
+      "value_per_100g": 2.2233333333333,
+      "value_per_serving": 0.61,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Copper, Cu": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin C": {
+      "value_per_100g": 0.0013333333333333,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Thiamin (B1)": {
+      "value_per_100g": 0.043333333333333,
+      "value_per_serving": 0.01,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Riboflavin (B2)": {
+      "value_per_100g": 0.30333333333333,
+      "value_per_serving": 0.08,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Niacin (B3)": {
+      "value_per_100g": 18.66,
+      "value_per_serving": 5.1,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Folic Acid (B9)": {
+      "value_per_100g": 137.0,
+      "value_per_serving": 37.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Alpha-tocopherol (Vitamin E)": {
+      "value_per_100g": 2.4666666666667,
+      "value_per_serving": 0.67,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Vitamin B6": {
+      "value_per_100g": 0.38333333333333,
+      "value_per_serving": 0.104,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Vitamins"
+  ],
+  "total_nutrients": 27
+}

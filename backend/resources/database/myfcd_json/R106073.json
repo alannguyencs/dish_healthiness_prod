@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R106073",
+  "food_name": "LYCHEE IN TIN",
+  "serving_unit": "1 BOWL",
+  "serving_size_grams": 337.1,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 2.8933333333333,
+      "value_per_serving": 9.75,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.12,
+      "value_per_serving": 0.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.4033333333333,
+      "value_per_serving": 4.73,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.3733333333333,
+      "value_per_serving": 4.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

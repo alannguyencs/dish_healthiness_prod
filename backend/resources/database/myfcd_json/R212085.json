@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R212085",
+  "food_name": "CAKE, CHOCOLATE (KEK COKLAT)",
+  "serving_unit": "1 slice",
+  "serving_size_grams": 74.74,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 9.2133333333333,
+      "value_per_serving": 6.89,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 8.4266666666667,
+      "value_per_serving": 6.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.41333333333333,
+      "value_per_serving": 0.31,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.37333333333333,
+      "value_per_serving": 0.28,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

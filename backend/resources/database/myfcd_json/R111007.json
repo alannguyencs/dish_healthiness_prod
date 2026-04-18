@@ -1,0 +1,31 @@
+{
+  "ndb_id": "R111007",
+  "food_name": "Unknown Food",
+  "serving_unit": "1 cube",
+  "serving_size_grams": 21.2015,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 285.06464553333,
+      "value_per_serving": 60.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 13.46525807,
+      "value_per_serving": 3.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins"
+  ],
+  "total_nutrients": 3
+}

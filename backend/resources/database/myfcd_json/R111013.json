@@ -1,0 +1,38 @@
+{
+  "ndb_id": "R111013",
+  "food_name": "CHEESE, COLBY (KEJU, COLBY)",
+  "serving_unit": "1 cube",
+  "serving_size_grams": 23.197,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 460.734,
+      "value_per_serving": 107.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 40.85,
+      "value_per_serving": 9.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Cholesterol": {
+      "value_per_100g": 59.99762668,
+      "value_per_serving": 14.0,
+      "unit": "mg",
+      "category": "Lipids"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Lipids"
+  ],
+  "total_nutrients": 4
+}

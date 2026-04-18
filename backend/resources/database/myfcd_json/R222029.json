@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R222029",
+  "food_name": "CHICKEN SATAY (SATAY AYAM)",
+  "serving_unit": "1 stick",
+  "serving_size_grams": 16.99,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 187.21666666667,
+      "value_per_serving": 32.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 32.876,
+      "value_per_serving": 5.59,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 28.323333333333,
+      "value_per_serving": 4.81,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 11.773333333333,
+      "value_per_serving": 2.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 5.28,
+      "value_per_serving": 0.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 34.033333333333,
+      "value_per_serving": 5.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.0033333333333,
+      "value_per_serving": 0.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 15.33,
+      "value_per_serving": 2.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 11.733333333333,
+      "value_per_serving": 1.99,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 2.5266666666667,
+      "value_per_serving": 0.43,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.84333333333333,
+      "value_per_serving": 0.14,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.22333333333333,
+      "value_per_serving": 0.04,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

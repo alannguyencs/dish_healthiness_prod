@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R214032",
+  "food_name": "TRADITIONAL MALAYSIAN KUIH, SWEET FERMENTED GLUTINOUS RICE (TAPAI PULUT)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 26.76,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 2.5466666666667,
+      "value_per_serving": 0.68,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.2,
+      "value_per_serving": 0.05,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 2.1533333333333,
+      "value_per_serving": 0.58,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.10666666666667,
+      "value_per_serving": 0.03,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.086666666666667,
+      "value_per_serving": 0.02,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

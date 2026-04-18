@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R212056",
+  "food_name": "TRADITIONAL MALAYSIAN KUIH, CINNAMON ROLLS  (KUIH CEMPIANG)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 72.31,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 5.05,
+      "value_per_serving": 3.65,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 2.4733333333333,
+      "value_per_serving": 1.79,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.90666666666667,
+      "value_per_serving": 0.66,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.19,
+      "value_per_serving": 0.86,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.13333333333333,
+      "value_per_serving": 0.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.35333333333333,
+      "value_per_serving": 0.26,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

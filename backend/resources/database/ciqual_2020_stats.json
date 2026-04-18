@@ -1,0 +1,10 @@
+{
+  "source": "CIQUAL 2020 - French Food Composition Database",
+  "total_foods": 3186,
+  "total_columns": 78,
+  "metadata_columns": 11,
+  "nutrient_columns": 67,
+  "food_groups": 11,
+  "has_english_name": 3186,
+  "has_scientific_name": 270
+}
