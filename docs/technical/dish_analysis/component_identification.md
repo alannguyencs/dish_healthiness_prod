@@ -93,6 +93,38 @@ Failure-mode table:
 
 **Thresholds and scoring.** `similarity_score` is the per-user BM25 top-1 normalized by max-in-batch (see [Personalized Food Index — Algorithms](./personalized_food_index.md#algorithms)); the top hit is always `1.0`. `THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25` mainly rejects corpora with zero lexical overlap — the prompt framing in Phase 1.1.2 is the real quality control. Re-tune after real retrieval-quality data lands.
 
+### Phase 1.1.2 — Reference-Assisted Component ID
+
+Consumes the `result_gemini.reference_image` key Phase 1.1.1 just persisted (or, on retry, the one the prior attempt persisted). When a full reference is available, the Gemini 2.5 Pro call runs with **two image parts** (query image at index 1, reference image at index 2) and the prompt substitutes a `__REFERENCE_BLOCK__` placeholder with a rendered "Reference results (HINT ONLY)" block. When any degrade condition applies, the Pro call falls back to today's single-image path with the placeholder stripped.
+
+Decision matrix:
+
+| Path                                              | `reference_image` persisted | File on disk | `prior_step1_data` | Image parts | Prompt block |
+|---------------------------------------------------|----------|----------|----------|----|----|
+| Cold-start / below-threshold / caption failed     | `null`   | —        | —        | 1  | stripped |
+| Warm-start, full reference                        | populated | present  | present  | **2** | **substituted** |
+| Warm-start, `prior_step1_data` null (Option B)    | populated | present  | `null`   | 1  | stripped |
+| Warm-start, image file missing                    | populated | missing  | any      | 1  | stripped + WARN log |
+| Retry-step1 after Phase 1.1.2 failure             | preserved from prior attempt | present | present | 2  | substituted |
+
+All branching lives in `_resolve_reference_inputs(reference) -> (Optional[bytes], Optional[Dict])` inside `backend/src/api/item_step1_tasks.py`. Call site re-reads `DishImageQuery.result_gemini.reference_image` before the Pro call so both the first-attempt and retry-short-circuit paths share a single resolution point.
+
+Rendered reference block (from `_render_reference_block(prior_step1_data)` in `prompts.py`):
+
+```
+## Reference results (HINT ONLY — may or may not match)
+
+The user has uploaded a similar dish before. The **image attached after the query image is the prior dish**, and the analysis below is what we produced for it last time. Use this ONLY as a hint — the two dishes may differ in cuisine, preparation, or portion. If the query image disagrees, trust the query image.
+
+**Prior dish name:** {top dish_predictions[0].name}
+
+**Prior components (name · serving sizes · predicted servings):**
+- {c.component_name} · {serving_sizes comma-joined} · {c.predicted_servings}
+- …
+```
+
+Only non-empty sections render — missing `dish_predictions` drops the dish-name line, missing `components` drops the list. Empty `prior_step1_data` is treated as "strip the placeholder" at the builder level.
+
 ```
 +---------------------+     +-----------------------+     +------------------+
 |   React SPA         |     |   FastAPI backend     |     |   Google Gemini  |
@@ -316,6 +348,13 @@ Phase 1 has **no dedicated HTTP endpoint** — it runs inside the `/api/date/{Y}
   - `generate_fast_caption_async(image_path) -> str` — Gemini 2.0 Flash plain-text wrapper. Temperature 0, no structured schema, no thinking budget. Raises `ValueError` on API failure or empty text; propagates `FileNotFoundError`.
 - `service/personalized_reference.py`
   - `resolve_reference_for_upload(user_id, query_id, image_path) -> Optional[Dict]` — Phase 1.1.1 orchestrator. Composes `fast_caption + tokenize + search_for_user + insert_description_row` with graceful-degrade on caption failure and retry-idempotency short-circuit when a row already exists for this `query_id`.
+- `service/llm/prompts.py`
+  - `get_step1_component_identification_prompt(reference=None) -> str` — loads `step1_component_identification.md` and either substitutes the `__REFERENCE_BLOCK__` placeholder with a rendered block (when `reference['prior_step1_data']` is non-empty) or strips the placeholder line entirely.
+  - `_render_reference_block(prior_step1_data) -> str` — module-private renderer; only emits sections for populated fields.
+- `service/llm/gemini_analyzer.py`
+  - `analyze_step1_component_identification_async(..., reference_image_bytes=None)` — builds a two-image Gemini request when reference bytes are provided; identical to today when `None`.
+- `api/item_step1_tasks.py`
+  - `_resolve_reference_inputs(reference) -> (Optional[bytes], Optional[Dict])` — reads the reference image off disk (`IMAGE_DIR` + basename), enforces the four degrade paths in the Phase 1.1.2 decision matrix, logs WARN on missing file.
 - `configs.py`
   - `THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25` — per-user BM25 top-1 floor. Rejects zero-overlap cases; the top hit is always 1.0 under max-in-batch normalization.
 - `api/_phase_errors.py` — shared with Phase 2:
@@ -429,7 +468,11 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 - [x] `analyze_image_background()` extended — Phase 1.1.1 call + `reference_image` persistence before the Pro call
 - [x] `THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25` config constant (`backend/src/configs.py`)
 - [x] `crud_personalized_food.get_row_by_query_id()` — retry-idempotency probe
-- [ ] Stage 3 (Phase 1.1.2): `reference_image` + `prior_step1_data` injected into the Step 1 Pro call
+- [x] Stage 3 (Phase 1.1.2): `reference_image` + `prior_step1_data` injected into the Step 1 Pro call
+- [x] `get_step1_component_identification_prompt(reference=None)` — `__REFERENCE_BLOCK__` substitute / strip
+- [x] `analyze_step1_component_identification_async(reference_image_bytes=None)` — optional second image part
+- [x] `_resolve_reference_inputs()` — four-path degrade arbiter (`item_step1_tasks.py`)
+- [x] `step1_component_identification.md` — `__REFERENCE_BLOCK__` placeholder line
 - [x] `analyze_image_background(query_id, file_path, retry_count=0)` — background task entry (lives in `item_step1_tasks.py`)
 - [x] `_phase_errors.py` — `classify_phase_error`, `persist_phase_error`, `ERROR_USER_MESSAGE` (shared with Phase 2)
 - [x] `POST /api/item/{record_id}/retry-step1` — `item_retry.py#retry_step1_analysis`

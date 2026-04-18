@@ -9,7 +9,7 @@ import json
 import os
 import time
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from google import genai  # pylint: disable=no-name-in-module
 from google.genai import types  # pylint: disable=import-error,no-name-in-module
@@ -55,11 +55,13 @@ def enrich_result_with_metadata(
 # ============================================================
 
 
+# pylint: disable=too-many-arguments
 async def analyze_step1_component_identification_async(  # pylint: disable=too-many-locals
     image_path: Path,
     analysis_prompt: str,
     gemini_model: str = "gemini-2.5-pro",
     thinking_budget: int = -1,
+    reference_image_bytes: Optional[bytes] = None,
 ) -> Dict[str, Any]:
     """
     Async: Step 1 - Identify components and predict serving sizes using Gemini.
@@ -74,6 +76,9 @@ async def analyze_step1_component_identification_async(  # pylint: disable=too-m
         analysis_prompt: Step 1 component identification prompt text
         gemini_model: Gemini model to use
         thinking_budget: Thinking budget for Gemini
+        reference_image_bytes: Optional JPEG bytes for a second image to
+            attach after the query image (Phase 1.1.2 reference-assisted
+            path, Stage 3). When None, the request is single-image.
 
     Returns:
         Dict[str, Any]: Step 1 results with metadata
@@ -97,9 +102,21 @@ async def analyze_step1_component_identification_async(  # pylint: disable=too-m
         # Create image part
         image_part = types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
 
+        # Optional reference image (Phase 1.1.2 two-image request). Order
+        # matters: the query image must land at index 1 so the prompt's
+        # "image attached after the query image is the prior dish" framing
+        # is accurate.
+        contents = [analysis_prompt, image_part]
+        if reference_image_bytes is not None:
+            reference_part = types.Part.from_bytes(
+                data=reference_image_bytes, mime_type="image/jpeg"
+            )
+            contents.append(reference_part)
+
         # Log model being used
         print(
-            f"[Gemini Step 1] Using model: {gemini_model} with thinking_budget: {thinking_budget}"
+            f"[Gemini Step 1] Using model: {gemini_model} with "
+            f"thinking_budget: {thinking_budget} image_parts: {len(contents) - 1}"
         )
 
         # Run in executor (Gemini SDK isn't truly async)
@@ -108,7 +125,7 @@ async def analyze_step1_component_identification_async(  # pylint: disable=too-m
         def _sync_gemini_call():
             return client.models.generate_content(
                 model=gemini_model,
-                contents=[analysis_prompt, image_part],
+                contents=contents,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
                     response_schema=Step1ComponentIdentification,

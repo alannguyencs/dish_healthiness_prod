@@ -202,6 +202,8 @@ For each individual dish, estimate how many servings of that dish are visible in
 4. **Be component-specific**: Each component gets its own serving size options and predicted servings estimate. Don't average across the dish.
 
 5. **Consider visual cues**: Look at food density, volume, thickness, and coverage area on the plate.
+
+__REFERENCE_BLOCK__
     ]]></content>
   </section>
 

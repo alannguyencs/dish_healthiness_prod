@@ -21,7 +21,7 @@ def patch_prompt(monkeypatch):
     monkeypatch.setattr(
         item_step1_tasks,
         "get_step1_component_identification_prompt",
-        lambda: "STEP1 SYSTEM PROMPT",
+        lambda *, reference=None: "STEP1 SYSTEM PROMPT",
     )
 
 
@@ -310,6 +310,278 @@ def test_analyze_image_background_retry_short_circuit_preserves_reference(
     final = writes[0]["result_gemini"]
     assert final["reference_image"] == prior_reference
     assert final["step1_data"]["dish_predictions"][0]["name"] == "Burger"
+
+
+def test_analyze_image_background_passes_single_image_on_cold_start(
+    monkeypatch, patch_prompt, patch_phase_1_1_1_noop, captured_writes, tmp_path
+):
+    """Cold start: analyzer called with bytes=None, prompt with reference=None."""
+    # Patch the prompt fixture so we can inspect the `reference=` kwarg.
+    captured_prompt = {}
+
+    def _capture_prompt(*, reference=None):
+        captured_prompt["reference"] = reference
+        return "STEP1 SYSTEM PROMPT"
+
+    monkeypatch.setattr(
+        item_step1_tasks, "get_step1_component_identification_prompt", _capture_prompt
+    )
+
+    record = make_record(result_gemini=None)
+    writes, capture = captured_writes
+    monkeypatch.setattr(item_step1_tasks, "update_dish_image_query_results", capture)
+
+    def _get_record(_id):
+        if writes:
+            record.result_gemini = writes[-1]["result_gemini"]
+        return record
+
+    monkeypatch.setattr(item_step1_tasks, "get_dish_image_query_by_id", _get_record)
+
+    captured_analyzer = {}
+
+    async def _capture_analyzer(**kwargs):
+        captured_analyzer.update(kwargs)
+        return {
+            "dish_predictions": [{"name": "X", "confidence": 0.9}],
+            "components": [{"component_name": "X"}],
+        }
+
+    monkeypatch.setattr(
+        item_step1_tasks, "analyze_step1_component_identification_async", _capture_analyzer
+    )
+
+    asyncio.run(
+        item_step1_tasks.analyze_image_background(
+            query_id=7, file_path=str(tmp_path / "q.jpg"), retry_count=0
+        )
+    )
+
+    assert captured_analyzer["reference_image_bytes"] is None
+    assert captured_prompt["reference"] is None
+
+
+def test_analyze_image_background_passes_two_images_on_full_warm_start(
+    monkeypatch, patch_prompt, captured_writes, tmp_path
+):
+    """Warm start with full reference → analyzer gets bytes, prompt gets reference."""
+    ref_image_bytes = b"reference-jpeg-bytes"
+    ref_filename = "q_prior.jpg"
+    (tmp_path / ref_filename).write_bytes(ref_image_bytes)
+    # Point the task's IMAGE_DIR constant at the tmp_path so disk resolution works.
+    monkeypatch.setattr(item_step1_tasks, "IMAGE_DIR", tmp_path)
+
+    prior_step1 = {
+        "dish_predictions": [{"name": "Chicken Rice", "confidence": 0.9}],
+        "components": [{"component_name": "Grilled Chicken", "serving_sizes": ["3 oz"]}],
+    }
+    persisted_reference = {
+        "query_id": 99,
+        "image_url": f"/images/{ref_filename}",
+        "description": "chicken rice",
+        "similarity_score": 0.87,
+        "prior_step1_data": prior_step1,
+    }
+
+    record = make_record(result_gemini={"reference_image": persisted_reference})
+    writes, capture = captured_writes
+    monkeypatch.setattr(item_step1_tasks, "update_dish_image_query_results", capture)
+
+    def _get_record(_id):
+        if writes:
+            record.result_gemini = writes[-1]["result_gemini"]
+        return record
+
+    monkeypatch.setattr(item_step1_tasks, "get_dish_image_query_by_id", _get_record)
+
+    # Retry short-circuit (row exists) so Phase 1.1.1 doesn't run and
+    # reference_image on the record stays as seeded.
+    monkeypatch.setattr(
+        item_step1_tasks.crud_personalized_food,
+        "get_row_by_query_id",
+        lambda _qid: object(),
+    )
+
+    async def must_not_call(**_kw):
+        raise AssertionError("orchestrator should not run on short-circuit")
+
+    monkeypatch.setattr(item_step1_tasks, "resolve_reference_for_upload", must_not_call)
+
+    captured_prompt = {}
+
+    def _capture_prompt(*, reference=None):
+        captured_prompt["reference"] = reference
+        return "STEP1 SYSTEM PROMPT"
+
+    monkeypatch.setattr(
+        item_step1_tasks, "get_step1_component_identification_prompt", _capture_prompt
+    )
+
+    captured_analyzer = {}
+
+    async def _capture_analyzer(**kwargs):
+        captured_analyzer.update(kwargs)
+        return {
+            "dish_predictions": [{"name": "X", "confidence": 0.9}],
+            "components": [{"component_name": "X"}],
+        }
+
+    monkeypatch.setattr(
+        item_step1_tasks, "analyze_step1_component_identification_async", _capture_analyzer
+    )
+
+    asyncio.run(
+        item_step1_tasks.analyze_image_background(
+            query_id=7, file_path=str(tmp_path / "q.jpg"), retry_count=0
+        )
+    )
+
+    assert captured_analyzer["reference_image_bytes"] == ref_image_bytes
+    assert captured_prompt["reference"] is not None
+    assert captured_prompt["reference"]["prior_step1_data"] == prior_step1
+
+
+def test_analyze_image_background_degrades_when_prior_step1_data_is_null(
+    monkeypatch, patch_prompt, captured_writes, tmp_path
+):
+    """Reference+file present but prior_step1_data null → single-image (Option B)."""
+    ref_filename = "q_prior.jpg"
+    (tmp_path / ref_filename).write_bytes(b"reference-jpeg-bytes")
+    monkeypatch.setattr(item_step1_tasks, "IMAGE_DIR", tmp_path)
+
+    persisted_reference = {
+        "query_id": 99,
+        "image_url": f"/images/{ref_filename}",
+        "description": "chicken rice",
+        "similarity_score": 0.87,
+        "prior_step1_data": None,
+    }
+
+    record = make_record(result_gemini={"reference_image": persisted_reference})
+    writes, capture = captured_writes
+    monkeypatch.setattr(item_step1_tasks, "update_dish_image_query_results", capture)
+
+    def _get_record(_id):
+        if writes:
+            record.result_gemini = writes[-1]["result_gemini"]
+        return record
+
+    monkeypatch.setattr(item_step1_tasks, "get_dish_image_query_by_id", _get_record)
+    monkeypatch.setattr(
+        item_step1_tasks.crud_personalized_food,
+        "get_row_by_query_id",
+        lambda _qid: object(),
+    )
+
+    async def must_not_call(**_kw):
+        raise AssertionError("orchestrator should not run on short-circuit")
+
+    monkeypatch.setattr(item_step1_tasks, "resolve_reference_for_upload", must_not_call)
+
+    captured_prompt = {}
+
+    def _capture_prompt(*, reference=None):
+        captured_prompt["reference"] = reference
+        return "STEP1 SYSTEM PROMPT"
+
+    monkeypatch.setattr(
+        item_step1_tasks, "get_step1_component_identification_prompt", _capture_prompt
+    )
+
+    captured_analyzer = {}
+
+    async def _capture_analyzer(**kwargs):
+        captured_analyzer.update(kwargs)
+        return {
+            "dish_predictions": [{"name": "X", "confidence": 0.9}],
+            "components": [{"component_name": "X"}],
+        }
+
+    monkeypatch.setattr(
+        item_step1_tasks, "analyze_step1_component_identification_async", _capture_analyzer
+    )
+
+    asyncio.run(
+        item_step1_tasks.analyze_image_background(
+            query_id=7, file_path=str(tmp_path / "q.jpg"), retry_count=0
+        )
+    )
+
+    assert captured_analyzer["reference_image_bytes"] is None
+    assert captured_prompt["reference"] is None
+
+
+def test_analyze_image_background_degrades_on_missing_image_file(
+    monkeypatch, patch_prompt, captured_writes, tmp_path, caplog
+):
+    """Reference populated with prior data, but file missing on disk → single-image + WARN."""
+    monkeypatch.setattr(item_step1_tasks, "IMAGE_DIR", tmp_path)  # tmp_path has no image files
+
+    persisted_reference = {
+        "query_id": 99,
+        "image_url": "/images/ghost.jpg",
+        "description": "chicken rice",
+        "similarity_score": 0.87,
+        "prior_step1_data": {
+            "dish_predictions": [{"name": "Chicken Rice"}],
+            "components": [{"component_name": "X"}],
+        },
+    }
+
+    record = make_record(result_gemini={"reference_image": persisted_reference})
+    writes, capture = captured_writes
+    monkeypatch.setattr(item_step1_tasks, "update_dish_image_query_results", capture)
+
+    def _get_record(_id):
+        if writes:
+            record.result_gemini = writes[-1]["result_gemini"]
+        return record
+
+    monkeypatch.setattr(item_step1_tasks, "get_dish_image_query_by_id", _get_record)
+    monkeypatch.setattr(
+        item_step1_tasks.crud_personalized_food,
+        "get_row_by_query_id",
+        lambda _qid: object(),
+    )
+
+    async def must_not_call(**_kw):
+        raise AssertionError("orchestrator should not run on short-circuit")
+
+    monkeypatch.setattr(item_step1_tasks, "resolve_reference_for_upload", must_not_call)
+
+    captured_prompt = {}
+
+    def _capture_prompt(*, reference=None):
+        captured_prompt["reference"] = reference
+        return "STEP1 SYSTEM PROMPT"
+
+    monkeypatch.setattr(
+        item_step1_tasks, "get_step1_component_identification_prompt", _capture_prompt
+    )
+
+    captured_analyzer = {}
+
+    async def _capture_analyzer(**kwargs):
+        captured_analyzer.update(kwargs)
+        return {
+            "dish_predictions": [{"name": "X", "confidence": 0.9}],
+            "components": [{"component_name": "X"}],
+        }
+
+    monkeypatch.setattr(
+        item_step1_tasks, "analyze_step1_component_identification_async", _capture_analyzer
+    )
+
+    with caplog.at_level("WARNING"):
+        asyncio.run(
+            item_step1_tasks.analyze_image_background(
+                query_id=7, file_path=str(tmp_path / "q.jpg"), retry_count=0
+            )
+        )
+
+    assert captured_analyzer["reference_image_bytes"] is None
+    assert captured_prompt["reference"] is None
+    assert any("reference image missing" in r.message for r in caplog.records)
 
 
 def test_failure_writes_step1_error_via_shared_helper(

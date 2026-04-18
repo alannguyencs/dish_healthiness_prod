@@ -8,8 +8,11 @@ file cap and so the Phase 1 + Phase 2 backgrounds tasks have parallel homes
 
 import logging
 from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
 
 from src.api._phase_errors import persist_phase_error
+from src.configs import IMAGE_DIR
 from src.crud import crud_personalized_food
 from src.crud.crud_food_image_query import (
     get_dish_image_query_by_id,
@@ -20,6 +23,43 @@ from src.service.llm.prompts import get_step1_component_identification_prompt
 from src.service.personalized_reference import resolve_reference_for_upload
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_reference_inputs(
+    reference: Optional[Dict[str, Any]],
+) -> Tuple[Optional[bytes], Optional[Dict[str, Any]]]:
+    """
+    Turn a persisted result_gemini.reference_image dict into concrete
+    (reference_image_bytes, reference) arguments for Phase 1.1.2.
+
+    Returns (None, None) on any of the degrade paths:
+      - reference is None (cold start / below-threshold / caption failure)
+      - reference.image_url resolves to a missing file on disk
+      - reference.prior_step1_data is None (Option B per 2026-04-18 decision)
+      - reference.prior_step1_data is an empty dict (defensive)
+    """
+    if not reference:
+        return None, None
+
+    image_url = reference.get("image_url")
+    if not image_url:
+        return None, None
+    disk_path = IMAGE_DIR / Path(image_url).name
+    try:
+        image_bytes = disk_path.read_bytes()
+    except (FileNotFoundError, OSError) as exc:
+        logger.warning(
+            "Phase 1.1.2 reference image missing on disk (%s); degrading to single-image: %s",
+            disk_path,
+            exc,
+        )
+        return None, None
+
+    prior = reference.get("prior_step1_data")
+    if not prior:
+        return None, None
+
+    return image_bytes, reference
 
 
 async def analyze_image_background(query_id: int, file_path: str, retry_count: int = 0) -> None:
@@ -73,12 +113,21 @@ async def analyze_image_background(query_id: int, file_path: str, retry_count: i
         logger.info("Phase 1.1.1 skipped on retry for query_id=%s", query_id)
 
     try:
-        step1_prompt = get_step1_component_identification_prompt()
+        # Re-read to pick up the reference_image Phase 1.1.1 just persisted
+        # (or the prior attempt's value on the retry short-circuit path).
+        record_pre_pro = get_dish_image_query_by_id(query_id)
+        reference_from_blob = (
+            (record_pre_pro.result_gemini or {}).get("reference_image") if record_pre_pro else None
+        )
+        reference_image_bytes, effective_reference = _resolve_reference_inputs(reference_from_blob)
+
+        step1_prompt = get_step1_component_identification_prompt(reference=effective_reference)
         step1_result = await analyze_step1_component_identification_async(
             image_path=file_path,
             analysis_prompt=step1_prompt,
             gemini_model="gemini-2.5-pro",
             thinking_budget=-1,
+            reference_image_bytes=reference_image_bytes,
         )
 
         # Re-read so we merge onto whatever Phase 1.1.1 wrote (including
