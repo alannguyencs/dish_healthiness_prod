@@ -29,6 +29,10 @@ Phase 1 is a single Gemini vision call triggered as a FastAPI `BackgroundTasks` 
 
 ## Data Model
 
+### Personalization Store (foundation, not yet consumed)
+
+A separate per-user BM25 corpus lives in `personalized_food_descriptions` (see [Personalized Food Index](./personalized_food_index.md)). Phase 1.1.1 — when it lands in a later stage — will read from this table before the Gemini call and insert a new row after it. Today the table exists but nothing in this pipeline writes to or reads from it; the forward reference is here so reviewers of later stages can locate the shared foundation.
+
 **`DishImageQuery.result_gemini`** — JSON blob. After Phase 1:
 
 ```json

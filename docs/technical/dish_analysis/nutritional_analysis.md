@@ -1,6 +1,6 @@
 # Nutritional Analysis — Technical Design
 
-[< Prev: User Customization](./user_customization.md) | [Parent](./index.md)
+[< Prev: User Customization](./user_customization.md) | [Parent](./index.md) | [Next: Personalized Food Index >](./personalized_food_index.md)
 
 ## Related Docs
 - Abstract: [abstract/dish_analysis/nutritional_analysis.md](../../abstract/dish_analysis/nutritional_analysis.md)
@@ -364,4 +364,4 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 
 ---
 
-[< Prev: User Customization](./user_customization.md) | [Parent](./index.md)
+[< Prev: User Customization](./user_customization.md) | [Parent](./index.md) | [Next: Personalized Food Index >](./personalized_food_index.md)

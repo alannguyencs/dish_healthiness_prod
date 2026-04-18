@@ -26,6 +26,7 @@ opencv-python-headless
 # others
 tqdm
 pytz
+rank-bm25
 
 # testing
 pytest>=8.0

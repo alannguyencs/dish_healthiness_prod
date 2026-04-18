@@ -41,3 +41,36 @@ BEGIN
             CHECK (dish_position IS NULL OR (dish_position BETWEEN 1 AND 5));
     END IF;
 END $$;
+
+-- Table: personalized_food_descriptions
+-- Per-user food upload index. One row per DishImageQuery owned by a user,
+-- keyed on query_id so later stages can join back to the dish record and
+-- its result_gemini blob without duplicating JSON payloads here.
+-- Stage 0 writes user_id, query_id, created_at, updated_at.
+-- Stage 2 fills image_url, description, tokens, similarity_score_on_insert.
+-- Stage 4 fills confirmed_dish_name, confirmed_portions, confirmed_tokens.
+-- Stage 8 fills corrected_step2_data.
+CREATE TABLE IF NOT EXISTS personalized_food_descriptions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    query_id INTEGER NOT NULL REFERENCES dish_image_query_prod_dev(id) ON DELETE CASCADE,
+    image_url VARCHAR,
+    description TEXT,
+    tokens JSONB,
+    similarity_score_on_insert FLOAT,
+    confirmed_dish_name TEXT,
+    confirmed_portions FLOAT,
+    confirmed_tokens JSONB,
+    corrected_step2_data JSONB,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+-- Lookup by owner (Stage 2 / Stage 6 primary access path)
+CREATE INDEX IF NOT EXISTS idx_personalized_food_descriptions_user_id
+    ON personalized_food_descriptions(user_id);
+
+-- Lookup by dish query (Stage 4 / Stage 8 update path)
+-- Also enforces 1:1 with dish_image_query_prod_dev
+CREATE UNIQUE INDEX IF NOT EXISTS uq_personalized_food_descriptions_query_id
+    ON personalized_food_descriptions(query_id);
