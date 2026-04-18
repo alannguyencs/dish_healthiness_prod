@@ -3,11 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import apiService from "../services/api";
 import {
   ItemHeader,
-  ItemNavigation,
   ItemImage,
   AnalysisLoading,
   Step1ComponentEditor,
   Step2Results,
+  Step2ErrorCard,
+  ItemStepTabs,
 } from "../components/item";
 
 const ItemV2 = () => {
@@ -19,6 +20,7 @@ const ItemV2 = () => {
   const [pollingStep1, setPollingStep1] = useState(false);
   const [pollingStep2, setPollingStep2] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [retryingStep2, setRetryingStep2] = useState(false);
   const [viewStep, setViewStep] = useState(null);
   const [confirmedStep1Data, setConfirmedStep1Data] = useState(null);
   const pollingIntervalRef = useRef(null);
@@ -28,6 +30,7 @@ const ItemV2 = () => {
     return () => {
       if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recordId]);
 
   const loadItem = async () => {
@@ -56,14 +59,15 @@ const ItemV2 = () => {
         setPollingStep2(false);
         stopPolling();
       } else if (
-        resultGemini.step === 1 &&
         resultGemini.step1_confirmed &&
-        !resultGemini.step2_data
+        !resultGemini.step2_data &&
+        !resultGemini.step2_error
       ) {
         setPollingStep1(false);
         setPollingStep2(true);
         startPolling();
-      } else if (resultGemini.step === 2 && resultGemini.step2_data) {
+      } else {
+        // Step 2 either completed (step2_data) or failed (step2_error)
         setPollingStep1(false);
         setPollingStep2(false);
         stopPolling();
@@ -80,34 +84,24 @@ const ItemV2 = () => {
   };
 
   const startPolling = () => {
-    // Don't start if already polling
     if (pollingIntervalRef.current) return;
-
-    // Poll every 3 seconds
     pollingIntervalRef.current = setInterval(async () => {
       try {
         const data = await apiService.getItem(recordId);
         setItem(data);
 
         const resultGemini = data.result_gemini;
+        if (!resultGemini) return;
 
-        // Stop polling if Step 1 is complete (and awaiting confirmation)
-        if (
-          resultGemini &&
-          resultGemini.step === 1 &&
-          !resultGemini.step1_confirmed
-        ) {
+        // Stop polling if Step 1 is complete and awaiting confirmation
+        if (resultGemini.step === 1 && !resultGemini.step1_confirmed) {
           setPollingStep1(false);
           setPollingStep2(false);
           stopPolling();
         }
 
-        // Stop polling if Step 2 is complete
-        if (
-          resultGemini &&
-          resultGemini.step === 2 &&
-          resultGemini.step2_data
-        ) {
+        // Stop polling if Step 2 succeeded OR failed (error surfaced)
+        if (resultGemini.step2_data || resultGemini.step2_error) {
           setPollingStep1(false);
           setPollingStep2(false);
           stopPolling();
@@ -128,21 +122,31 @@ const ItemV2 = () => {
   const handleStep1Confirmation = async (confirmationData) => {
     try {
       setConfirming(true);
-      // Store the user's confirmed selections
       setConfirmedStep1Data(confirmationData);
       await apiService.confirmStep1(recordId, confirmationData);
-
-      // Start polling for Step 2
       setPollingStep2(true);
       startPolling();
-
-      // Reload item to get updated state
       await loadItem();
     } catch (err) {
       console.error("Failed to confirm Step 1:", err);
       alert("Failed to confirm Step 1. Please try again.");
     } finally {
       setConfirming(false);
+    }
+  };
+
+  const handleStep2Retry = async () => {
+    try {
+      setRetryingStep2(true);
+      await apiService.retryStep2(recordId);
+      setPollingStep2(true);
+      startPolling();
+      await loadItem();
+    } catch (err) {
+      console.error("Failed to retry Step 2:", err);
+      alert("Failed to retry. Please try again in a moment.");
+    } finally {
+      setRetryingStep2(false);
     }
   };
 
@@ -180,21 +184,19 @@ const ItemV2 = () => {
   const resultGemini = item?.result_gemini;
   const step1Data = resultGemini?.step1_data;
   const step2Data = resultGemini?.step2_data;
+  const step2Error = resultGemini?.step2_error;
   const currentStep = resultGemini?.step || 0;
   const step1Confirmed = resultGemini?.step1_confirmed || false;
 
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto p-4 space-y-6">
-        {/* Header */}
         <ItemHeader
           onBackClick={handleBackToDashboard}
           targetDate={item?.target_date}
         />
 
-        {/* Main Content: Image (1/3) + Analysis (2/3) */}
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left Column: Image (1/3 width) */}
           <div className="lg:w-1/3">
             {item && (
               <div className="sticky top-4">
@@ -207,58 +209,16 @@ const ItemV2 = () => {
             )}
           </div>
 
-          {/* Right Column: Analysis (2/3 width) */}
           <div className="lg:w-2/3 space-y-6">
-            {/* Progress Indicator */}
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => setViewStep(1)}
-                  disabled={!step1Data}
-                  className={`flex-1 text-center p-3 rounded-lg transition-all ${
-                    viewStep === 1 || (viewStep === null && currentStep === 1)
-                      ? "bg-blue-100 border-2 border-blue-500"
-                      : currentStep >= 1
-                        ? "bg-blue-50 border-2 border-blue-300 hover:bg-blue-100 cursor-pointer"
-                        : "bg-gray-100 cursor-not-allowed"
-                  }`}
-                >
-                  <div className="font-semibold text-gray-800">Step 1</div>
-                  <div className="text-xs text-gray-600">
-                    Component Identification
-                  </div>
-                  {currentStep === 1 && !step1Confirmed && (
-                    <div className="text-xs text-blue-600 font-medium mt-1">
-                      Awaiting Confirmation
-                    </div>
-                  )}
-                </button>
-                <div className="text-gray-400">→</div>
-                <button
-                  onClick={() => setViewStep(2)}
-                  disabled={!step2Data}
-                  className={`flex-1 text-center p-3 rounded-lg transition-all ${
-                    viewStep === 2 || (viewStep === null && currentStep === 2)
-                      ? "bg-green-100 border-2 border-green-500"
-                      : step2Data
-                        ? "bg-green-50 border-2 border-green-300 hover:bg-green-100 cursor-pointer"
-                        : "bg-gray-100 cursor-not-allowed"
-                  }`}
-                >
-                  <div className="font-semibold text-gray-800">Step 2</div>
-                  <div className="text-xs text-gray-600">
-                    Nutritional Analysis
-                  </div>
-                  {step1Confirmed && !step2Data && (
-                    <div className="text-xs text-blue-600 font-medium mt-1">
-                      In Progress...
-                    </div>
-                  )}
-                </button>
-              </div>
-            </div>
+            <ItemStepTabs
+              step1Data={step1Data}
+              step2Data={step2Data}
+              currentStep={currentStep}
+              step1Confirmed={step1Confirmed}
+              viewStep={viewStep}
+              onSelectStep={setViewStep}
+            />
 
-            {/* Content based on current step or user selection */}
             {pollingStep1 && viewStep === null && (
               <AnalysisLoading message="Analyzing dish components..." />
             )}
@@ -279,9 +239,18 @@ const ItemV2 = () => {
             {step1Confirmed &&
               pollingStep2 &&
               !step2Data &&
+              !step2Error &&
               viewStep === null && (
                 <AnalysisLoading message="Calculating nutritional values..." />
               )}
+
+            {step2Error && !step2Data && viewStep === null && (
+              <Step2ErrorCard
+                error={step2Error}
+                onRetry={handleStep2Retry}
+                isRetrying={retryingStep2}
+              />
+            )}
 
             {((viewStep === 2 && step2Data) ||
               (viewStep === null && currentStep === 2 && step2Data)) && (

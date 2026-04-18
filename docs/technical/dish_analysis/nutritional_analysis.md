@@ -7,7 +7,7 @@
 
 ## Architecture
 
-Phase 2 is a second Gemini vision call scheduled as a `BackgroundTasks` coroutine the moment the confirm endpoint returns. The prompt is the Step 2 markdown file with the user's confirmed dish name and component list appended as a plain-text block. Output is enforced to `Step2NutritionalAnalysis` via the SDK `response_schema` parameter. The frontend continues polling the same item endpoint and renders the results when the payload arrives.
+Phase 2 is a second Gemini vision call scheduled as a `BackgroundTasks` coroutine the moment the confirm endpoint returns. The prompt is the Step 2 markdown file with the user's confirmed dish name and component list appended as a plain-text block. Output is enforced to `Step2NutritionalAnalysis` via the SDK `response_schema` parameter. If the call fails, the background task classifies the exception and persists a `step2_error` block into `result_gemini` so the frontend can surface a retry-able error card. The frontend continues polling the same item endpoint and renders either the results or the error card when the payload arrives.
 
 ```
 +---------------------+     +-----------------------+     +------------------+
@@ -16,16 +16,20 @@ Phase 2 is a second Gemini vision call scheduled as a `BackgroundTasks` coroutin
 |  ItemV2.jsx         |     |  trigger_step2_       |     |  models.         |
 |   (poll 3s)         |     |  analysis_background()|---->|  generate_       |
 |  Step2Results.jsx   |<====|                       |     |  content()       |
-|                     | JSON|  analyze_step2_...()  |     |                  |
+|  Step2ErrorCard.jsx | JSON|  analyze_step2_...()  |     |                  |
+|  ItemStepTabs.jsx   |     |                       |     |                  |
+|                     |     |  item_retry.py:       |     |                  |
+|                     |---->|  POST /retry-step2    |     |                  |
 +---------------------+     +-----------------------+     +------------------+
                                   │
                                   ▼
-                            +----------------+
-                            |  Postgres      |
-                            |  result_gemini |
-                            |  .step2_data   |
-                            |  .step = 2     |
-                            +----------------+
+                            +-----------------+
+                            |  Postgres       |
+                            |  result_gemini  |
+                            |  .step2_data    |
+                            |  .step2_error   |
+                            |  .step = 2      |
+                            +-----------------+
 ```
 
 ## Data Model
@@ -47,6 +51,17 @@ Defined in `backend/src/service/llm/models.py`:
 | `micronutrients` | `List[str]` | Default `[]` |
 
 The analyzer appends the same engineering fields used by Phase 1 (`input_token`, `output_token`, `model`, `price_usd`, `analysis_time`).
+
+### `step2_error` (failure path)
+
+Written to `result_gemini.step2_error` by `_persist_step2_error` whenever the background task catches an exception. Cleared on successful Step 2 completion or on retry-endpoint dispatch.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `error_type` | `str` | One of `config_error \| image_missing \| parse_error \| api_error \| unknown` |
+| `message` | `str` | Pre-canned, user-facing string (`ERROR_USER_MESSAGE[error_type]`) |
+| `occurred_at` | `str` | ISO-8601 UTC timestamp |
+| `retry_count` | `int` | 0 on first failure; incremented by the retry endpoint each time the user re-runs |
 
 ### `result_gemini` after Phase 2
 
@@ -163,7 +178,23 @@ if result_gemini.iterations:
 update_dish_image_query_results(query_id, None, result_gemini)
   │
   ▼
-(Exceptions are caught and logged; task swallows them silently)
+(On exception → _persist_step2_error(query_id, exc, retry_count):
+   classify → write result_gemini.step2_error)
+
+---- Retry path ----
+
+POST /api/item/{record_id}/retry-step2  (item_retry.py)
+  │
+  ├──> auth + ownership checks
+  ├──> guard: step1_confirmed && !step2_data && step2_error present
+  ├──> guard: image file still on disk
+  ├──> clear result_gemini.step2_error
+  ├──> persist cleared blob
+  └──> BackgroundTasks.add_task(
+         trigger_step2_analysis_background,
+         record_id, image_path,
+         confirmed_dish_name, confirmed_components,
+         retry_count + 1)
 
 ---- Frontend side ----
 
@@ -173,8 +204,11 @@ ItemV2.jsx poller (3 s)
 GET /api/item/{id}
   │
   ▼
-if result_gemini.step == 2 && result_gemini.step2_data:
+if result_gemini.step2_data:
     stopPolling(); render <Step2Results step2Data={step2_data} />
+elif result_gemini.step2_error:
+    stopPolling(); render <Step2ErrorCard error={step2_error}
+                                          onRetry={handleStep2Retry} />
 ```
 
 ## Algorithms
@@ -196,15 +230,17 @@ if result_gemini.step == 2 && result_gemini.step2_data:
 
 ## Backend — API Layer
 
-No dedicated Phase 2 HTTP endpoint. Observable API surface:
-
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/api/item/{record_id}` | Frontend polls; returns updated `result_gemini` once Phase 2 lands |
+| GET | `/api/item/{record_id}` | Frontend polls; returns updated `result_gemini` once Phase 2 lands (success or `step2_error`) |
+| POST | `/api/item/{record_id}/retry-step2` | Clears `step2_error`, increments `retry_count`, re-schedules the background task. 400 if Step 1 not confirmed, Step 2 already done, or no prior error to retry. 404 if record not found or image file missing on disk. |
 
 ## Backend — Service Layer
 
-- `api/item_tasks.py#trigger_step2_analysis_background(query_id, image_path, dish_name, components)` — the Phase 2 background coroutine. Catches and logs every exception.
+- `api/item_tasks.py#trigger_step2_analysis_background(query_id, image_path, dish_name, components, retry_count=0)` — the Phase 2 background coroutine. On success clears any prior `step2_error`; on exception delegates to `_persist_step2_error`.
+- `api/item_tasks.py#_persist_step2_error(query_id, exc, retry_count)` — classifies the exception via `_classify_step2_error`, looks up a user-facing message in `ERROR_USER_MESSAGE`, and writes a `step2_error` block to `result_gemini`.
+- `api/item_tasks.py#_classify_step2_error(exc) -> str` — buckets exceptions into `config_error | image_missing | parse_error | api_error | unknown` based on substring matching against `str(exc).lower()`.
+- `api/item_retry.py#retry_step2_analysis(...)` — POST endpoint handler that clears `step2_error`, increments retry count, and re-schedules the background task.
 - `service/llm/gemini_analyzer.py#analyze_step2_nutritional_analysis_async(...)` — Gemini call.
 - `service/llm/prompts.py#get_step2_nutritional_analysis_prompt(dish_name, components)` — prompt loader + confirmed-data injection.
 - `service/llm/pricing.py#compute_price_usd(..., vendor="gemini")` — reused Phase 1 pricing logic.
@@ -277,14 +313,17 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 
 ## Frontend — Components
 
-- `components/item/AnalysisLoading.jsx` — shown while `pollingStep2 && !step2_data`.
+- `components/item/AnalysisLoading.jsx` — shown while `pollingStep2 && !step2_data && !step2_error`.
 - `components/item/Step2Results.jsx` — renders the confirmed dish name, the healthiness score with a category badge and rationale, the five core macros, the micronutrients list, and the model/cost/time footer.
+- `components/item/Step2ErrorCard.jsx` — red-tinted card rendered when `result_gemini.step2_error` is present. Shows the user-facing message, hides the **Try Again** button for `error_type === "config_error"`, and swaps the button label to **Try Anyway** with a warning paragraph once `retry_count >= 5` (soft cap).
+- `components/item/ItemStepTabs.jsx` — Step 1 ↔ Step 2 progress tab row. Extracted from `ItemV2.jsx` to keep the page under the 300-line cap.
 - `components/item/ItemImage.jsx` / `ItemHeader.jsx` / `ItemNavigation.jsx` — chrome shared across the item page.
 
 ## Frontend — Services & Hooks
 
 - `services/api.js#getItem(recordId)` — same polling call as Phase 1.
-- Polling loop inside `ItemV2.jsx`: stops when `result_gemini.step === 2 && result_gemini.step2_data`.
+- `services/api.js#retryStep2(recordId)` — `POST /api/item/{id}/retry-step2`; called by `ItemV2.handleStep2Retry` when the user clicks the error card's button.
+- Polling loop inside `ItemV2.jsx`: stops when `result_gemini.step2_data || result_gemini.step2_error` is truthy.
 
 ## External Integrations
 
@@ -292,7 +331,9 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 
 ## Constraints & Edge Cases
 
-- The background task catches every exception and logs it; a Gemini failure leaves `result_gemini.step = 1, step1_confirmed = true, step2_data = null`, and the frontend polls indefinitely. There is no retry, no surfaced error state.
+- On Gemini failure the background task classifies the exception and persists `result_gemini.step2_error`; the frontend stops polling and renders `Step2ErrorCard`. The user can click **Try Again** to invoke `POST /retry-step2`. `error_type === "config_error"` hides the retry button because retrying a missing API key won't fix anything.
+- Soft retry cap: at `retry_count >= 5` the frontend swaps the button label to **Try Anyway** and shows a warning. The backend does not block — it relies on the UX nudge to discourage runaway retries while preserving user agency.
+- No auto-retry on transient errors (`api_error`). The user explicitly opts in via the retry button so cost is never silently doubled during regional outages.
 - `record.result_gemini` is re-read before the write — if the record is deleted between confirm and Phase 2 the task returns early with a log.
 - Image file deletion between Phase 1 and Phase 2: Phase 1's file is the one used; if it is gone, Gemini call fails and is logged (no explicit user-facing error).
 - Pricing relies on the same `PRICING` table as Phase 1; unknown models fall back to `DEFAULT_PRICING` and report cost incorrectly.
@@ -303,7 +344,8 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 
 ## Component Checklist
 
-- [x] `trigger_step2_analysis_background()` — background task entry
+- [x] `trigger_step2_analysis_background()` — background task entry (now accepts `retry_count`)
+- [x] `_persist_step2_error()` + `_classify_step2_error()` + `ERROR_USER_MESSAGE` table
 - [x] `analyze_step2_nutritional_analysis_async()` — Gemini call with structured output
 - [x] `get_step2_nutritional_analysis_prompt(dish_name, components)` — prompt loader + injection
 - [x] `Step2NutritionalAnalysis` Pydantic schema
@@ -311,11 +353,14 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 - [x] `enrich_result_with_metadata()` — model / price / time stamps
 - [x] `update_dish_image_query_results()` — single DB write
 - [x] Iteration bookkeeping in `trigger_step2_analysis_background`
-- [x] `ItemV2.jsx` polling stop condition (`step==2 && step2_data`)
+- [x] `POST /api/item/{record_id}/retry-step2` — `item_retry.py#retry_step2_analysis`
+- [x] `ItemV2.jsx` polling stop condition (`step2_data || step2_error`)
 - [x] `AnalysisLoading.jsx` — Phase 2 loading UI
 - [x] `Step2Results.jsx` — score badge, rationale, macros, micros, footer
+- [x] `Step2ErrorCard.jsx` — error UI with retry button + soft-cap warning
+- [x] `ItemStepTabs.jsx` — extracted Step 1 / Step 2 progress tabs
 - [x] `apiService.getItem()` — polling call
-- [ ] Retry / error-state UI for Phase 2 failures
+- [x] `apiService.retryStep2()` — retry call
 - [ ] Idempotency key or dedupe on Phase 2 background task scheduling
 
 ---

@@ -20,7 +20,7 @@ After the user confirms the component list in the previous phase, the system run
 - Core nutrition numbers: calories, fibre, carbohydrates, protein, and fat.
 - A list of notable micronutrients worth calling out.
 
-The user can toggle between this results view and the earlier component editor to recheck what was confirmed.
+If the AI call fails, the user sees a clear error message with a one-click **Try Again** button instead of an indefinite loading spinner. The user can toggle between the results view and the earlier component editor to recheck what was confirmed.
 
 ## User Flow
 
@@ -30,20 +30,28 @@ Confirm components on Component Identification page
   v
 Nutritional Analysis loading indicator
   |
-  v
-AI returns results
+  +--> AI returns results
+  |        |
+  |        v
+  |    Results page shows:
+  |       +-- Confirmed dish name
+  |       +-- Healthiness score (0-100) with colour-coded badge
+  |       +-- Short rationale for the score
+  |       +-- Macro nutrients: calories, fibre, carbs, protein, fat
+  |       +-- Notable micronutrients (labelled badges)
+  |       +-- Phase metadata (AI model, time, cost)
+  |        |
+  |        +--> Toggle back to Component Identification view
+  |        +--> Back button --> Return to Meal Upload page for the date
   |
-  v
-Results page shows:
-   +-- Confirmed dish name
-   +-- Healthiness score (0-100) with colour-coded badge
-   +-- Short rationale for the score
-   +-- Macro nutrients: calories, fibre, carbs, protein, fat
-   +-- Notable micronutrients (labelled badges)
-   +-- Phase metadata (AI model, time, cost)
-  |
-  +--> Toggle back to Component Identification view
-  +--> Back button --> Return to Meal Upload page for the date
+  +--> AI call fails
+           |
+           v
+       Error card with reason + "Try Again" button
+           |
+           +--> Click Try Again --> Loading indicator --> AI re-runs
+           +--> "Try Anyway" warning appears after 5 failed attempts
+           +--> Back button --> Return to Meal Upload page for the date
 ```
 
 ## Scope
@@ -54,6 +62,7 @@ Results page shows:
   - Display of calories (kcal), fibre (g), carbohydrates (g), protein (g), fat (g)
   - List of notable micronutrients
   - Loading indicator while the AI is working
+  - Visible error state with a one-click retry when the AI call fails (no auto-retry)
   - Toggle between the results view and the component editor view once both phases are complete
   - Visibility into the AI model used, time taken, and cost for this phase
 - **Not included:**
@@ -71,6 +80,8 @@ Results page shows:
 - [x] Calories, fibre, carbs, protein, and fat are all visible on the results view
 - [x] Notable micronutrients appear as labelled badges
 - [x] Once both phases are complete, the user can switch between the results view and the component editor view
+- [x] If the AI call fails, the user sees an error card explaining what went wrong instead of an indefinite loading spinner
+- [x] The user can retry from the error card; on success the results view appears as normal
 
 ---
 

@@ -275,7 +275,7 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 
 ## Constraints & Edge Cases
 
-- `GEMINI_API_KEY` missing → `ValueError` inside the background task; the record stays at `result_gemini = NULL`, the frontend polls forever.
+- `GEMINI_API_KEY` missing → `ValueError` inside the background task; the record stays at `result_gemini = NULL`, the frontend polls forever. **Same gap exists today on Phase 1 that Phase 2 already fixed via `step2_error` + retry endpoint** (see `nutritional_analysis.md`). A follow-up will mirror that pattern with `step1_error` + `POST /retry-step1`; tracked in `docs/issues/260414.md`.
 - Prompt file missing → `FileNotFoundError`; same failure mode as above.
 - Gemini returns a response the Pydantic schema can't parse → `response.parsed` is `None`, falls back to `json.loads(response.text)`. If that still fails → `ValueError`.
 - Schema guard: the analyzer explicitly checks that `dish_predictions` and `components` keys exist in the parsed dict and raises if not — guards against the fallback path returning an unrelated JSON shape.

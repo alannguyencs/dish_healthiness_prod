@@ -108,6 +108,12 @@ const apiService = {
     );
     return response.data;
   },
+
+  // Retry Step 2 nutritional analysis after a prior failure
+  retryStep2: async (recordId) => {
+    const response = await api.post(`/api/item/${recordId}/retry-step2`);
+    return response.data;
+  },
 };
 
 export default apiService;
