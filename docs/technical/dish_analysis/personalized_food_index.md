@@ -130,7 +130,7 @@ None. `rank-bm25` is an in-process Python library, added to `requirements.txt` a
 - **Empty query tokens.** Short-circuits to `[]` before touching the DB.
 - **Single-row corpus / BM25 IDF collapse.** BM25 returns 0 for every row when `df/N` is degenerate. The service falls back to token-overlap ratio so retrieval still works; callers should not assume `similarity_score` is a BM25-quality number.
 - **`similarity_score` is a ranking signal, not an absolute quality number.** The top hit is always 1.0. Downstream stages (thresholds like `THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25`) must treat this as "top of the batch" and rely on the prompt framing ("reference is a hint, not ground truth") for quality control. Absolute-quality scoring will be revisited in Stage 2 once real user data is available.
-- **Self-matching is the caller's responsibility.** Stage 0 provides `exclude_query_id`; it is on the Phase 1.1.1 orchestrator to pass its own in-flight `query_id` so the current upload cannot match itself. Stage 2's write-after-read insertion order is the belt-and-suspenders guarantee.
+- **Self-matching is the caller's responsibility.** Stage 0 provides `exclude_query_id`; it is on the Phase 1.1.1 orchestrator to pass its own in-flight `query_id` so the current upload cannot match itself. Stage 2 implements the write-after-read insertion order as the belt-and-suspenders guarantee: the orchestrator calls `search_for_user(..., exclude_query_id=query_id)` (filter) AND inserts the new row only after the search returns (order). Either alone would suffice under current assumptions; both together tolerate a future refactor that re-orders steps or drops `exclude_query_id` without silently re-introducing self-matches.
 - **Row deletion cascades with the dish.** FK `ON DELETE CASCADE` means purging a `DishImageQuery` also removes its personalization row. Matches GDPR-style "delete my data" semantics.
 - **Tokenizer is ASCII-folding.** Works for EN / FR / MS / VI romanized captions. CJK captions produce empty token lists and are therefore invisible to retrieval; revisit before onboarding CJK users. Swapping the tokenizer later does not invalidate any stored artefact because the index is rebuilt per request.
 
@@ -149,7 +149,7 @@ None. `rank-bm25` is an in-process Python library, added to `requirements.txt` a
 - [x] `rank-bm25` dependency — `requirements.txt`
 - [x] Unit tests CRUD — `backend/tests/test_crud_personalized_food.py`
 - [x] Unit tests index — `backend/tests/test_personalized_food_index.py`
-- [ ] Stage 2 (Phase 1.1.1): fast-caption + retrieval wired into `analyze_image_background`
+- [x] Stage 2 (Phase 1.1.1): fast-caption + retrieval wired into `analyze_image_background` (see [component_identification.md](./component_identification.md#phase-111--fast-caption--reference-retrieval))
 - [ ] Stage 4 (Phase 1.2): `update_confirmed_fields` called from `confirm_step1_and_trigger_step2`
 - [ ] Stage 6 (Phase 2.2): `search_for_user` called in `trigger_step2_analysis_background`
 - [ ] Stage 8 (Phase 2.4): `update_corrected_step2_data` called from the Step 2 correction endpoint

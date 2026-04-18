@@ -28,6 +28,14 @@ RESOURCE_DIR.mkdir(exist_ok=True)
 # tables, never from disk.
 DATABASE_DIR = RESOURCE_DIR / "database"
 
+# Stage 2 (Phase 1.1.1) — minimum similarity_score a top-1 match must clear
+# to be attached as a reference on result_gemini.reference_image. The score
+# is a max-in-batch relative ranking signal (see
+# docs/technical/dish_analysis/personalized_food_index.md — the top hit
+# always lands at 1.0), so 0.25 is a soft floor that mainly rejects corpora
+# with zero lexical overlap. Re-tune after real retrieval-quality data.
+THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25
+
 LOG_DIR = PROJECT_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 

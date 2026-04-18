@@ -150,6 +150,31 @@ def update_corrected_step2_data(
         db.close()
 
 
+def get_row_by_query_id(query_id: int) -> Optional[PersonalizedFoodDescription]:
+    """
+    Return the single personalization row for a given dish query, or None.
+
+    Stage 2's retry-idempotency probe. The `uq_personalized_food_descriptions_query_id`
+    unique index guarantees at most one row per query_id, so a direct filter
+    is sufficient.
+
+    Args:
+        query_id (int): DishImageQuery id to look up.
+
+    Returns:
+        Optional[PersonalizedFoodDescription]: The row, or None if absent.
+    """
+    db = SessionLocal()
+    try:
+        return (
+            db.query(PersonalizedFoodDescription)
+            .filter(PersonalizedFoodDescription.query_id == query_id)
+            .first()
+        )
+    finally:
+        db.close()
+
+
 def get_all_rows_for_user(
     user_id: int,
     *,

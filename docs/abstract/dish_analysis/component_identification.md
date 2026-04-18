@@ -22,6 +22,10 @@ The proposals are displayed on the Component Identification screen, where the us
 
 If the AI call fails, the user sees a clear error message with a one-click **Try Again** button instead of an indefinite loading spinner.
 
+### Personalization (silent in this stage)
+
+Starting with this phase, the system quietly remembers every dish each user has uploaded. Before the first-pass AI call runs, a short description of the new photo is compared against the user's own upload history, and the closest prior dish — if any — is set aside as an invisible reference. The reference is not shown to the user and does not change what the user sees today. The measurable benefit arrives when a later release starts feeding that reference into the first-pass AI call so the model can borrow portion / preparation hints from similar dishes the same user has seen before. The user's history is strictly per-account: one user's uploads never influence another user's analyses.
+
 ## User Flow
 
 ```

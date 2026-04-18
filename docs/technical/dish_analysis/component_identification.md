@@ -7,7 +7,91 @@
 
 ## Architecture
 
-Phase 1 is a single Gemini vision call triggered as a FastAPI `BackgroundTasks` coroutine immediately after `Meal Upload` creates the row. The task lives in `backend/src/api/item_step1_tasks.py` (relocated from `date.py` to keep that file under the 300-line cap). On success it writes the structured output into `result_gemini.step1_data` and leaves `step1_confirmed=false` so the frontend poller can pick it up and route the user into the editor. On failure it classifies the exception and persists `result_gemini.step1_error` via the shared `persist_phase_error` helper in `src.api._phase_errors`; the frontend stops polling and renders `<PhaseErrorCard>` with a retry button.
+Phase 1 is a two-step Gemini pipeline triggered as a FastAPI `BackgroundTasks` coroutine immediately after `Meal Upload` creates the row. The task lives in `backend/src/api/item_step1_tasks.py` (relocated from `date.py` to keep that file under the 300-line cap). The two steps are:
+
+- **Phase 1.1.1 — Fast caption + personalized reference retrieval.** A fast Gemini 2.0 Flash call produces a plain-text caption; the caption is BM25-searched against the user's prior personalization corpus (`personalized_food_descriptions`, Stage 0 foundation); the top-1 hit (or `null`) is stashed on `result_gemini.reference_image` before the component-ID call runs. The upload's own row is inserted into the corpus **after** the search so it cannot self-match. See [Phase 1.1.1 — Fast Caption + Reference Retrieval](#phase-111--fast-caption--reference-retrieval) below for the full flow.
+- **Phase 1.1.2 — Gemini 2.5 Pro structured-output component identification.** On success it writes the structured output into `result_gemini.step1_data` and leaves `step1_confirmed=false` so the frontend poller can pick it up and route the user into the editor. On failure it classifies the exception and persists `result_gemini.step1_error` via the shared `persist_phase_error` helper in `src.api._phase_errors`; the frontend stops polling and renders `<PhaseErrorCard>` with a retry button.
+
+The two phases persist independently on `result_gemini`: Phase 1.1.1 writes `reference_image` before Phase 1.1.2 runs, so a Phase 1.1.2 failure does not destroy the retrieval output and a `/retry-step1` that re-runs only Phase 1.1.2 keeps the original reference intact.
+
+### Phase 1.1.1 — Fast Caption + Reference Retrieval
+
+Pipeline (runs first inside `analyze_image_background`):
+
+```
+analyze_image_background(query_id, file_path, retry_count=0)
+  │
+  ▼
+record_pre = get_dish_image_query_by_id(query_id)
+  │
+  ├── is_retry_short_circuit?
+  │     (crud_personalized_food.get_row_by_query_id(query_id) is not None)
+  │     → skip Phase 1.1.1 entirely; preserve prior reference_image
+  │
+  ▼ (first run only)
+resolve_reference_for_upload(user_id, query_id, file_path)
+  │
+  ├── generate_fast_caption_async(file_path)          gemini-2.0-flash, temp=0, plain text
+  │     (on ValueError / FileNotFoundError → log WARN, return None — graceful degrade)
+  │
+  ├── query_tokens = personalized_food_index.tokenize(description)
+  │
+  ├── if query_tokens:
+  │     matches = personalized_food_index.search_for_user(
+  │         user_id, query_tokens, top_k=1,
+  │         min_similarity=THRESHOLD_PHASE_1_1_1_SIMILARITY (0.25),
+  │         exclude_query_id=query_id)
+  │   else:
+  │     matches = []
+  │
+  ├── if matches:
+  │     prior = get_dish_image_query_by_id(top.query_id)
+  │     reference = { query_id, image_url, description,
+  │                   similarity_score,
+  │                   prior_step1_data = prior.result_gemini.step1_data or None }
+  │   else:
+  │     reference = None
+  │
+  └── crud_personalized_food.insert_description_row(
+          user_id, query_id,
+          image_url=record_pre.image_url,
+          description=description, tokens=query_tokens,
+          similarity_score_on_insert=(top.similarity_score if matches else None))
+  │
+  ▼
+pre_blob = (result_gemini or { step:0, step1_data:None }).copy()
+pre_blob["reference_image"] = reference
+update_dish_image_query_results(query_id, result_openai=None, result_gemini=pre_blob)
+  │
+  ▼ (Phase 1.1.2 starts — sees reference_image already persisted)
+```
+
+Failure-mode table:
+
+| Failure                              | Behavior                                   | `reference_image` | Personalization row |
+|---                                   |---                                         |---                |---                  |
+| Gemini Flash errors (rate, net, parse) | Log WARN; orchestrator returns `None`.    | `null`            | Not inserted         |
+| User has zero prior rows             | BM25 returns `[]`; orchestrator returns `None`. | `null`       | Inserted (seeds future searches) |
+| Top-1 below `THRESHOLD_PHASE_1_1_1_SIMILARITY` | `[]` after threshold filter.    | `null`            | Inserted             |
+| Caption tokenizes to `[]`            | Skip search; orchestrator returns `None`. | `null`            | Inserted with `tokens=[]` |
+| Retry and row already exists          | Caller short-circuits before orchestrator. | Unchanged (prior attempt's value preserved) | Unchanged            |
+| Retry and no row                      | Normal path.                              | New value          | Inserted             |
+
+`reference_image` JSON shape (stashed on `result_gemini`):
+
+```json
+{
+  "query_id": 1234,
+  "image_url": "/images/260418_200123_u7_dish1.jpg",
+  "description": "grilled chicken rice with cucumber",
+  "similarity_score": 0.87,
+  "prior_step1_data": { ...the referenced DishImageQuery's result_gemini.step1_data... }
+}
+```
+
+…or `"reference_image": null` on any of the failure / cold-start / below-threshold cases above.
+
+**Thresholds and scoring.** `similarity_score` is the per-user BM25 top-1 normalized by max-in-batch (see [Personalized Food Index — Algorithms](./personalized_food_index.md#algorithms)); the top hit is always `1.0`. `THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25` mainly rejects corpora with zero lexical overlap — the prompt framing in Phase 1.1.2 is the real quality control. Re-tune after real retrieval-quality data lands.
 
 ```
 +---------------------+     +-----------------------+     +------------------+
@@ -29,9 +113,9 @@ Phase 1 is a single Gemini vision call triggered as a FastAPI `BackgroundTasks` 
 
 ## Data Model
 
-### Personalization Store (foundation, not yet consumed)
+### Personalization Store
 
-A separate per-user BM25 corpus lives in `personalized_food_descriptions` (see [Personalized Food Index](./personalized_food_index.md)). Phase 1.1.1 — when it lands in a later stage — will read from this table before the Gemini call and insert a new row after it. Today the table exists but nothing in this pipeline writes to or reads from it; the forward reference is here so reviewers of later stages can locate the shared foundation.
+A per-user BM25 corpus lives in `personalized_food_descriptions` (see [Personalized Food Index](./personalized_food_index.md)). Phase 1.1.1 reads from this table before the Gemini component-ID call and inserts a new row after the search (see the [Phase 1.1.1](#phase-111--fast-caption--reference-retrieval) sub-section above). The `reference_image` key on `result_gemini` is the link from this pipeline to the foundation table; Stage 3 (Phase 1.1.2) will start consuming that key to attach a second image + reference block to the Pro call.
 
 **`DishImageQuery.result_gemini`** — JSON blob. After Phase 1:
 
@@ -110,6 +194,11 @@ api/date.py: upload_dish() → BackgroundTasks.add_task(
   │
   ▼
 analyze_image_background(query_id, file_path)
+  │
+  ▼
+[Phase 1.1.1] resolve_reference_for_upload(user_id, query_id, file_path)
+  │                                    (see Architecture → Phase 1.1.1 above)
+  ▼ writes result_gemini.reference_image BEFORE the Pro call
   │
   ▼
 get_step1_component_identification_prompt()
@@ -222,7 +311,13 @@ Phase 1 has **no dedicated HTTP endpoint** — it runs inside the `/api/date/{Y}
 ## Backend — Service Layer
 
 - `api/item_step1_tasks.py`
-  - `analyze_image_background(query_id, file_path, retry_count=0)` — Phase 1 background coroutine. Imported by `date.py`'s upload endpoints and by `item_retry.py`'s `retry_step1_analysis`.
+  - `analyze_image_background(query_id, file_path, retry_count=0)` — Phase 1 background coroutine. Runs Phase 1.1.1 first (unless retry short-circuits on an existing personalization row), persists `result_gemini.reference_image`, then runs Phase 1.1.2. Imported by `date.py`'s upload endpoints and by `item_retry.py`'s `retry_step1_analysis`.
+- `service/llm/fast_caption.py`
+  - `generate_fast_caption_async(image_path) -> str` — Gemini 2.0 Flash plain-text wrapper. Temperature 0, no structured schema, no thinking budget. Raises `ValueError` on API failure or empty text; propagates `FileNotFoundError`.
+- `service/personalized_reference.py`
+  - `resolve_reference_for_upload(user_id, query_id, image_path) -> Optional[Dict]` — Phase 1.1.1 orchestrator. Composes `fast_caption + tokenize + search_for_user + insert_description_row` with graceful-degrade on caption failure and retry-idempotency short-circuit when a row already exists for this `query_id`.
+- `configs.py`
+  - `THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25` — per-user BM25 top-1 floor. Rejects zero-overlap cases; the top hit is always 1.0 under max-in-batch normalization.
 - `api/_phase_errors.py` — shared with Phase 2:
   - `classify_phase_error(exc)` — buckets exceptions into `config_error | image_missing | parse_error | api_error | unknown`.
   - `persist_phase_error(query_id, exc, retry_count, error_key)` — writes `error_key` (e.g. `step1_error`) into `result_gemini`; initializes the blob if it was `NULL`.
@@ -293,7 +388,9 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 
 ## Backend — CRUD Layer
 
-- `crud/dish_query_basic.update_dish_image_query_results(query_id, result_openai, result_gemini)` — the only write made by Phase 1. Replaces `result_gemini` wholesale.
+- `crud/dish_query_basic.update_dish_image_query_results(query_id, result_openai, result_gemini)` — Phase 1 writes this twice per run (once after Phase 1.1.1 to persist `reference_image`, once after Phase 1.1.2 success to merge `step1_data`). The error path writes via `persist_phase_error`. All three writes replace `result_gemini` wholesale by merging onto the current DB value.
+- `crud/crud_personalized_food.get_row_by_query_id(query_id)` — retry-idempotency probe. Returns the row if one exists for this dish, `None` otherwise. Uses the existing `uq_personalized_food_descriptions_query_id` unique index.
+- `crud/crud_personalized_food.insert_description_row(user_id, query_id, *, image_url, description, tokens, similarity_score_on_insert)` — Phase 1.1.1's write-after-read insert. Stage 0 CRUD; Stage 2 is the first caller.
 
 ## Frontend — Pages & Routes
 
@@ -327,6 +424,12 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 
 ## Component Checklist
 
+- [x] `generate_fast_caption_async()` — Gemini 2.0 Flash plain-text wrapper (`backend/src/service/llm/fast_caption.py`)
+- [x] `resolve_reference_for_upload()` — Phase 1.1.1 orchestrator (`backend/src/service/personalized_reference.py`)
+- [x] `analyze_image_background()` extended — Phase 1.1.1 call + `reference_image` persistence before the Pro call
+- [x] `THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25` config constant (`backend/src/configs.py`)
+- [x] `crud_personalized_food.get_row_by_query_id()` — retry-idempotency probe
+- [ ] Stage 3 (Phase 1.1.2): `reference_image` + `prior_step1_data` injected into the Step 1 Pro call
 - [x] `analyze_image_background(query_id, file_path, retry_count=0)` — background task entry (lives in `item_step1_tasks.py`)
 - [x] `_phase_errors.py` — `classify_phase_error`, `persist_phase_error`, `ERROR_USER_MESSAGE` (shared with Phase 2)
 - [x] `POST /api/item/{record_id}/retry-step1` — `item_retry.py#retry_step1_analysis`

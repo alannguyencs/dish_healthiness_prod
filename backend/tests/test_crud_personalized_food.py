@@ -139,6 +139,24 @@ def test_update_corrected_step2_data_returns_none_for_missing_query_id(sqlite_se
     assert crud_personalized_food.update_corrected_step2_data(9999, {"a": 1}) is None
 
 
+def test_get_row_by_query_id_returns_row(sqlite_session):
+    inserted = crud_personalized_food.insert_description_row(
+        user_id=1,
+        query_id=10,
+        description="chicken rice",
+        tokens=["chicken", "rice"],
+    )
+    row = crud_personalized_food.get_row_by_query_id(10)
+    assert row is not None
+    assert row.id == inserted.id
+    assert row.query_id == 10
+    assert row.description == "chicken rice"
+
+
+def test_get_row_by_query_id_returns_none_for_missing(sqlite_session):
+    assert crud_personalized_food.get_row_by_query_id(9999) is None
+
+
 def test_get_all_rows_for_user_scopes_and_excludes(sqlite_session):
     crud_personalized_food.insert_description_row(
         user_id=1, query_id=10, description="a", tokens=["a"]
