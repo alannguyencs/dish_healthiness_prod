@@ -1,6 +1,6 @@
 # Personalized Food Index — Technical Design
 
-[< Prev: Nutritional Analysis](./nutritional_analysis.md) | [Parent](./index.md)
+[< Prev: Nutritional Analysis](./nutritional_analysis.md) | [Parent](./index.md) | [Next: Nutrition DB >](./nutrition_db.md)
 
 ## Related Docs
 
@@ -156,4 +156,4 @@ None. `rank-bm25` is an in-process Python library, added to `requirements.txt` a
 
 ---
 
-[< Prev: Nutritional Analysis](./nutritional_analysis.md) | [Parent](./index.md)
+[< Prev: Nutritional Analysis](./nutritional_analysis.md) | [Parent](./index.md) | [Next: Nutrition DB >](./nutrition_db.md)

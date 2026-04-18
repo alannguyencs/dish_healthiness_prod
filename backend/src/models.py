@@ -7,7 +7,17 @@ application, including user management and food image query storage.
 
 from typing import Any, Dict
 
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, JSON, String
+from sqlalchemy import (
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    JSON,
+    String,
+    UniqueConstraint,
+)
 
 from src.database import Base
 
@@ -158,6 +168,109 @@ class PersonalizedFoodDescription(Base):
     def to_dict(self) -> Dict[str, Any]:
         """
         Convert personalized food description to dictionary representation.
+
+        Returns:
+            Dict[str, Any]: Dictionary containing all row attributes
+        """
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
+
+class NutritionFood(Base):
+    """
+    Unified nutrition database row across the four source DBs.
+
+    One row per food from Anuvaad INDB 2024, CIQUAL 2020, Malaysian Food
+    Calories, or MyFCD. Direct columns for the four macros where the
+    source has them; `raw_data` JSONB carries the full source row for
+    extras (CIQUAL micros, Anuvaad full nutrient set, etc.).
+
+    `searchable_document` is precomputed at seed time by
+    `scripts/seed/load_nutrition_db.py` — variations and synonyms
+    expanded once so the runtime BM25 index build is a whitespace split.
+    Re-tuning the variation maps requires re-running the seed script.
+    See `docs/technical/dish_analysis/nutrition_db.md` for column-level
+    semantics.
+    """
+
+    __tablename__ = "nutrition_foods"
+    __table_args__ = (
+        UniqueConstraint("source", "source_food_id", name="uq_nutrition_foods_source_food_id"),
+        Index("idx_nutrition_foods_source", "source"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    source = Column(String, nullable=False)
+    source_food_id = Column(String, nullable=False)
+    food_name = Column(String, nullable=False)
+    food_name_eng = Column(String, nullable=True, default=None)
+    category = Column(String, nullable=True, default=None)
+    searchable_document = Column(String, nullable=False)
+    calories = Column(Float, nullable=True, default=None)
+    carbs_g = Column(Float, nullable=True, default=None)
+    protein_g = Column(Float, nullable=True, default=None)
+    fat_g = Column(Float, nullable=True, default=None)
+    fiber_g = Column(Float, nullable=True, default=None)
+    serving_size_grams = Column(Float, nullable=True, default=None)
+    serving_unit = Column(String, nullable=True, default=None)
+    raw_data = Column(JSON, nullable=False)
+    created_at = Column(DateTime, nullable=False)
+    updated_at = Column(DateTime, nullable=False)
+
+    def __repr__(self) -> str:
+        """
+        Return string representation of nutrition food row.
+
+        Returns:
+            str: String representation showing source and id
+        """
+        return f"<NutritionFood {self.source}:{self.source_food_id}>"
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert nutrition food to dictionary representation.
+
+        Returns:
+            Dict[str, Any]: Dictionary containing all row attributes
+        """
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
+
+class NutritionMyfcdNutrient(Base):
+    """
+    Long-format MyFCD nutrient row.
+
+    Joined back to the parent `NutritionFood` row by
+    (source='myfcd', source_food_id=ndb_id). The service reconstructs
+    the nested `.nutrients` dict downstream consumers expect.
+    """
+
+    __tablename__ = "nutrition_myfcd_nutrients"
+    __table_args__ = (
+        UniqueConstraint(
+            "ndb_id", "nutrient_name", name="uq_nutrition_myfcd_nutrients_ndb_nutrient"
+        ),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    ndb_id = Column(String, nullable=False, index=True)
+    nutrient_name = Column(String, nullable=False)
+    value_per_100g = Column(Float, nullable=True, default=None)
+    value_per_serving = Column(Float, nullable=True, default=None)
+    unit = Column(String, nullable=True, default=None)
+    category = Column(String, nullable=True, default=None)
+
+    def __repr__(self) -> str:
+        """
+        Return string representation of MyFCD nutrient row.
+
+        Returns:
+            str: String representation showing ndb_id and nutrient name
+        """
+        return f"<NutritionMyfcdNutrient {self.ndb_id}:{self.nutrient_name}>"
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert MyFCD nutrient row to dictionary representation.
 
         Returns:
             Dict[str, Any]: Dictionary containing all row attributes

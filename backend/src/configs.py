@@ -22,6 +22,12 @@ IMAGE_DIR.mkdir(exist_ok=True)
 RESOURCE_DIR = PROJECT_DIR / "resources"
 RESOURCE_DIR.mkdir(exist_ok=True)
 
+# Nutrition source CSVs (Anuvaad, CIQUAL, Malaysian, MyFCD basic+nutrients).
+# Read by `scripts/seed/load_nutrition_db.py` only; the runtime service
+# reads from the seeded `nutrition_foods` / `nutrition_myfcd_nutrients`
+# tables, never from disk.
+DATABASE_DIR = RESOURCE_DIR / "database"
+
 LOG_DIR = PROJECT_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 

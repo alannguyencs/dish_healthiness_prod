@@ -74,3 +74,65 @@ CREATE INDEX IF NOT EXISTS idx_personalized_food_descriptions_user_id
 -- Also enforces 1:1 with dish_image_query_prod_dev
 CREATE UNIQUE INDEX IF NOT EXISTS uq_personalized_food_descriptions_query_id
     ON personalized_food_descriptions(query_id);
+
+-- Table: nutrition_foods
+-- Unified row table for the four source nutrition databases (Malaysian
+-- food calories, MyFCD, Anuvaad INDB 2024, CIQUAL 2020). One row per
+-- food item across all sources. Direct columns for the four macros plus
+-- standard serving fields. raw_data JSONB stores source-specific extras
+-- (full Anuvaad nutrient set, CIQUAL micros, Malaysian portion text)
+-- so Stage 7 can read either the direct columns or the JSON blob.
+-- searchable_document is precomputed at seed time (variations and
+-- synonyms expanded once) so the runtime BM25 index build is a simple
+-- whitespace split.
+CREATE TABLE IF NOT EXISTS nutrition_foods (
+    id SERIAL PRIMARY KEY,
+    source TEXT NOT NULL,
+    source_food_id TEXT NOT NULL,
+    food_name TEXT NOT NULL,
+    food_name_eng TEXT,
+    category TEXT,
+    searchable_document TEXT NOT NULL,
+    calories FLOAT,
+    carbs_g FLOAT,
+    protein_g FLOAT,
+    fat_g FLOAT,
+    fiber_g FLOAT,
+    serving_size_grams FLOAT,
+    serving_unit TEXT,
+    raw_data JSONB NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+-- Source filter (service partitions the corpus by source before BM25)
+CREATE INDEX IF NOT EXISTS idx_nutrition_foods_source
+    ON nutrition_foods(source);
+
+-- Idempotent upsert key for the seed script
+CREATE UNIQUE INDEX IF NOT EXISTS uq_nutrition_foods_source_food_id
+    ON nutrition_foods(source, source_food_id);
+
+-- Table: nutrition_myfcd_nutrients
+-- Long-format MyFCD nutrient detail. Joined back to the parent
+-- nutrition_foods row by (source='myfcd', source_food_id=ndb_id) so the
+-- service can reconstruct the nested .nutrients dict that downstream
+-- consumers expect. Soft join (no DB-level FK) because the nutrient
+-- table only carries values for MyFCD rows.
+CREATE TABLE IF NOT EXISTS nutrition_myfcd_nutrients (
+    id SERIAL PRIMARY KEY,
+    ndb_id TEXT NOT NULL,
+    nutrient_name TEXT NOT NULL,
+    value_per_100g FLOAT,
+    value_per_serving FLOAT,
+    unit TEXT,
+    category TEXT
+);
+
+-- Lookup by parent food (service load path)
+CREATE INDEX IF NOT EXISTS idx_nutrition_myfcd_nutrients_ndb_id
+    ON nutrition_myfcd_nutrients(ndb_id);
+
+-- Idempotent upsert key for the seed script
+CREATE UNIQUE INDEX IF NOT EXISTS uq_nutrition_myfcd_nutrients_ndb_nutrient
+    ON nutrition_myfcd_nutrients(ndb_id, nutrient_name);
