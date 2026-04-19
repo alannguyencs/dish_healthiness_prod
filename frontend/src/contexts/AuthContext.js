@@ -9,8 +9,23 @@ export const AuthProvider = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    // For now, assume not authenticated on mount
-    setLoading(false);
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await apiService.getSession();
+        if (!cancelled && data?.success) {
+          setUser(data.user);
+          setAuthenticated(true);
+        }
+      } catch (_err) {
+        // 401 or network error — leave unauthenticated.
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const login = async (username, password) => {

@@ -29,6 +29,11 @@ const apiService = {
     return response.data;
   },
 
+  getSession: async () => {
+    const response = await api.get("/api/login/session");
+    return response.data;
+  },
+
   // Dashboard endpoints
   getDashboardData: async (year = null, month = null) => {
     const params = {};

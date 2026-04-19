@@ -6,11 +6,11 @@ with session management.
 """
 
 import logging
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from src.auth import authenticate_user, create_access_token
+from src.auth import authenticate_user, authenticate_user_from_request, create_access_token
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -76,6 +76,23 @@ async def process_login(login_data: LoginRequest) -> JSONResponse:
     )
 
     return response
+
+
+@router.get("/session")
+async def get_session(request: Request) -> JSONResponse:
+    """Return the current user if the session cookie is valid, 401 otherwise."""
+    user = authenticate_user_from_request(request)
+    if not user:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"success": False, "message": "Not authenticated"},
+        )
+    return JSONResponse(
+        content={
+            "success": True,
+            "user": {"id": user.id, "username": user.username},
+        }
+    )
 
 
 @router.post("/logout")
