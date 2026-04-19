@@ -168,6 +168,28 @@ Explain your healthiness score in one clear paragraph (3-5 sentences):
    - Rice → Manganese, Selenium
    - Vegetables → Vitamin A, Vitamin C, Folate
    - Dairy → Calcium, Vitamin D
+
+### Cooking Style / Preparation / Regional Variant
+
+When inferring nutrient numbers, explicitly weigh the dish's:
+- Cooking style (deep-fried vs steamed vs grilled vs raw)
+- Preparation method (battered, breaded, tempered, sauced)
+- Regional variant (North-Indian vs South-Indian curry, Hainanese vs Hakka chicken rice, Sichuan vs Cantonese, etc.)
+
+These choices shift calorie and macro estimates meaningfully — reflect the decision in the `reasoning_*` fields.
+
+__NUTRITION_DB_BLOCK__
+__PERSONALIZED_BLOCK__
+
+### Attribution contract (`reasoning_*`)
+
+Each `reasoning_*` field is a short string (≤ 200 characters) attributing its metric's value to its source. Acceptable shapes:
+
+- `"Nutrition DB: Chicken Rice (malaysian, 88%) calibrated against image"` — a DB match drove the number.
+- `"User prior: 2026-04-10 similar upload (sim 0.82)"` — a prior personalized analysis drove the number.
+- `"LLM-only: image + components, no DB match above threshold"` — no external evidence.
+
+If an optional block (Nutrition Database Matches, Personalization Matches) is **absent** from this prompt, treat it as authoritatively missing — do NOT cite a Nutrition Database source or a user prior that was not provided. An empty `""` for `reasoning_micronutrients` is acceptable when no micronutrients are surfaced.
     ]]></content>
   </section>
 
@@ -185,7 +207,14 @@ The output must be valid JSON matching this exact structure:
   "carbs_g": 42,
   "protein_g": 52,
   "fat_g": 31,
-  "micronutrients": ["Iron", "Vitamin B12", "Zinc", "Selenium", "Vitamin B6", "Potassium"]
+  "micronutrients": ["Iron", "Vitamin B12", "Zinc", "Selenium", "Vitamin B6", "Potassium"],
+  "reasoning_sources": "LLM-only: image + components (no DB match above threshold)",
+  "reasoning_calories": "Grilled beef ~52 g protein x 4 kcal + fries ~25 g fat x 9 kcal",
+  "reasoning_fiber": "Fries contribute most fiber (skin-on potato estimate)",
+  "reasoning_carbs": "Fries carb-heavy; beef ~0 carbs",
+  "reasoning_protein": "Beef steak drives protein; fries negligible",
+  "reasoning_fat": "Deep-fried fries ~60% of fat; steak marbling adds ~40%",
+  "reasoning_micronutrients": "Iron + B12 + Zinc from beef; Potassium + Selenium from fries"
 }
 ```
 
@@ -199,6 +228,13 @@ The output must be valid JSON matching this exact structure:
 - `protein_g` (integer): Total protein in grams
 - `fat_g` (integer): Total fat in grams
 - `micronutrients` (array of strings): 3-8 notable micronutrients
+- `reasoning_sources` (string): Short attribution of which sources drove this analysis (DB match name, user-prior reference, or "LLM-only")
+- `reasoning_calories` (string): One-line rationale for the calories estimate
+- `reasoning_fiber` (string): One-line rationale for fiber_g
+- `reasoning_carbs` (string): One-line rationale for carbs_g
+- `reasoning_protein` (string): One-line rationale for protein_g
+- `reasoning_fat` (string): One-line rationale for fat_g
+- `reasoning_micronutrients` (string): One-line rationale for the micronutrients list (empty string `""` acceptable when none surfaced)
 
 **All macronutrient values must be whole integers (no decimals).**
 

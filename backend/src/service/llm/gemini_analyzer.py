@@ -166,11 +166,13 @@ async def analyze_step1_component_identification_async(  # pylint: disable=too-m
         raise ValueError(f"Error calling Gemini API (Step 1): {e}") from e
 
 
+# pylint: disable=too-many-arguments
 async def analyze_step2_nutritional_analysis_async(  # pylint: disable=too-many-locals
     image_path: Path,
     analysis_prompt: str,
     gemini_model: str = "gemini-2.5-pro",
     thinking_budget: int = -1,
+    reference_image_bytes: Optional[bytes] = None,
 ) -> Dict[str, Any]:
     """
     Async: Step 2 - Calculate nutritional values using Gemini.
@@ -186,6 +188,10 @@ async def analyze_step2_nutritional_analysis_async(  # pylint: disable=too-many-
         analysis_prompt: Step 2 nutritional analysis prompt (with confirmed data)
         gemini_model: Gemini model to use
         thinking_budget: Thinking budget for Gemini
+        reference_image_bytes: Optional JPEG bytes for a second image to
+            attach after the query image (Phase 2.3 two-image path when
+            the top-1 Phase 2.2 match's similarity_score >= 0.35). When
+            None, the request is single-image.
 
     Returns:
         Dict[str, Any]: Step 2 results with metadata
@@ -209,9 +215,20 @@ async def analyze_step2_nutritional_analysis_async(  # pylint: disable=too-many-
         # Create image part
         image_part = types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
 
+        # Optional reference image (Phase 2.3 two-image request, Stage 7).
+        # Order matters: the query image lands at index 1; the reference
+        # image at index 2 if attached.
+        contents = [analysis_prompt, image_part]
+        if reference_image_bytes is not None:
+            reference_part = types.Part.from_bytes(
+                data=reference_image_bytes, mime_type="image/jpeg"
+            )
+            contents.append(reference_part)
+
         # Log model being used
         print(
-            f"[Gemini Step 2] Using model: {gemini_model} with thinking_budget: {thinking_budget}"
+            f"[Gemini Step 2] Using model: {gemini_model} with "
+            f"thinking_budget: {thinking_budget} image_parts: {len(contents) - 1}"
         )
 
         # Run in executor (Gemini SDK isn't truly async)
@@ -220,7 +237,7 @@ async def analyze_step2_nutritional_analysis_async(  # pylint: disable=too-many-
         def _sync_gemini_call():
             return client.models.generate_content(
                 model=gemini_model,
-                contents=[analysis_prompt, image_part],
+                contents=contents,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
                     response_schema=Step2NutritionalAnalysis,

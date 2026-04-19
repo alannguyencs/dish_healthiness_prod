@@ -22,13 +22,17 @@ After the user confirms the component list in the previous phase, the system run
 
 If the AI call fails, the user sees a clear error message with a one-click **Try Again** button instead of an indefinite loading spinner. The user can toggle between the results view and the earlier component editor to recheck what was confirmed.
 
-### Curated nutrition database (consulted silently)
+### Curated nutrition database (active)
 
-Starting this phase, the system also consults a curated database of ~4,500 foods across four international sources (Malaysian, MyFCD, Anuvaad, CIQUAL) to find close matches for the confirmed dish and each of its components. The matches are recorded on the record but not yet shown to the user and not yet fed into the AI — the measurable benefit arrives when a later release lets the AI cite them for more consistent nutrition numbers. Dev environments that have not seeded the database, or dishes with no database coverage, continue to run exactly as before — the AI is never blocked on database coverage.
+The system consults a curated database of ~4,500 foods across four international sources (Malaysian, MyFCD, Anuvaad, CIQUAL) and, when the top match is confident enough, passes it to the AI as evidence for calibrating calories and macros. Dev environments that have not seeded the database, or dishes with no confident match, fall back to the AI's own knowledge of the image — the analysis is never blocked on database coverage.
 
-### Personalization history (consulted silently)
+### Personalization history (active)
 
-In parallel with the nutrition database lookup, the system also compares the user's confirmed dish and its short caption against the user's own prior uploads. Close historical matches are recorded on the record (but not yet shown to the user and not yet fed into the AI — the measurable benefit arrives when a later release lets the AI reuse the user's prior analyses for more consistent nutrition numbers on repeat dishes). Strictly per-account: one user's history never influences another user's analyses.
+In parallel with the nutrition database lookup, the system compares the user's confirmed dish and its short caption against the user's own prior uploads. When a close match exists the AI gets a concise summary of the prior analysis; when the match is particularly close, the prior dish's photo is also attached as a hint image. Strictly per-account: one user's history never influences another user's analyses.
+
+### Reasoning attribution
+
+Every macro number on the Step 2 results now ships with a one-line rationale — which database source (if any) drove the calories, which prior dish supported the protein estimate, or "LLM-only" when no external evidence cleared the confidence gates. These rationales are currently recorded on the record for debugging and operator audit; a later release adds a "Why these numbers?" panel on the review UI. Weak or absent evidence falls back explicitly to the AI's own reasoning, flagged as "LLM-only" in the attribution so nothing is silently invented.
 
 ## User Flow
 

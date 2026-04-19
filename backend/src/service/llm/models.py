@@ -149,3 +149,26 @@ class Step2NutritionalAnalysis(BaseModel):
         default_factory=list,
         description="Notable micronutrients with optional mg quantities",
     )
+    reasoning_sources: str = Field(
+        default="",
+        description=(
+            "Short string listing which sources drove this analysis "
+            "(e.g. 'Nutrition DB: Chicken Rice (malaysian, 88%)', "
+            "'User prior: similar upload', or 'LLM-only')."
+        ),
+    )
+    reasoning_calories: str = Field(
+        default="",
+        description="Rationale for the calories_kcal estimate, citing source if any.",
+    )
+    reasoning_fiber: str = Field(default="", description="Rationale for fiber_g.")
+    reasoning_carbs: str = Field(default="", description="Rationale for carbs_g.")
+    reasoning_protein: str = Field(default="", description="Rationale for protein_g.")
+    reasoning_fat: str = Field(default="", description="Rationale for fat_g.")
+    reasoning_micronutrients: str = Field(
+        default="",
+        description=(
+            "Rationale for the micronutrients list. Empty string is acceptable "
+            "when no micronutrients are surfaced."
+        ),
+    )

@@ -25,6 +25,26 @@ def dummy_image(tmp_path):
     return path
 
 
+STEP2_OK_RESPONSE_DICT = {
+    "dish_name": "Chicken Rice",
+    "healthiness_score": 70,
+    "healthiness_score_rationale": "Balanced",
+    "calories_kcal": 500,
+    "fiber_g": 2,
+    "carbs_g": 60,
+    "protein_g": 25,
+    "fat_g": 15,
+    "micronutrients": ["Iron"],
+    "reasoning_sources": "",
+    "reasoning_calories": "",
+    "reasoning_fiber": "",
+    "reasoning_carbs": "",
+    "reasoning_protein": "",
+    "reasoning_fat": "",
+    "reasoning_micronutrients": "",
+}
+
+
 def _patch_client(monkeypatch, *, captured: dict, response=None):
     fake_response = response or SimpleNamespace(
         parsed=SimpleNamespace(
@@ -126,3 +146,91 @@ def test_analyze_step1_preserves_image_order_query_first_reference_second(
         import base64  # pylint: disable=import-outside-toplevel
 
         assert base64.b64decode(ref_bytes) == b"reference-jpeg-bytes"
+
+
+# ---------------------------------------------------------------------------
+# Stage 7 — Step 2 analyzer with optional reference_image_bytes
+# ---------------------------------------------------------------------------
+
+
+def _step2_response():
+    return SimpleNamespace(
+        parsed=SimpleNamespace(model_dump=lambda: STEP2_OK_RESPONSE_DICT),
+        text=None,
+        usage_metadata=SimpleNamespace(
+            prompt_token_count=100,
+            candidates_token_count=200,
+            thoughts_token_count=0,
+        ),
+    )
+
+
+def test_analyze_step2_sends_single_image_when_no_reference_bytes(monkeypatch, dummy_image):
+    os.environ["GEMINI_API_KEY"] = "test-key"
+    captured = {}
+    _patch_client(monkeypatch, captured=captured, response=_step2_response())
+
+    asyncio.run(
+        gemini_analyzer.analyze_step2_nutritional_analysis_async(
+            image_path=dummy_image,
+            analysis_prompt="STEP2 PROMPT",
+        )
+    )
+    assert len(captured["contents"]) == 2  # prompt + query image
+
+
+def test_analyze_step2_sends_two_images_when_reference_bytes_provided(monkeypatch, dummy_image):
+    os.environ["GEMINI_API_KEY"] = "test-key"
+    captured = {}
+    _patch_client(monkeypatch, captured=captured, response=_step2_response())
+
+    asyncio.run(
+        gemini_analyzer.analyze_step2_nutritional_analysis_async(
+            image_path=dummy_image,
+            analysis_prompt="STEP2 PROMPT",
+            reference_image_bytes=b"prior-dish-bytes",
+        )
+    )
+    assert len(captured["contents"]) == 3  # prompt + query + reference
+    assert captured["contents"][0] == "STEP2 PROMPT"
+
+
+def test_analyze_step2_preserves_order_query_first_reference_second(monkeypatch, dummy_image):
+    os.environ["GEMINI_API_KEY"] = "test-key"
+    captured = {}
+    _patch_client(monkeypatch, captured=captured, response=_step2_response())
+
+    asyncio.run(
+        gemini_analyzer.analyze_step2_nutritional_analysis_async(
+            image_path=dummy_image,
+            analysis_prompt="STEP2 PROMPT",
+            reference_image_bytes=b"prior-dish-bytes",
+        )
+    )
+    contents = captured["contents"]
+    ref_part = contents[2]
+    ref_dict = ref_part.model_dump() if hasattr(ref_part, "model_dump") else dict(ref_part)
+    ref_bytes = ref_dict.get("inline_data", {}).get("data")
+    if isinstance(ref_bytes, bytes):
+        assert ref_bytes == b"prior-dish-bytes"
+    elif isinstance(ref_bytes, str):
+        import base64  # pylint: disable=import-outside-toplevel
+
+        assert base64.b64decode(ref_bytes) == b"prior-dish-bytes"
+
+
+def test_analyze_step2_does_not_require_reasoning_fields(monkeypatch, dummy_image):
+    """reasoning_* default to empty strings — analyzer must not raise on empty values."""
+    os.environ["GEMINI_API_KEY"] = "test-key"
+    captured = {}
+    _patch_client(monkeypatch, captured=captured, response=_step2_response())
+
+    result = asyncio.run(
+        gemini_analyzer.analyze_step2_nutritional_analysis_async(
+            image_path=dummy_image,
+            analysis_prompt="STEP2 PROMPT",
+        )
+    )
+    assert result["reasoning_sources"] == ""
+    assert result["reasoning_calories"] == ""
+    assert result["reasoning_micronutrients"] == ""

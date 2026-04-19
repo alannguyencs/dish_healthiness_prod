@@ -43,6 +43,27 @@ THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25
 # after real retrieval-quality data.
 THRESHOLD_PHASE_2_2_SIMILARITY = 0.30
 
+# Stage 7 (Phase 2.3) threshold gates for the Gemini prompt's optional
+# reference blocks and for the image-B attach.
+
+# Include the Nutrition Database Matches block only when the top match's
+# confidence_score (0-100 scale) clears 80. Tuned against the
+# reference-project NDCG eval set; editing invalidates the Stage 9 gate.
+THRESHOLD_DB_INCLUDE = 80
+
+# Include the Personalization Matches block only when the top match's
+# similarity_score (0-1 scale, max-in-batch normalized) clears 0.30.
+# Same value as THRESHOLD_PHASE_2_2_SIMILARITY (Stage 6's retrieval gate)
+# by intent; separate knob so prompt-inclusion can be tuned independently
+# of the retrieval surface.
+THRESHOLD_PERSONALIZATION_INCLUDE = 0.30
+
+# Attach the top-1 personalization match's image as a second Gemini input
+# (image B) only when its similarity_score clears 0.35. Stricter than
+# THRESHOLD_PERSONALIZATION_INCLUDE so the gap band [0.30, 0.35) gives
+# Gemini a textual hint without an unframed second image.
+THRESHOLD_PHASE_2_2_IMAGE = 0.35
+
 LOG_DIR = PROJECT_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 

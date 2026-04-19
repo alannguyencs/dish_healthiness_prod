@@ -9,6 +9,10 @@ import re
 from typing import Any, Dict, List, Optional
 
 from src.configs import RESOURCE_DIR
+from src.service.llm._step2_blocks import (
+    render_nutrition_db_block,
+    render_personalized_block,
+)
 
 
 _REFERENCE_PLACEHOLDER = "__REFERENCE_BLOCK__"
@@ -16,6 +20,16 @@ _REFERENCE_PLACEHOLDER = "__REFERENCE_BLOCK__"
 # leaves no blank gap behind.
 _REFERENCE_STRIP_RE = re.compile(
     r"^[ \t]*" + re.escape(_REFERENCE_PLACEHOLDER) + r"[ \t]*\n?", re.M
+)
+
+_NUTRITION_DB_PLACEHOLDER = "__NUTRITION_DB_BLOCK__"
+_NUTRITION_DB_STRIP_RE = re.compile(
+    r"^[ \t]*" + re.escape(_NUTRITION_DB_PLACEHOLDER) + r"[ \t]*\n?", re.M
+)
+
+_PERSONALIZED_PLACEHOLDER = "__PERSONALIZED_BLOCK__"
+_PERSONALIZED_STRIP_RE = re.compile(
+    r"^[ \t]*" + re.escape(_PERSONALIZED_PLACEHOLDER) + r"[ \t]*\n?", re.M
 )
 
 
@@ -96,12 +110,28 @@ def get_step1_component_identification_prompt(
     return _REFERENCE_STRIP_RE.sub("", prompt)
 
 
-def get_step2_nutritional_analysis_prompt(dish_name: str, components: List[Dict[str, Any]]) -> str:
+def _substitute_or_strip(
+    prompt: str, placeholder_re: re.Pattern, placeholder: str, block: str
+) -> str:
+    """Substitute `placeholder` with `block` when non-empty, else strip the placeholder line."""
+    if block:
+        return prompt.replace(placeholder, block)
+    return placeholder_re.sub("", prompt)
+
+
+def get_step2_nutritional_analysis_prompt(
+    dish_name: str,
+    components: List[Dict[str, Any]],
+    nutrition_db_matches: Optional[Dict[str, Any]] = None,
+    personalized_matches: Optional[List[Dict[str, Any]]] = None,
+) -> str:
     """
     Load and format Step 2 prompt for nutritional analysis.
 
-    This prompt is used after user confirms Step 1 data. It provides
-    comprehensive nutritional analysis based on confirmed components.
+    Phase 2.3 (Stage 7): gate the two optional reference blocks on
+    `THRESHOLD_DB_INCLUDE` and `THRESHOLD_PERSONALIZATION_INCLUDE`, then
+    substitute or strip the placeholder lines accordingly. Block ordering
+    is fixed in the .md: DB block precedes personalization block.
 
     Args:
         dish_name: User-confirmed dish name
@@ -110,6 +140,12 @@ def get_step2_nutritional_analysis_prompt(dish_name: str, components: List[Dict[
                    - component_name (str)
                    - selected_serving_size (str)
                    - number_of_servings (float)
+        nutrition_db_matches: Optional Stage 5 pre-Pro-persisted dict.
+            When its top match's `confidence_score >= 80`, the
+            `__NUTRITION_DB_BLOCK__` placeholder is substituted.
+        personalized_matches: Optional Stage 6 pre-Pro-persisted list.
+            When its top match's `similarity_score >= 0.30`, the
+            `__PERSONALIZED_BLOCK__` placeholder is substituted.
 
     Returns:
         str: Step 2 nutritional analysis prompt with confirmed data
@@ -123,6 +159,19 @@ def get_step2_nutritional_analysis_prompt(dish_name: str, components: List[Dict[
 
     with open(prompt_path, "r", encoding="utf-8") as f:
         base_prompt = f.read()
+
+    base_prompt = _substitute_or_strip(
+        base_prompt,
+        _NUTRITION_DB_STRIP_RE,
+        _NUTRITION_DB_PLACEHOLDER,
+        render_nutrition_db_block(nutrition_db_matches),
+    )
+    base_prompt = _substitute_or_strip(
+        base_prompt,
+        _PERSONALIZED_STRIP_RE,
+        _PERSONALIZED_PLACEHOLDER,
+        render_personalized_block(personalized_matches),
+    )
 
     # Format component data for injection into prompt
     components_text = "\n\n**USER-CONFIRMED DATA FROM STEP 1:**\n\n"

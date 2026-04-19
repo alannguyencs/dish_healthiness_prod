@@ -56,10 +56,12 @@ COMPONENTS = [
 
 @pytest.fixture()
 def patch_prompt(monkeypatch):
+    # Stage 7 passes nutrition_db_matches + personalized_matches kwargs; the
+    # fixture signature accepts them all.
     monkeypatch.setattr(
         item_tasks,
         "get_step2_nutritional_analysis_prompt",
-        lambda dish_name, components: "STEP2 PROMPT",
+        lambda **_kw: "STEP2 PROMPT",
     )
 
 
@@ -607,3 +609,326 @@ def test_phase2_task_reads_reference_description_from_record(
     assert persona_calls[0]["description"] == "beef noodle soup"
     assert persona_calls[0]["query_id"] == 7
     assert persona_calls[0]["user_id"] == record.user_id
+
+
+# ---------------------------------------------------------------------------
+# Stage 7 — Phase 2.3 threshold-gated blocks + image-B attach
+# ---------------------------------------------------------------------------
+
+
+def _patch_persisted_record(
+    monkeypatch,
+    writes_list,
+    *,
+    nutrition_db_matches=None,
+    personalized_matches=None,
+):
+    """
+    Install get_dish_image_query_by_id so Stage 7 sees persisted matches.
+    `writes_list` is the shared capture list from the `captured_writes`
+    fixture — passed in so re-reads after capture see the latest write.
+    """
+    base = {
+        "step": 1,
+        "step1_data": {},
+        "step1_confirmed": True,
+        "reference_image": {"description": "chicken rice"},
+        "nutrition_db_matches": nutrition_db_matches,
+        "personalized_matches": personalized_matches,
+    }
+    record = make_record(result_gemini=base)
+
+    def _get_record(_id):
+        if writes_list:
+            record.result_gemini = writes_list[-1]["result_gemini"]
+        return record
+
+    monkeypatch.setattr(item_tasks, "get_dish_image_query_by_id", _get_record)
+    return record
+
+
+def _patch_prompt_capture(monkeypatch):
+    captured = {}
+
+    def _capture(**kwargs):
+        captured.update(kwargs)
+        return "STEP2 PROMPT"
+
+    monkeypatch.setattr(item_tasks, "get_step2_nutritional_analysis_prompt", _capture)
+    return captured
+
+
+def _patch_analyzer_capture(monkeypatch):
+    captured = {}
+
+    async def _capture(**kwargs):
+        captured.update(kwargs)
+        return {
+            "dish_name": "Chicken Rice",
+            "calories_kcal": 500,
+            "reasoning_sources": "stub",
+        }
+
+    monkeypatch.setattr(item_tasks, "analyze_step2_nutritional_analysis_async", _capture)
+    return captured
+
+
+def test_stage7_plumbs_matches_into_prompt_builder(monkeypatch, captured_writes, tmp_path):
+    """Stage 7: nutrition_db_matches + personalized_matches flow from record into the prompt."""
+    nutrition_db_matches = {"nutrition_matches": [{"matched_food_name": "Chicken Rice"}]}
+    personalized_matches = [{"query_id": 42, "similarity_score": 0.50, "image_url": None}]
+
+    writes, capture = captured_writes
+    _patch_persisted_record(
+        monkeypatch,
+        writes,
+        nutrition_db_matches=nutrition_db_matches,
+        personalized_matches=personalized_matches,
+    )
+    monkeypatch.setattr(item_tasks, "update_dish_image_query_results", capture)
+
+    monkeypatch.setattr(
+        item_tasks, "extract_and_lookup_nutrition", lambda *_a, **_kw: nutrition_db_matches
+    )
+    monkeypatch.setattr(
+        item_tasks,
+        "lookup_personalization",
+        lambda user_id, query_id, description, confirmed_dish_name: personalized_matches,
+    )
+    prompt_captured = _patch_prompt_capture(monkeypatch)
+    _patch_analyzer_capture(monkeypatch)
+
+    # Fix IMAGE_DIR so the missing-image path is exercised cleanly
+    monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
+
+    asyncio.run(
+        item_tasks.trigger_step2_analysis_background(
+            query_id=1,
+            image_path="/tmp/q.jpg",
+            dish_name="Chicken Rice",
+            components=COMPONENTS,
+        )
+    )
+
+    assert prompt_captured["nutrition_db_matches"] == nutrition_db_matches
+    assert prompt_captured["personalized_matches"] == personalized_matches
+
+
+def test_stage7_resolves_image_bytes_when_similarity_above_035(
+    monkeypatch, captured_writes, tmp_path
+):
+    """Top-1 similarity 0.50 + file on disk → analyzer receives reference_image_bytes."""
+    ref_bytes = b"prior-jpeg-bytes"
+    ref_file = tmp_path / "prior.jpg"
+    ref_file.write_bytes(ref_bytes)
+
+    personalized_matches = [
+        {
+            "query_id": 42,
+            "similarity_score": 0.50,
+            "image_url": "/images/prior.jpg",
+            "description": "c",
+            "prior_step2_data": None,
+            "corrected_step2_data": None,
+        }
+    ]
+    writes, capture = captured_writes
+    _patch_persisted_record(
+        monkeypatch,
+        writes,
+        nutrition_db_matches={"nutrition_matches": []},
+        personalized_matches=personalized_matches,
+    )
+    monkeypatch.setattr(item_tasks, "update_dish_image_query_results", capture)
+    monkeypatch.setattr(
+        item_tasks, "extract_and_lookup_nutrition", lambda *_a, **_kw: {"nutrition_matches": []}
+    )
+    monkeypatch.setattr(
+        item_tasks,
+        "lookup_personalization",
+        lambda *a, **kw: personalized_matches,
+    )
+    _patch_prompt_capture(monkeypatch)
+    analyzer_captured = _patch_analyzer_capture(monkeypatch)
+
+    monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
+
+    asyncio.run(
+        item_tasks.trigger_step2_analysis_background(
+            query_id=1,
+            image_path="/tmp/q.jpg",
+            dish_name="Chicken Rice",
+            components=COMPONENTS,
+        )
+    )
+
+    assert analyzer_captured["reference_image_bytes"] == ref_bytes
+
+
+def test_stage7_no_image_bytes_when_similarity_below_035(monkeypatch, captured_writes, tmp_path):
+    personalized_matches = [
+        {
+            "query_id": 42,
+            "similarity_score": 0.32,
+            "image_url": "/images/prior.jpg",
+            "description": "c",
+            "prior_step2_data": None,
+            "corrected_step2_data": None,
+        }
+    ]
+    writes, capture = captured_writes
+    _patch_persisted_record(
+        monkeypatch,
+        writes,
+        nutrition_db_matches={"nutrition_matches": []},
+        personalized_matches=personalized_matches,
+    )
+    monkeypatch.setattr(item_tasks, "update_dish_image_query_results", capture)
+    monkeypatch.setattr(
+        item_tasks, "extract_and_lookup_nutrition", lambda *_a, **_kw: {"nutrition_matches": []}
+    )
+    monkeypatch.setattr(
+        item_tasks,
+        "lookup_personalization",
+        lambda *a, **kw: personalized_matches,
+    )
+    _patch_prompt_capture(monkeypatch)
+    analyzer_captured = _patch_analyzer_capture(monkeypatch)
+
+    monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
+
+    asyncio.run(
+        item_tasks.trigger_step2_analysis_background(
+            query_id=1,
+            image_path="/tmp/q.jpg",
+            dish_name="Chicken Rice",
+            components=COMPONENTS,
+        )
+    )
+
+    assert analyzer_captured["reference_image_bytes"] is None
+
+
+def test_stage7_no_image_bytes_when_file_missing_and_logs_warn(
+    monkeypatch, captured_writes, tmp_path, caplog
+):
+    """similarity >= 0.35 but file missing → None + WARN log."""
+    personalized_matches = [
+        {
+            "query_id": 42,
+            "similarity_score": 0.70,
+            "image_url": "/images/gone.jpg",
+            "description": "c",
+            "prior_step2_data": None,
+            "corrected_step2_data": None,
+        }
+    ]
+    writes, capture = captured_writes
+    _patch_persisted_record(
+        monkeypatch,
+        writes,
+        nutrition_db_matches={"nutrition_matches": []},
+        personalized_matches=personalized_matches,
+    )
+    monkeypatch.setattr(item_tasks, "update_dish_image_query_results", capture)
+    monkeypatch.setattr(
+        item_tasks, "extract_and_lookup_nutrition", lambda *_a, **_kw: {"nutrition_matches": []}
+    )
+    monkeypatch.setattr(
+        item_tasks,
+        "lookup_personalization",
+        lambda *a, **kw: personalized_matches,
+    )
+    _patch_prompt_capture(monkeypatch)
+    analyzer_captured = _patch_analyzer_capture(monkeypatch)
+
+    monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)  # no file created
+
+    with caplog.at_level("WARNING"):
+        asyncio.run(
+            item_tasks.trigger_step2_analysis_background(
+                query_id=1,
+                image_path="/tmp/q.jpg",
+                dish_name="Chicken Rice",
+                components=COMPONENTS,
+            )
+        )
+
+    assert analyzer_captured["reference_image_bytes"] is None
+    assert any("reference image missing" in rec.message for rec in caplog.records)
+
+
+def test_stage7_no_image_bytes_when_no_personalized_matches(
+    monkeypatch, captured_writes, tmp_path
+):
+    writes, capture = captured_writes
+    _patch_persisted_record(
+        monkeypatch,
+        writes,
+        nutrition_db_matches={"nutrition_matches": []},
+        personalized_matches=[],
+    )
+    monkeypatch.setattr(item_tasks, "update_dish_image_query_results", capture)
+    monkeypatch.setattr(
+        item_tasks, "extract_and_lookup_nutrition", lambda *_a, **_kw: {"nutrition_matches": []}
+    )
+    monkeypatch.setattr(item_tasks, "lookup_personalization", lambda *a, **kw: [])
+    _patch_prompt_capture(monkeypatch)
+    analyzer_captured = _patch_analyzer_capture(monkeypatch)
+
+    monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
+
+    asyncio.run(
+        item_tasks.trigger_step2_analysis_background(
+            query_id=1,
+            image_path="/tmp/q.jpg",
+            dish_name="Chicken Rice",
+            components=COMPONENTS,
+        )
+    )
+
+    assert analyzer_captured["reference_image_bytes"] is None
+
+
+def test_stage7_persists_reasoning_fields_from_step2_result(
+    monkeypatch, captured_writes, tmp_path
+):
+    writes, capture = captured_writes
+    _patch_persisted_record(
+        monkeypatch,
+        writes,
+        nutrition_db_matches={"nutrition_matches": []},
+        personalized_matches=[],
+    )
+    monkeypatch.setattr(item_tasks, "update_dish_image_query_results", capture)
+    monkeypatch.setattr(
+        item_tasks, "extract_and_lookup_nutrition", lambda *_a, **_kw: {"nutrition_matches": []}
+    )
+    monkeypatch.setattr(item_tasks, "lookup_personalization", lambda *a, **kw: [])
+    _patch_prompt_capture(monkeypatch)
+
+    async def _fake(**_kw):
+        return {
+            "dish_name": "Chicken Rice",
+            "calories_kcal": 500,
+            "reasoning_sources": "Nutrition DB: Chicken Rice (malaysian, 88%)",
+            "reasoning_calories": "From DB top match, scaled to serving",
+            "reasoning_micronutrients": "",
+        }
+
+    monkeypatch.setattr(item_tasks, "analyze_step2_nutritional_analysis_async", _fake)
+    monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
+
+    asyncio.run(
+        item_tasks.trigger_step2_analysis_background(
+            query_id=1,
+            image_path="/tmp/q.jpg",
+            dish_name="Chicken Rice",
+            components=COMPONENTS,
+        )
+    )
+
+    final = writes[-1]["result_gemini"]
+    assert final["step2_data"]["reasoning_sources"].startswith("Nutrition DB")
+    assert final["step2_data"]["reasoning_calories"]
+    assert final["step2_data"]["reasoning_micronutrients"] == ""

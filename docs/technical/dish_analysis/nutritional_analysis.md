@@ -195,8 +195,57 @@ Written by:
 - `api/item_tasks.py::_safe_phase_2_1_result / _safe_phase_2_2_result` — gather exception converters.
 
 Read by:
-- Stage 7 (Phase 2.3 prompt) — not yet wired.
+- Stage 7 (Phase 2.3 prompt) — `personalized_matches` drives the `__PERSONALIZED_BLOCK__` placeholder substitution and the optional image-B attach.
 - Stage 8 (Phase 2.4 PersonalizationMatches panel) — not yet wired.
+
+### Phase 2.3 — Reference-Assisted Prompt (Stage 7)
+
+Consumes the two match keys persisted in Stages 5 and 6, plus the top-1 personalization image when `similarity_score ≥ 0.35`. Three thresholds gate the prompt and the image-B attach:
+
+| Constant | Value | Compared against | Gate effect |
+|---|---|---|---|
+| `THRESHOLD_DB_INCLUDE` | `80` | `nutrition_db_matches.nutrition_matches[0].confidence_score` (0-100) | Include `__NUTRITION_DB_BLOCK__` in the prompt |
+| `THRESHOLD_PERSONALIZATION_INCLUDE` | `0.30` | `personalized_matches[0].similarity_score` (0-1) | Include `__PERSONALIZED_BLOCK__` in the prompt |
+| `THRESHOLD_PHASE_2_2_IMAGE` | `0.35` | same as above | Attach image B (second Gemini image part) |
+
+Below threshold = placeholder line stripped cleanly via regex (same pattern as Stage 3's `__REFERENCE_BLOCK__`). The gap band `[0.30, 0.35)` lets the text block in but keeps image B off.
+
+**Block order** in the prompt: DB block precedes personalization block. DB is the curated, consistent source; personalization is weaker evidence (the user's prior analysis may itself have been uncertain).
+
+**Trimmed JSON payload.** Neither block dumps the full match dict verbatim. A module-private helper (`backend/src/service/llm/_step2_blocks.py`) narrows each match to the fields the prompt actually needs:
+
+- DB match: `matched_food_name, source, confidence_score, calories_kcal, protein_g, carbs_g, fat_g, fiber_g` (macros come from the source-aware `extract_single_match_nutrition` in `_nutrition_aggregation.py`).
+- Personalization match: `description, similarity_score, prior_step2_data` (5 macros) `, corrected_step2_data` (same 5 macros when Stage 8 has written them; otherwise `null`).
+
+Drops `raw_bm25_score`, full `raw_data`, `image_url`, `query_id`, `nutrition_data`. Keeps outbound prompts readable in `backend.log` and reduces Gemini input tokens by ~2× compared to a full-dict dump.
+
+**Image B**. When `personalized_matches[0].similarity_score >= 0.35`, `_resolve_phase_2_2_image_bytes` reads the bytes from `IMAGE_DIR / Path(image_url).name` and appends them to the Gemini `contents` list after the query image. Missing file → log WARN, single-image fallback (same pattern as Stage 3).
+
+**Output schema additions.** `Step2NutritionalAnalysis` gains seven flat `reasoning_*: str = Field(default="")` fields:
+
+| Field | Purpose |
+|---|---|
+| `reasoning_sources` | Top-level attribution for the analysis (DB match name, user-prior reference, or "LLM-only") |
+| `reasoning_calories` | One-line rationale for `calories_kcal` |
+| `reasoning_fiber` | One-line rationale for `fiber_g` |
+| `reasoning_carbs` | One-line rationale for `carbs_g` |
+| `reasoning_protein` | One-line rationale for `protein_g` |
+| `reasoning_fat` | One-line rationale for `fat_g` |
+| `reasoning_micronutrients` | One-line rationale for the micronutrients list (empty `""` acceptable) |
+
+All seven default to `""` in the schema. The analyzer's required-field guard is **not** extended — Gemini structured-output emits empty strings when no citation is warranted, and a missing reasoning would otherwise raise and force the user into retry.
+
+**Attribution contract** (enforced via prompt text, not schema). The .md prompt tells Gemini: "An omitted block is authoritatively absent — do NOT cite a Nutrition Database source that was not provided." This prevents the model from hallucinating citations for blocks that were gated out.
+
+Written by:
+- `backend/src/service/llm/_step2_blocks.py` — `render_nutrition_db_block`, `render_personalized_block`, `_trim_db_match`, `_trim_personalization_match`.
+- `backend/src/service/llm/prompts.py::get_step2_nutritional_analysis_prompt(dish_name, components, nutrition_db_matches=None, personalized_matches=None)` — new signature; substitutes or strips both placeholders.
+- `backend/src/service/llm/gemini_analyzer.py::analyze_step2_nutritional_analysis_async(..., reference_image_bytes=None)` — new kwarg; second Gemini image part when bytes provided.
+- `backend/src/api/item_tasks.py::_resolve_phase_2_2_image_bytes` — optional image-B resolution; graceful degrade on missing file.
+- `backend/src/api/item_tasks.py::trigger_step2_analysis_background` — re-read persisted matches, resolve bytes, plumb all three into prompt + analyzer.
+
+Read by:
+- Stage 8 (Phase 2.4 ReasoningPanel + Top-5 panels) — not yet wired.
 
 ## Pipeline
 
@@ -224,6 +273,23 @@ _gather_pre_pro_lookups(query_id, dish_name, components)
 _persist_pre_pro_state(query_id, nutrition_db_matches, personalized_matches)
   └── writes BOTH result_gemini.nutrition_db_matches AND result_gemini.personalized_matches
      BEFORE the Pro call
+  │
+  ▼ (Phase 2.3, Stage 7 — prompt + image-B resolution)
+reference_image_bytes = _resolve_phase_2_2_image_bytes(personalized_matches)
+  └── None unless personalized_matches[0].similarity_score >= THRESHOLD_PHASE_2_2_IMAGE (0.35)
+  │
+step2_prompt = get_step2_nutritional_analysis_prompt(
+    dish_name, components,
+    nutrition_db_matches=nutrition_db_matches,
+    personalized_matches=personalized_matches)
+  ├── render_nutrition_db_block gated on confidence_score >= 80
+  ├── render_personalized_block gated on similarity_score >= 0.30
+  └── placeholder lines stripped via regex when gates fail
+  │
+step2_result = await analyze_step2_nutritional_analysis_async(
+    image_path, step2_prompt,
+    gemini_model="gemini-2.5-pro", thinking_budget=-1,
+    reference_image_bytes=reference_image_bytes)
   │
   ▼
 service/llm/prompts.py: get_step2_nutritional_analysis_prompt(dish_name, components)
@@ -475,7 +541,12 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 - [x] Stage 6 — `lookup_personalization()` in `service/personalized_lookup.py`
 - [x] Stage 6 — `_gather_pre_pro_lookups`, `_persist_pre_pro_state`, `_safe_phase_2_{1,2}_result` in `item_tasks.py`
 - [x] Stage 6 — `THRESHOLD_PHASE_2_2_SIMILARITY = 0.30` config constant
-- [ ] Stage 7 — Phase 2.3 prompt consumes `nutrition_db_matches` + `personalized_matches` with threshold gating
+- [x] Stage 7 — Phase 2.3 prompt consumes `nutrition_db_matches` + `personalized_matches` with threshold gating
+- [x] Stage 7 — `Step2NutritionalAnalysis` schema adds seven flat `reasoning_*` fields (default `""`)
+- [x] Stage 7 — `analyze_step2_nutritional_analysis_async(reference_image_bytes=None)` two-image path
+- [x] Stage 7 — `_resolve_phase_2_2_image_bytes` in `item_tasks.py` + `trigger_step2_analysis_background` plumb-through
+- [x] Stage 7 — `THRESHOLD_DB_INCLUDE=80`, `THRESHOLD_PERSONALIZATION_INCLUDE=0.30`, `THRESHOLD_PHASE_2_2_IMAGE=0.35`
+- [x] Stage 7 — `_step2_blocks.py` render/trim helpers (JSON-dump trimmed subsets; keep outbound prompt under log-budget)
 - [ ] Idempotency key or dedupe on Phase 2 background task scheduling
 
 ---

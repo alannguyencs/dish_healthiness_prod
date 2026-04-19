@@ -8,9 +8,10 @@ and are shared with the Phase 1 background task in `src.api.item_step1_tasks`.
 import asyncio
 import logging
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from src.api._phase_errors import persist_phase_error
+from src.configs import IMAGE_DIR, THRESHOLD_PHASE_2_2_IMAGE
 from src.crud.crud_food_image_query import (
     get_dish_image_query_by_id,
     update_dish_image_query_results,
@@ -22,6 +23,38 @@ from src.service.nutrition_lookup import extract_and_lookup_nutrition
 from src.service.personalized_lookup import lookup_personalization
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_phase_2_2_image_bytes(
+    personalized_matches: List[Dict[str, Any]],
+) -> Optional[bytes]:
+    """
+    Stage 7: resolve the top-1 personalization match's image bytes for
+    attachment as image B in the Gemini Pro call.
+
+    Returns None on any of the degrade paths:
+      - empty personalized_matches
+      - top-1 similarity_score < THRESHOLD_PHASE_2_2_IMAGE (0.35)
+      - missing image_url or missing file on disk
+    """
+    if not personalized_matches:
+        return None
+    top = personalized_matches[0]
+    if (top.get("similarity_score") or 0.0) < THRESHOLD_PHASE_2_2_IMAGE:
+        return None
+    image_url = top.get("image_url")
+    if not image_url:
+        return None
+    disk_path = IMAGE_DIR / Path(image_url).name
+    try:
+        return disk_path.read_bytes()
+    except (FileNotFoundError, OSError) as exc:
+        logger.warning(
+            "Phase 2.3 reference image missing on disk (%s); degrading to single-image: %s",
+            disk_path,
+            exc,
+        )
+        return None
 
 
 def _persist_pre_pro_state(
@@ -145,8 +178,18 @@ async def trigger_step2_analysis_background(
         )
         _persist_pre_pro_state(query_id, nutrition_db_matches, personalized_matches)
 
+        # Stage 7: resolve optional image-B bytes from the top-1 personalization
+        # match (gated on similarity_score >= THRESHOLD_PHASE_2_2_IMAGE). Plumb
+        # matches + bytes into the prompt + analyzer so the threshold-gated
+        # reference blocks and the two-image Pro call exercise the Phase 2.3
+        # reference-assisted path.
+        reference_image_bytes = _resolve_phase_2_2_image_bytes(personalized_matches)
+
         step2_prompt = get_step2_nutritional_analysis_prompt(
-            dish_name=dish_name, components=components
+            dish_name=dish_name,
+            components=components,
+            nutrition_db_matches=nutrition_db_matches,
+            personalized_matches=personalized_matches,
         )
 
         step2_result = await analyze_step2_nutritional_analysis_async(
@@ -154,6 +197,7 @@ async def trigger_step2_analysis_background(
             analysis_prompt=step2_prompt,
             gemini_model="gemini-2.5-pro",
             thinking_budget=-1,
+            reference_image_bytes=reference_image_bytes,
         )
 
         query_record = get_dish_image_query_by_id(query_id)
