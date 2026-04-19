@@ -50,11 +50,22 @@ const CHEVRON_UP = (
   </svg>
 );
 
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:2612";
+
+const resolveImageUrl = (url) => {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${API_BASE}${url}`;
+};
+
 const PersonalizedDataCard = ({ flashCaption, referenceImage }) => {
   const [expanded, setExpanded] = useState(false);
   const hasCaption =
     typeof flashCaption === "string" && flashCaption.length > 0;
   const hasReference = Boolean(referenceImage);
+  const thumbnailSrc = hasReference
+    ? resolveImageUrl(referenceImage.image_url)
+    : null;
 
   return (
     <div
@@ -99,9 +110,9 @@ const PersonalizedDataCard = ({ flashCaption, referenceImage }) => {
                 to={`/item/${referenceImage.query_id}`}
                 className="block border border-gray-200 rounded-md p-2 flex gap-3 hover:bg-gray-50 transition"
               >
-                {referenceImage.image_url && (
+                {thumbnailSrc && (
                   <img
-                    src={referenceImage.image_url}
+                    src={thumbnailSrc}
                     alt=""
                     loading="lazy"
                     className="w-16 h-16 object-cover rounded flex-shrink-0"

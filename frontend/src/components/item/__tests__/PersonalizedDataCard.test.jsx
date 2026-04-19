@@ -63,9 +63,11 @@ describe("PersonalizedDataCard", () => {
     expect(refSection).toHaveTextContent(/0\.72 sim/);
     expect(refSection).toHaveTextContent(/grilled chicken rice with cucumber/);
     expect(refSection.querySelector("a[href='/item/42']")).toBeInTheDocument();
-    expect(refSection.querySelector("img")).toHaveAttribute(
-      "src",
-      "/images/prior.jpg",
+    // The component prefixes relative image paths with the backend base URL
+    // so thumbnails hit the FastAPI server (port 2612) rather than 404ing
+    // against the React dev server (port 2512).
+    expect(refSection.querySelector("img").getAttribute("src")).toMatch(
+      /\/images\/prior\.jpg$/,
     );
   });
 
