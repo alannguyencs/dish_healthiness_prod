@@ -36,6 +36,13 @@ DATABASE_DIR = RESOURCE_DIR / "database"
 # with zero lexical overlap. Re-tune after real retrieval-quality data.
 THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25
 
+# Stage 6 (Phase 2.2) — minimum similarity_score a personalization match
+# must clear to be surfaced on result_gemini.personalized_matches. Same
+# max-in-batch normalization as Stage 2, so this is a relative ranking
+# signal that mainly rejects corpora with zero lexical overlap. Re-tune
+# after real retrieval-quality data.
+THRESHOLD_PHASE_2_2_SIMILARITY = 0.30
+
 LOG_DIR = PROJECT_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 

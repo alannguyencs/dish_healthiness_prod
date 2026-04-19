@@ -148,6 +148,56 @@ Read by:
 - Stage 7 (Phase 2.3 prompt) — not yet wired.
 - Stage 8 (Phase 2.4 Top-5 DB Matches panel) — not yet wired.
 
+### Phase 2.2 — Personalization Lookup (Stage 6)
+
+Runs **in parallel** with Phase 2.1 inside `trigger_step2_analysis_background` via `asyncio.gather(..., return_exceptions=True)`. Consumes the Stage 0 per-user BM25 corpus (`personalized_food_descriptions`) populated by Stage 2 (caption + tokens) and Stage 4 (confirmed_dish_name + confirmed_tokens). Persists the raw list on `result_gemini.personalized_matches` in the same pre-Pro write as `nutrition_db_matches`.
+
+Signature:
+
+```python
+def lookup_personalization(
+    user_id: int,
+    query_id: int,
+    description: Optional[str],        # from result_gemini.reference_image.description
+    confirmed_dish_name: str,          # from Stage 4 confirm endpoint
+    top_k: int = 5,
+    min_similarity: float = THRESHOLD_PHASE_2_2_SIMILARITY,  # 0.30
+) -> List[Dict[str, Any]]:
+```
+
+Per-match shape:
+
+```python
+{
+    "query_id": int,                         # referenced DishImageQuery id
+    "image_url": str | None,                 # referenced dish's image URL
+    "description": str | None,               # Phase 1.1.1 caption on the referenced row
+    "similarity_score": float,               # 0..1 max-in-batch normalized
+    "prior_step2_data": Dict | None,         # referenced DishImageQuery.result_gemini.step2_data
+    "corrected_step2_data": Dict | None,     # personalization row's corrected_step2_data (Stage 8 writes)
+}
+```
+
+Token source: **union** of `tokenize(description) ∪ tokenize(confirmed_dish_name)` — either side may be empty (cold-start Phase 1.1.1 or empty dish name) without breaking the lookup. Empty union returns `[]` without touching the DB.
+
+Self-excluding: `search_for_user` is called with `exclude_query_id=query_id` so the current upload's own row never matches itself (double-belt with Stage 2's write-after-read insertion order).
+
+Failure modes inside the gather:
+
+- **Phase 2.2 raises** — `_safe_phase_2_2_result` logs WARN naming the query_id + exception; returns `[]`. Pro call still runs.
+- **Phase 2.1 raises** — `_safe_phase_2_1_result` logs WARN; returns the Stage 5 empty-response shape with `match_summary.reason = "unexpected_exception"`. Pro call still runs.
+- **`result_gemini` absent** — fall back to sequential Phase 2.1 only; `personalized_matches = []`.
+
+Written by:
+- `service/personalized_lookup.py::lookup_personalization` — orchestrator.
+- `api/item_tasks.py::_gather_pre_pro_lookups` — the `asyncio.gather` scheduler.
+- `api/item_tasks.py::_persist_pre_pro_state` — atomic two-key persist.
+- `api/item_tasks.py::_safe_phase_2_1_result / _safe_phase_2_2_result` — gather exception converters.
+
+Read by:
+- Stage 7 (Phase 2.3 prompt) — not yet wired.
+- Stage 8 (Phase 2.4 PersonalizationMatches panel) — not yet wired.
+
 ## Pipeline
 
 ```
@@ -160,15 +210,20 @@ api/item.py: confirm_step1_and_trigger_step2()
   ▼
 api/item_tasks.py: trigger_step2_analysis_background(query_id, image_path, dish_name, components)
   │
-  ▼ (NEW — Phase 2.1, Stage 5)
-extract_and_lookup_nutrition(dish_name, components)
-  ├── per-candidate collect_from_nutrition_db(query, min_confidence=70)
-  ├── fallback: collect_from_nutrition_db(", ".join(candidates), min_confidence=60) when best < 0.75
-  └── returns { ... search_strategy, nutrition_matches, total_nutrition, search_attempts, ... }
+  ▼ (Phase 2.1 + Phase 2.2, Stages 5 + 6 — parallel gather)
+_gather_pre_pro_lookups(query_id, dish_name, components)
+  ├── user_id, ref_description = record.user_id, result_gemini.reference_image.description
+  ├── asyncio.gather(
+  │     asyncio.to_thread(extract_and_lookup_nutrition, dish_name, components),
+  │     asyncio.to_thread(lookup_personalization, user_id, query_id, ref_description, dish_name),
+  │     return_exceptions=True)
+  ├── exception-side converted to empty-shape fallbacks via _safe_phase_2_{1,2}_result
+  └── returns (nutrition_db_matches, personalized_matches)
   │
   ▼
-_persist_nutrition_db_matches(query_id, nutrition_db_matches)
-  └── writes result_gemini.nutrition_db_matches BEFORE the Pro call
+_persist_pre_pro_state(query_id, nutrition_db_matches, personalized_matches)
+  └── writes BOTH result_gemini.nutrition_db_matches AND result_gemini.personalized_matches
+     BEFORE the Pro call
   │
   ▼
 service/llm/prompts.py: get_step2_nutritional_analysis_prompt(dish_name, components)
@@ -414,10 +469,13 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 - [x] `ItemStepTabs.jsx` — extracted Step 1 / Step 2 progress tabs
 - [x] `apiService.getItem()` — polling call
 - [x] `apiService.retryStep2()` — retry call
-- [x] Stage 5 — `extract_and_lookup_nutrition()` + pre-Pro `_persist_nutrition_db_matches()` in `item_tasks.py`
+- [x] Stage 5 — `extract_and_lookup_nutrition()` + pre-Pro persist in `item_tasks.py`
 - [x] Stage 5 — `_nutrition_aggregation.py` helpers (`deduplicate_matches / aggregate_nutrition / calculate_optimal_nutrition / extract_single_match_nutrition / generate_recommendations`)
 - [x] Stage 5 — `NutritionCollectionService.collect_from_nutrition_db(text, min_confidence, deduplicate)` method
-- [ ] Stage 7 — Phase 2.3 prompt consumes `nutrition_db_matches` with threshold gating
+- [x] Stage 6 — `lookup_personalization()` in `service/personalized_lookup.py`
+- [x] Stage 6 — `_gather_pre_pro_lookups`, `_persist_pre_pro_state`, `_safe_phase_2_{1,2}_result` in `item_tasks.py`
+- [x] Stage 6 — `THRESHOLD_PHASE_2_2_SIMILARITY = 0.30` config constant
+- [ ] Stage 7 — Phase 2.3 prompt consumes `nutrition_db_matches` + `personalized_matches` with threshold gating
 - [ ] Idempotency key or dedupe on Phase 2 background task scheduling
 
 ---

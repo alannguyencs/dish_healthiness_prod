@@ -10,3 +10,4 @@
 - [x] docs/plan/260418_stage3_phase1_1_2_reference_assisted_component_id.md
 - [x] docs/plan/260418_stage4_phase1_2_confirm_enriches_personalization.md
 - [x] docs/plan/260419_stage5_phase2_1_nutrition_db_lookup.md
+- [x] docs/plan/260419_stage6_phase2_2_personalization_lookup.md

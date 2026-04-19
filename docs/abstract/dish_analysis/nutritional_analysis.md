@@ -26,6 +26,10 @@ If the AI call fails, the user sees a clear error message with a one-click **Try
 
 Starting this phase, the system also consults a curated database of ~4,500 foods across four international sources (Malaysian, MyFCD, Anuvaad, CIQUAL) to find close matches for the confirmed dish and each of its components. The matches are recorded on the record but not yet shown to the user and not yet fed into the AI — the measurable benefit arrives when a later release lets the AI cite them for more consistent nutrition numbers. Dev environments that have not seeded the database, or dishes with no database coverage, continue to run exactly as before — the AI is never blocked on database coverage.
 
+### Personalization history (consulted silently)
+
+In parallel with the nutrition database lookup, the system also compares the user's confirmed dish and its short caption against the user's own prior uploads. Close historical matches are recorded on the record (but not yet shown to the user and not yet fed into the AI — the measurable benefit arrives when a later release lets the AI reuse the user's prior analyses for more consistent nutrition numbers on repeat dishes). Strictly per-account: one user's history never influences another user's analyses.
+
 ## User Flow
 
 ```
