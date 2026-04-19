@@ -1,6 +1,6 @@
 # Component Identification
 
-[Parent](./index.md) | [Next: User Customization >](./user_customization.md)
+[< Prev: End-to-End Workflow](./end_to_end_workflow.md) | [Parent](./index.md) | [Next: User Customization >](./user_customization.md)
 
 **Status:** Done
 
@@ -90,4 +90,4 @@ AI first pass runs in the background
 
 ---
 
-[Parent](./index.md) | [Next: User Customization >](./user_customization.md)
+[< Prev: End-to-End Workflow](./end_to_end_workflow.md) | [Parent](./index.md) | [Next: User Customization >](./user_customization.md)

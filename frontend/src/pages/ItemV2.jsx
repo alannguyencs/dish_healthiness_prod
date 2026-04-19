@@ -37,6 +37,7 @@ const ItemV2 = () => {
   const [retryingStep2, setRetryingStep2] = useState(false);
   const [retryingStep1, setRetryingStep1] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [aiAssisting, setAiAssisting] = useState(false);
   const [viewStep, setViewStep] = useState(null);
 
   const handleStep2Correction = async (payload) => {
@@ -49,6 +50,19 @@ const ItemV2 = () => {
       alert("Failed to save correction. Please try again.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAiAssistantCorrection = async (prompt) => {
+    try {
+      setAiAssisting(true);
+      await apiService.saveAiAssistantCorrection(recordId, prompt);
+      await reload();
+    } catch (err) {
+      console.error("Failed AI Assistant revision:", err);
+      alert("AI revision failed. Please try again.");
+    } finally {
+      setAiAssisting(false);
     }
   };
 
@@ -242,6 +256,8 @@ const ItemV2 = () => {
                   step2Corrected={step2Corrected}
                   onEditSave={handleStep2Correction}
                   saving={saving}
+                  onAiAssistSubmit={handleAiAssistantCorrection}
+                  aiAssisting={aiAssisting}
                 />
               </>
             )}

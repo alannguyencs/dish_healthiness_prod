@@ -52,3 +52,21 @@ class Step2CorrectionRequest(BaseModel):
         default_factory=list,
         description="User-corrected micronutrients list (plain strings, chip add/remove UI)",
     )
+
+
+class AiAssistantCorrectionRequest(BaseModel):
+    """
+    Request body for POST /api/item/{record_id}/ai-assistant-correction (Stage 10).
+
+    The user provides a free-text hint; the backend loads the current
+    effective Step 2 payload, calls Gemini 2.5 Pro with the query image +
+    trimmed baseline JSON + hint, and commits the revised payload directly
+    via the same `/correction` persistence path.
+    """
+
+    prompt: str = Field(
+        ...,
+        min_length=1,
+        max_length=2000,
+        description="User's natural-language hint to drive the Step 2 revision.",
+    )

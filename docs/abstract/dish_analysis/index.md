@@ -6,9 +6,10 @@ Dish analysis is a two-phase AI workflow that runs automatically after the user 
 
 | # | Page | Description |
 |---|------|-------------|
-| 1 | [Component Identification](./component_identification.md) | Phase 1 — AI proposes the dish name and its components with suggested serving sizes |
-| 2 | [User Customization](./user_customization.md) | The user edits the AI proposals (dish name, components, serving sizes, counts) before confirming |
-| 3 | [Nutritional Analysis](./nutritional_analysis.md) | Phase 2 — AI returns calories, macros, micronutrients, and a healthiness score |
+| 1 | [End-to-End Workflow](./end_to_end_workflow.md) | One-page trace of every phase from upload to final nutrition — canonical diagram |
+| 2 | [Component Identification](./component_identification.md) | Phase 1 — AI proposes the dish name and its components with suggested serving sizes |
+| 3 | [User Customization](./user_customization.md) | The user edits the AI proposals (dish name, components, serving sizes, counts) before confirming |
+| 4 | [Nutritional Analysis](./nutritional_analysis.md) | Phase 2 — AI returns calories, macros, micronutrients, and a healthiness score |
 
 ---
 

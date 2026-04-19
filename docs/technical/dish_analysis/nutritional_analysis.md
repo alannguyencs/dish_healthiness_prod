@@ -5,6 +5,8 @@
 ## Related Docs
 - Abstract: [abstract/dish_analysis/nutritional_analysis.md](../../abstract/dish_analysis/nutritional_analysis.md)
 
+> **Note:** Stage 10 adds a parallel "AI Assistant Edit" correction path on the Step 2 card — see [user_customization.md § Phase 2.4 — AI Assistant Edit (Stage 10)](./user_customization.md#phase-24--ai-assistant-edit-stage-10). The revision call reuses `analyze_step2_nutritional_analysis_async` from the same `llm/gemini_analyzer.py` module documented below.
+
 ## Architecture
 
 Phase 2 is a second Gemini vision call scheduled as a `BackgroundTasks` coroutine the moment the confirm endpoint returns. The prompt is the Step 2 markdown file with the user's confirmed dish name and component list appended as a plain-text block. Output is enforced to `Step2NutritionalAnalysis` via the SDK `response_schema` parameter. If the call fails, the background task classifies the exception and persists a `step2_error` block into `result_gemini` so the frontend can surface a retry-able error card. The frontend continues polling the same item endpoint and renders either the results or the error card when the payload arrives.

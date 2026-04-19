@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import Step2AiAssistantPanel from "./Step2AiAssistantPanel";
 import Step2ResultsEditForm from "./Step2ResultsEditForm";
 import { resolveHealthinessTier } from "../../utils/healthiness";
 
@@ -7,12 +8,22 @@ import { resolveHealthinessTier } from "../../utils/healthiness";
  * Step2Results Component
  *
  * Displays Step 2 nutritional analysis results after user confirmation.
- * Stage 8: when `step2Corrected` is present, render it over `step2Data`
- * ("Corrected by you" badge). The Edit toggle flips the card into an
- * edit form; Save calls `onEditSave(payload)`; Cancel reverts.
+ * Stage 8: Manual Edit toggle flips the card into an edit form. Stage 10
+ * adds a parallel "AI Assistant Edit" button that expands an inline
+ * textarea; Submit POSTs the hint to the backend which revises the
+ * payload via Gemini 2.5 Pro and commits directly (no preview step).
  */
-const Step2Results = ({ step2Data, step2Corrected, onEditSave, saving }) => {
+const Step2Results = ({
+  step2Data,
+  step2Corrected,
+  onEditSave,
+  saving,
+  onAiAssistSubmit,
+  aiAssisting,
+}) => {
   const [editing, setEditing] = useState(false);
+  const [aiHintOpen, setAiHintOpen] = useState(false);
+  const [aiHint, setAiHint] = useState("");
 
   if (!step2Data) {
     return (
@@ -78,17 +89,52 @@ const Step2Results = ({ step2Data, step2Corrected, onEditSave, saving }) => {
             </span>
           )}
         </div>
-        {onEditSave && (
-          <button
-            type="button"
-            onClick={() => setEditing(true)}
-            className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded text-sm font-semibold"
-            data-testid="step2-edit-toggle"
-          >
-            Edit
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {onEditSave && (
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              disabled={aiAssisting}
+              className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded text-sm font-semibold disabled:opacity-50 inline-flex items-center gap-1.5"
+              data-testid="step2-edit-toggle"
+            >
+              <span aria-hidden="true">✏️</span>
+              <span>Manual Edit</span>
+            </button>
+          )}
+          {onAiAssistSubmit && (
+            <button
+              type="button"
+              onClick={() => setAiHintOpen((v) => !v)}
+              disabled={aiAssisting}
+              className="px-3 py-1 bg-violet-100 hover:bg-violet-200 text-violet-900 rounded text-sm font-semibold disabled:opacity-50 inline-flex items-center gap-1.5"
+              data-testid="step2-ai-assistant-toggle"
+            >
+              <span aria-hidden="true">{aiAssisting ? "⏳" : "✨"}</span>
+              <span>{aiAssisting ? "Revising…" : "AI Assistant Edit"}</span>
+            </button>
+          )}
+        </div>
       </div>
+
+      {aiHintOpen && onAiAssistSubmit && (
+        <Step2AiAssistantPanel
+          value={aiHint}
+          onChange={setAiHint}
+          assisting={!!aiAssisting}
+          onCancel={() => {
+            setAiHint("");
+            setAiHintOpen(false);
+          }}
+          onSubmit={async () => {
+            const trimmed = aiHint.trim();
+            if (!trimmed) return;
+            await onAiAssistSubmit(trimmed);
+            setAiHint("");
+            setAiHintOpen(false);
+          }}
+        />
+      )}
 
       <div className="space-y-3">
         <div className="flex items-center gap-3">

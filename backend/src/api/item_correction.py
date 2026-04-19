@@ -23,13 +23,14 @@ from typing import Any, Dict
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-from src.api.item_schemas import Step2CorrectionRequest
+from src.api.item_schemas import AiAssistantCorrectionRequest, Step2CorrectionRequest
 from src.auth import authenticate_user_from_request
 from src.crud import crud_personalized_food
 from src.crud.crud_food_image_query import (
     get_dish_image_query_by_id,
     update_dish_image_query_results,
 )
+from src.service.llm.step2_assistant import revise_step2_with_hint
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +89,87 @@ async def save_step2_correction(
         )
 
     payload = correction.model_dump()
+
+    new_blob = dict(record.result_gemini)
+    new_blob["step2_corrected"] = payload
+    update_dish_image_query_results(
+        query_id=record_id,
+        result_openai=None,
+        result_gemini=new_blob,
+    )
+
+    _enrich_personalization_corrected_data(record_id, payload)
+
+    return JSONResponse(
+        content={
+            "success": True,
+            "record_id": record_id,
+            "step2_corrected": payload,
+        }
+    )
+
+
+def _compose_ai_assistant_payload(revised: Dict[str, Any], user_hint: str) -> Dict[str, Any]:
+    """
+    Shape the revised Gemini output into the `step2_corrected` payload,
+    dropping engineering metadata fields and stamping the audit hint.
+    """
+    return {
+        "dish_name": revised.get("dish_name"),
+        "healthiness_score": revised["healthiness_score"],
+        "healthiness_score_rationale": revised["healthiness_score_rationale"],
+        "calories_kcal": revised["calories_kcal"],
+        "fiber_g": revised["fiber_g"],
+        "carbs_g": revised["carbs_g"],
+        "protein_g": revised["protein_g"],
+        "fat_g": revised["fat_g"],
+        "micronutrients": revised.get("micronutrients", []),
+        "ai_assistant_prompt": user_hint,
+    }
+
+
+@router.post("/{record_id}/ai-assistant-correction")
+async def save_ai_assistant_correction(
+    record_id: int,
+    request: Request,
+    body: AiAssistantCorrectionRequest,
+) -> JSONResponse:
+    """
+    Stage 10 — prompt-driven Step 2 revision.
+
+    Loads the current effective Step 2 payload as baseline, calls Gemini
+    2.5 Pro with the query image + trimmed baseline + user hint, and
+    commits the revised payload directly via the same `/correction`
+    persistence path. `ai_assistant_prompt` is stashed on the corrected
+    payload (latest hint wins).
+    """
+    logger.info("AI Assistant Edit request for record_id=%s", record_id)
+
+    user = authenticate_user_from_request(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    record = get_dish_image_query_by_id(record_id)
+    if not record or record.user_id != user.id:
+        raise HTTPException(status_code=404, detail="Record not found")
+
+    if not record.result_gemini or not record.result_gemini.get("step2_data"):
+        raise HTTPException(
+            status_code=400,
+            detail="Step 2 analysis has not completed; nothing to revise.",
+        )
+
+    user_hint = body.prompt.strip()
+    if not user_hint:
+        raise HTTPException(status_code=422, detail="Prompt must not be empty")
+
+    try:
+        revised = await revise_step2_with_hint(record_id, user_hint)
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.exception("AI Assistant revision failed for record_id=%s", record_id)
+        raise HTTPException(status_code=502, detail="AI revision failed") from exc
+
+    payload = _compose_ai_assistant_payload(revised, user_hint)
 
     new_blob = dict(record.result_gemini)
     new_blob["step2_corrected"] = payload

@@ -73,4 +73,89 @@ describe("Step2Results", () => {
       screen.getByText(/step 2 analysis in progress/i),
     ).toBeInTheDocument();
   });
+
+  test("Stage 10 — AI Assistant button renders only when onAiAssistSubmit is provided", () => {
+    const { rerender } = render(
+      <Step2Results step2Data={baseStep2} onEditSave={jest.fn()} />,
+    );
+    expect(screen.queryByTestId("step2-ai-assistant-toggle")).toBeNull();
+
+    rerender(
+      <Step2Results
+        step2Data={baseStep2}
+        onEditSave={jest.fn()}
+        onAiAssistSubmit={jest.fn()}
+      />,
+    );
+    expect(screen.getByTestId("step2-ai-assistant-toggle")).toBeInTheDocument();
+    expect(screen.getByText(/Manual Edit/i)).toBeInTheDocument();
+    expect(screen.getByText(/AI Assistant Edit/i)).toBeInTheDocument();
+  });
+
+  test("Stage 10 — clicking AI Assistant toggle opens hint panel", () => {
+    render(
+      <Step2Results
+        step2Data={baseStep2}
+        onEditSave={jest.fn()}
+        onAiAssistSubmit={jest.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("step2-ai-assistant-toggle"));
+    expect(screen.getByTestId("step2-ai-assistant-panel")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("step2-ai-assistant-textarea"),
+    ).toBeInTheDocument();
+  });
+
+  test("Stage 10 — Submit disabled when textarea is empty, enabled when non-empty", () => {
+    render(
+      <Step2Results
+        step2Data={baseStep2}
+        onEditSave={jest.fn()}
+        onAiAssistSubmit={jest.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("step2-ai-assistant-toggle"));
+    const submit = screen.getByTestId("step2-ai-assistant-submit");
+    expect(submit).toBeDisabled();
+
+    fireEvent.change(screen.getByTestId("step2-ai-assistant-textarea"), {
+      target: { value: "smaller portion" },
+    });
+    expect(submit).not.toBeDisabled();
+  });
+
+  test("Stage 10 — Submit calls onAiAssistSubmit with trimmed hint", async () => {
+    const onAiAssistSubmit = jest.fn().mockResolvedValue({});
+    render(
+      <Step2Results
+        step2Data={baseStep2}
+        onEditSave={jest.fn()}
+        onAiAssistSubmit={onAiAssistSubmit}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("step2-ai-assistant-toggle"));
+    fireEvent.change(screen.getByTestId("step2-ai-assistant-textarea"), {
+      target: { value: "  smaller portion  " },
+    });
+    fireEvent.click(screen.getByTestId("step2-ai-assistant-submit"));
+
+    expect(onAiAssistSubmit).toHaveBeenCalledTimes(1);
+    expect(onAiAssistSubmit.mock.calls[0][0]).toBe("smaller portion");
+  });
+
+  test("Stage 10 — both buttons disabled and AI button shows 'Revising…' while assisting", () => {
+    render(
+      <Step2Results
+        step2Data={baseStep2}
+        onEditSave={jest.fn()}
+        onAiAssistSubmit={jest.fn()}
+        aiAssisting={true}
+      />,
+    );
+    expect(screen.getByTestId("step2-edit-toggle")).toBeDisabled();
+    const aiBtn = screen.getByTestId("step2-ai-assistant-toggle");
+    expect(aiBtn).toBeDisabled();
+    expect(aiBtn).toHaveTextContent(/Revising/i);
+  });
 });

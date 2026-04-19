@@ -12,6 +12,7 @@ export { default as ServingsCountInput } from "./ServingsCountInput";
 export { default as Step1ComponentEditor } from "./Step1ComponentEditor";
 export { default as Step2Results } from "./Step2Results";
 export { default as Step2ResultsEditForm } from "./Step2ResultsEditForm";
+export { default as Step2AiAssistantPanel } from "./Step2AiAssistantPanel";
 export { default as PhaseErrorCard } from "./PhaseErrorCard";
 export { default as ItemStepTabs } from "./ItemStepTabs";
 export { default as ReasoningPanel } from "./ReasoningPanel";

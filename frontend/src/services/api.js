@@ -145,6 +145,17 @@ const apiService = {
     );
     return response.data;
   },
+
+  // Stage 10: prompt-driven AI Assistant revision of the Step 2 analysis.
+  // Backend calls Gemini 2.5 Pro with the query image + current effective
+  // Step 2 payload + user hint, commits the revised payload directly.
+  saveAiAssistantCorrection: async (recordId, prompt) => {
+    const response = await api.post(
+      `/api/item/${recordId}/ai-assistant-correction`,
+      { prompt },
+    );
+    return response.data;
+  },
 };
 
 export default apiService;

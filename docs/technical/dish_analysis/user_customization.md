@@ -2,7 +2,7 @@
 
 [< Prev: Component Identification](./component_identification.md) | [Parent](./index.md) | [Next: Nutritional Analysis >](./nutritional_analysis.md)
 
-> **Note:** Stage 8 (Phase 2.4) adds a symmetric "one Edit toggle" pattern on the Step 2 results view via `POST /api/item/{record_id}/correction`. The UX mirrors this Step 1 editor's single-Confirm flow. See [nutritional_analysis.md § Phase 2.4](./nutritional_analysis.md#phase-24--user-review--correction-stage-8).
+> **Note:** Stage 8 (Phase 2.4) adds a symmetric "one Edit toggle" pattern on the Step 2 results view via `POST /api/item/{record_id}/correction`. The UX mirrors this Step 1 editor's single-Confirm flow. See [nutritional_analysis.md § Phase 2.4](./nutritional_analysis.md#phase-24--user-review--correction-stage-8). Stage 10 extends the Step 2 card with a second, parallel correction path — see [§ Phase 2.4 — AI Assistant Edit (Stage 10)](#phase-24--ai-assistant-edit-stage-10) below.
 
 ## Related Docs
 - Abstract: [abstract/dish_analysis/user_customization.md](../../abstract/dish_analysis/user_customization.md)
@@ -300,6 +300,102 @@ None. This feature is entirely DB + React state.
 - [x] Stage 4 — `confirm_step1_and_trigger_step2` calls `crud_personalized_food.update_confirmed_fields` with swallow-log failure policy
 - [ ] Error-recovery path on `confirmStep1` failure (currently just `alert`)
 - [ ] Server-side idempotency / debounce on repeated confirm submissions
+
+## Phase 2.4 — AI Assistant Edit (Stage 10)
+
+Stage 10 adds a second correction path on the Step 2 card beside Stage 8's Manual Edit: the user types a natural-language hint, the backend calls Gemini 2.5 Pro to revise the current Step 2 payload, and the revised numbers commit directly (no preview / Accept-Cancel). Persistence reuses the Stage 8 write path — `result_gemini.step2_corrected` on the query row + `personalized_food_descriptions.corrected_step2_data` via the dual-write helper.
+
+### Data Model — `AiAssistantCorrectionRequest`
+
+Defined in `backend/src/api/item_schemas.py`:
+
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `prompt` | `str` | `min_length=1`, `max_length=2000` |
+
+### `result_gemini.step2_corrected` (AI-authored variant)
+
+Identical to the Stage 8 Manual payload but adds one audit field:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ai_assistant_prompt` | `str` | The latest user hint that produced this revision. Overwritten on every AI revision (latest wins). Absent from Manual Edit payloads. |
+
+### Pipeline
+
+```
+Step2Results.jsx button row (Manual Edit | AI Assistant Edit)
+  │
+  │ click "AI Assistant Edit"
+  ▼
+Step2AiAssistantPanel expands (textarea + Submit/Cancel)
+  │
+  │ user types hint, clicks Submit
+  │ (both edit buttons disable; AI button shows "Revising…")
+  ▼
+ItemV2.handleAiAssistantCorrection(prompt)
+  │
+  │ apiService.saveAiAssistantCorrection(recordId, prompt)
+  ▼
+POST /api/item/{record_id}/ai-assistant-correction
+  │
+  ▼
+api/item_correction.py#save_ai_assistant_correction
+  ├── authenticate + ownership (404 on mismatch)
+  ├── require result_gemini.step2_data (400 otherwise)
+  ├── trim prompt; 422 if empty
+  ├── revise_step2_with_hint(record_id, prompt) — Gemini 2.5 Pro
+  ├── compose payload (macros + rationale + micronutrients + ai_assistant_prompt)
+  ├── new_blob = dict(result_gemini); new_blob.step2_corrected = payload
+  ├── update_dish_image_query_results(query_id, None, new_blob)
+  └── _enrich_personalization_corrected_data(record_id, payload)   # dual-write
+  │
+  ▼
+200 { success, record_id, step2_corrected }
+  │
+  ▼
+Frontend reload() → card re-renders with revised numbers + "Corrected by you" badge
+```
+
+`revise_step2_with_hint` (in `backend/src/service/llm/step2_assistant.py`):
+
+1. Load the record; read `result_gemini.step2_corrected` if present, else `step2_data` (current-effective-payload baseline).
+2. Trim the baseline to prompt-relevant fields only (drops `model`, `price_usd`, `analysis_time`, `input_token`, `output_token`, `ai_assistant_prompt`).
+3. Render `backend/resources/step2_assistant_correction.md` with `{{BASELINE_JSON}}` and `{{USER_HINT}}` substituted.
+4. Call `analyze_step2_nutritional_analysis_async(image_path, prompt, "gemini-2.5-pro")` with the query image attached (single-image, no reference-image B).
+5. Return the raw `Step2NutritionalAnalysis` dict; the endpoint composes the `step2_corrected` payload.
+
+### Backend — API Layer (Stage 10 addition)
+
+| Method | Path | Auth | Request | Response | Status |
+|--------|------|------|---------|----------|--------|
+| POST | `/api/item/{record_id}/ai-assistant-correction` | Cookie | `AiAssistantCorrectionRequest` | `{success, record_id, step2_corrected}` | 200 / 400 / 401 / 404 / 422 / 502 |
+
+### Frontend — Components (Stage 10 additions)
+
+- `Step2Results.jsx` — header now renders two buttons (`Manual Edit`, `AI Assistant Edit`). Manages `aiHintOpen` / `aiHint` local state and passes them to the new panel.
+- `Step2AiAssistantPanel.jsx` (NEW) — inline textarea + Submit/Cancel inside a violet-accented card. Disabled while `assisting=true`; Submit guard: `value.trim().length > 0`.
+- `ItemV2.jsx` — owns `aiAssisting` state and `handleAiAssistantCorrection(prompt)`; passes both through to `<Step2Results/>`.
+- `services/api.js#saveAiAssistantCorrection(recordId, prompt)` — mirrors `saveStep2Correction`.
+
+### Constraints & Edge Cases (Stage 10)
+
+- **Stacked edits.** Baseline is the current effective payload (`step2_corrected` → `step2_data`), so a Manual edit followed by an AI Assistant edit refines the manual numbers rather than reverting to the original AI proposal.
+- **Image required.** `revise_step2_with_hint` raises `FileNotFoundError` if the query image is no longer on disk; the endpoint catches and bubbles a 502.
+- **Audit trail.** Only the latest `ai_assistant_prompt` is stored. Earlier hints are lost — if a richer history is later needed, extend the payload with `ai_assistant_history: List[str]`.
+- **Latency.** A single Gemini 2.5 Pro call with image + prompt typically completes in 6–10s; the UI shows "Revising…" the whole time and both edit buttons are disabled to prevent double-submit.
+- **Cross-stage invariant #7.** Phase 1 state (`step1_data`, `confirmed_*`) and the Phase 2.1 / 2.2 retrieval artifacts (`nutrition_db_matches`, `personalized_matches`) are **not** touched — only `step2_corrected` changes.
+
+### Component Checklist (Stage 10)
+
+- [x] `AiAssistantCorrectionRequest` Pydantic schema
+- [x] `POST /api/item/{record_id}/ai-assistant-correction` — auth, ownership, state guard (`step2_data` required), empty-prompt guard, Gemini call, dual-write persistence
+- [x] `backend/src/service/llm/step2_assistant.py#revise_step2_with_hint` — baseline selection + prompt render + Gemini call
+- [x] `backend/resources/step2_assistant_correction.md` — revision prompt template
+- [x] `Step2Results.jsx` — dual-button header + AI hint panel integration
+- [x] `Step2AiAssistantPanel.jsx` — textarea + Submit/Cancel
+- [x] `apiService.saveAiAssistantCorrection()`
+- [x] `ItemV2.handleAiAssistantCorrection()` — error alert + reload on success
 
 ---
 
