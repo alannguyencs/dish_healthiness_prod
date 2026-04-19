@@ -235,6 +235,15 @@ const ItemV2 = () => {
                   onEditSave={handleStep2Correction}
                   saving={saving}
                 />
+                <div
+                  className="flex items-center gap-3 pt-2"
+                  data-testid="research-only-divider"
+                >
+                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                    Research only
+                  </span>
+                  <div className="flex-1 border-t border-gray-200" />
+                </div>
                 <ReasoningPanel step2Data={step2Data} />
                 <Top5DbMatches
                   matches={nutritionDbMatches?.nutrition_matches}
