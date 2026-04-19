@@ -1,5 +1,56 @@
 Each *standard measurement* below uses FDA metric equivalents (cup, tbsp, tsp, ounce), and each *hand measurement* is a practical visual estimate.
 
+## Serving size — the simple version
+
+**A serving size is the FDA's standard "one slot" for a food type, so calories on a label mean something consistent.**
+
+Think of the Nutrition Facts label as a menu with prices. Without a standard portion, every brand would price differently ("$5 for some fries" — how much is *some*?). Serving size is FDA saying: "For fries, one serving = a medium handful. All brands list prices per that one handful."
+
+### What it IS
+
+- A **fixed reference amount** per food category (chicken breast = 3 oz, bacon = 1 slice, cereal = 1 cup, soda = 12 fl oz).
+- Based on **how much people actually eat in one sitting**, from national consumption surveys.
+- **Listed in both household units + grams** (e.g. "1 cup / 240 mL") so users can eyeball it.
+
+### What it is NOT
+
+- ❌ Not a recommendation of how much you *should* eat.
+- ❌ Not a measurement of how much you *did* eat.
+- ❌ Not universal across foods — each food category has its own.
+
+### Why it exists (4 reasons)
+
+1. **Humans don't weigh food.** "1 cup" is estimate-able by eye; "47 grams" is not.
+2. **Density varies.** 1 cup of puffed rice = 14 g; 1 cup of granola = 112 g. Per-cup nutrition matches what the eye sees; per-gram is a lab number.
+3. **Stops manufacturer tricks.** Before the FDA RACC table, brands shrank servings to claim "0 calories". The table locks it in per category.
+4. **Compare brands at a glance.** All cereal boxes list "per ¾ cup", so 150 vs. 180 kcal means something immediately — no mental math.
+
+### How to read a label correctly
+
+```
+┌─ Nutrition Facts ──────────────┐
+│ Serving size     1 cup (45 g)  │   ← the FDA reference
+│ Servings per box  10            │   ← how many servings the package holds
+│ Calories          180           │   ← PER ONE serving (1 cup / 45 g)
+└────────────────────────────────┘
+```
+
+Eat 2 cups → you ate 2 servings → **360 calories**. The label doesn't change; you multiply.
+
+### One-line takeaway
+
+> Serving size is a **ruler**, not a recommendation. The amount you actually ate is a separate number that you multiply the label numbers by.
+
+### How it shows up in this app
+
+| Concept | What it is | Where it lives in the pipeline |
+|---|---|---|
+| Serving size | FDA's reference weight for this food type | `step1_data.components[n].serving_sizes` (e.g. "3 oz", "4 oz", …) — the dropdown options on the Step 1 editor |
+| User's portion count | How many of those reference servings are on the plate | `step1_data.components[n].number_of_servings` (and `confirmed_portions` post-confirm) |
+| Total meal nutrition | `per_serving_nutrition × portion_count`, summed across components | `step2_data` computed by Phase 2.3 |
+
+---
+
 ## Bread, cereal, rice, pasta
 
 | Dish category | Standard measurement (FDA / USDA) | Hand / finger estimate |
