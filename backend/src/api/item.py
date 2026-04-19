@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 from src.api.item_schemas import Step1ConfirmationRequest
 from src.api.item_tasks import trigger_step2_analysis_background
 from src.auth import authenticate_user_from_request
+from src.crud import crud_personalized_food
 from src.crud.crud_food_image_query import (
     get_dish_image_query_by_id,
     get_current_iteration,
@@ -22,12 +23,42 @@ from src.crud.crud_food_image_query import (
     confirm_step1_atomic,
 )
 from src.schemas import MetadataUpdate
+from src.service import personalized_food_index
 from src.configs import IMAGE_DIR
 
 logger = logging.getLogger(__name__)
 
 # Create router for item detail endpoints
 router = APIRouter(prefix="/api/item", tags=["item"])
+
+
+def _enrich_personalization_row(record_id: int, confirmation: Step1ConfirmationRequest) -> None:
+    """
+    Stage 4 (Phase 1.2) enrichment: mirror the user-verified dish name and
+    portion total onto the personalization row so future uploads can match
+    against human-verified tokens.
+
+    Fire-and-forget — failures must not bounce the user, since the atomic
+    DishImageQuery commit already landed and Stage 6 retrieval degrades
+    cleanly without confirmed_tokens.
+    """
+    try:
+        confirmed_portions = sum(c.number_of_servings for c in confirmation.components)
+        confirmed_tokens = personalized_food_index.tokenize(confirmation.selected_dish_name)
+        updated_row = crud_personalized_food.update_confirmed_fields(
+            query_id=record_id,
+            confirmed_dish_name=confirmation.selected_dish_name,
+            confirmed_portions=confirmed_portions,
+            confirmed_tokens=confirmed_tokens,
+        )
+        if updated_row is None:
+            logger.warning(
+                "Stage 4 enrichment skipped: no personalized_food_descriptions "
+                "row for query_id=%s (Phase 1.1.1 may have degraded gracefully)",
+                record_id,
+            )
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.warning("Stage 4 enrichment failed for query_id=%s: %s", record_id, exc)
 
 
 @router.get("/{record_id}")
@@ -242,6 +273,8 @@ async def confirm_step1_and_trigger_step2(
         )
 
     # outcome == "confirmed" — we are the unique scheduler for Phase 2.
+    _enrich_personalization_row(record_id, confirmation)
+
     background_tasks.add_task(
         trigger_step2_analysis_background,
         record_id,

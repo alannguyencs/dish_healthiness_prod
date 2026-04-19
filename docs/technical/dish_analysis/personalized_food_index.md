@@ -150,7 +150,7 @@ None. `rank-bm25` is an in-process Python library, added to `requirements.txt` a
 - [x] Unit tests CRUD — `backend/tests/test_crud_personalized_food.py`
 - [x] Unit tests index — `backend/tests/test_personalized_food_index.py`
 - [x] Stage 2 (Phase 1.1.1): fast-caption + retrieval wired into `analyze_image_background` (see [component_identification.md](./component_identification.md#phase-111--fast-caption--reference-retrieval))
-- [ ] Stage 4 (Phase 1.2): `update_confirmed_fields` called from `confirm_step1_and_trigger_step2`
+- [x] Stage 4 (Phase 1.2): `update_confirmed_fields` called from `confirm_step1_and_trigger_step2` (see [user_customization.md](./user_customization.md#personalization-enrichment-stage-4))
 - [ ] Stage 6 (Phase 2.2): `search_for_user` called in `trigger_step2_analysis_background`
 - [ ] Stage 8 (Phase 2.4): `update_corrected_step2_data` called from the Step 2 correction endpoint
 

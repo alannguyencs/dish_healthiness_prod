@@ -23,6 +23,8 @@ On the Component Identification screen, every piece of AI output is editable by 
 
 Only when the user clicks **Confirm** is their corrected version saved and passed into the Nutritional Analysis phase.
 
+Confirming Step 1 now also feeds the user's personalization history with the verified dish name and portion count, improving accuracy on future uploads of similar dishes. This enrichment is invisible to the user and strictly per-account — one user's confirmed dishes never affect another user's analyses.
+
 ## User Flow
 
 ```

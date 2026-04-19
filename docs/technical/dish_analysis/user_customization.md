@@ -156,6 +156,16 @@ Optimistic update:
 update_dish_image_query_results(record_id, None, result_gemini)
   │
   ▼
+Stage 4 enrichment (fire-and-forget; swallow-log on None/exception):
+  confirmed_portions = sum(c.number_of_servings for c in confirmation.components)
+  confirmed_tokens   = personalized_food_index.tokenize(selected_dish_name)
+  crud_personalized_food.update_confirmed_fields(
+      query_id=record_id,
+      confirmed_dish_name=selected_dish_name,
+      confirmed_portions=confirmed_portions,
+      confirmed_tokens=confirmed_tokens)
+  │
+  ▼
 BackgroundTasks.add_task(trigger_step2_analysis_background,
                          record_id, image_path,
                          confirmation.selected_dish_name,
@@ -198,6 +208,25 @@ The confirm endpoint does four independent checks before the optimistic write; a
 3. `result_gemini` non-null and `result_gemini.step == 1`.
 4. `image_url` non-null and the file resolves on disk under `IMAGE_DIR`.
 
+### Personalization Enrichment (Stage 4)
+
+After `confirm_step1_atomic` returns `"confirmed"`, the endpoint enriches the per-user personalization row by calling `crud_personalized_food.update_confirmed_fields` with three derived values:
+
+- `confirmed_dish_name` — the user's selected dish name (same string committed onto `DishImageQuery.result_gemini.confirmed_dish_name`).
+- `confirmed_portions` — `sum(c.number_of_servings for c in confirmation.components)`. A dish-level total-portion scalar for Stage 6 (Phase 2.2) retrieval; its semantic interpretation is that stage's concern.
+- `confirmed_tokens` — `personalized_food_index.tokenize(confirmed_dish_name)`. Stage 6 unions this with the caption-side `tokens` at the query side, so user-verified dish names influence retrieval going forward.
+
+**Failure policy: swallow + log WARN.** The call is wrapped in a broad `try/except` with two WARN paths:
+
+- `update_confirmed_fields` returns `None` (no row for `query_id`) — Phase 1.1.1 graceful-degraded or the row was manually removed. Logged with the `query_id` so operators can correlate.
+- Any exception (DB error, etc.) — caught and logged. Phase 2 scheduling proceeds.
+
+Rationale: the atomic `confirm_step1_atomic` commit onto `DishImageQuery` has already succeeded by this point — the user's primary intent landed. Enrichment is fire-and-forget correctness for future uploads. Stage 6 retrieval degrades cleanly without `confirmed_tokens` (it still has `tokens`), so a transient enrichment failure weakens the signal rather than breaking retrieval. See [Personalized Food Index](./personalized_food_index.md) for the downstream consumer.
+
+**Ordering.** The enrichment block runs **after** `confirm_step1_atomic(...) == "confirmed"` and **before** `background_tasks.add_task(trigger_step2_analysis_background, ...)`. FastAPI defers the background task until after the response, so the ordering is not semantically strict; it keeps the invariant "all state mutations happen before dispatch" as a clean read-rule for future maintainers.
+
+**Not called** on `"not_found"` / `"no_step1"` / `"duplicate"` outcomes — the duplicate case in particular would otherwise stomp on the first-winner's committed values.
+
 ## Backend — API Layer
 
 | Method | Path | Auth | Request | Response | Status |
@@ -216,6 +245,8 @@ The legacy `PATCH /api/item/{record_id}/metadata` endpoint is defined in the sam
 - `get_dish_image_query_by_id(record_id)` — read-before-write.
 - `update_dish_image_query_results(query_id, result_openai, result_gemini)` — persists the optimistic `step1_confirmed=true` + confirmed fields. Replaces `result_gemini` wholesale.
 - `update_metadata(query_id, dish, serving, count)` — legacy, only reachable via the legacy PATCH route.
+- `crud_personalized_food.update_confirmed_fields(query_id, *, confirmed_dish_name, confirmed_portions, confirmed_tokens)` — Stage 4 enrichment. Returns the updated row on success, `None` if the row does not exist for this `query_id`. Raises on DB errors (caught and logged at the endpoint).
+- `personalized_food_index.tokenize(text) -> List[str]` — NFKD-fold + casefold + strip + split. Deterministic; same string always produces the same token list, so `confirmed_tokens` can be compared directly against the fast-caption `tokens`.
 
 ## Frontend — Pages & Routes
 
@@ -264,6 +295,7 @@ None. This feature is entirely DB + React state.
 - [x] `AddComponentForm.jsx`
 - [x] `apiService.confirmStep1()`
 - [x] `ItemV2.handleStep1Confirmation()` — optimistic UI + poll start + loadItem
+- [x] Stage 4 — `confirm_step1_and_trigger_step2` calls `crud_personalized_food.update_confirmed_fields` with swallow-log failure policy
 - [ ] Error-recovery path on `confirmStep1` failure (currently just `alert`)
 - [ ] Server-side idempotency / debounce on repeated confirm submissions
 

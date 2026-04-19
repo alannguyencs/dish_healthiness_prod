@@ -193,3 +193,209 @@ def test_returns_404_when_atomic_crud_finds_nothing(
 
     assert res.status_code == 404
     assert captured_tasks == []
+
+
+# ---------------------------------------------------------------------------
+# Stage 4 — Phase 1.2 enrichment of personalized_food_descriptions
+# ---------------------------------------------------------------------------
+
+
+MULTI_COMPONENT_BODY = {
+    "selected_dish_name": "Hainanese Chicken Rice",
+    "components": [
+        {
+            "component_name": "Grilled Chicken",
+            "selected_serving_size": "3 oz",
+            "number_of_servings": 0.5,
+        },
+        {
+            "component_name": "White Rice",
+            "selected_serving_size": "1 cup",
+            "number_of_servings": 1.0,
+        },
+        {
+            "component_name": "Cucumber",
+            "selected_serving_size": "1/2 cup",
+            "number_of_servings": 1.5,
+        },
+    ],
+}
+
+
+def _patch_enrichment(monkeypatch, *, returns=None, raises=None):
+    calls = []
+
+    def _update(**kwargs):
+        calls.append(kwargs)
+        if raises is not None:
+            raise raises
+        return returns
+
+    monkeypatch.setattr(item.crud_personalized_food, "update_confirmed_fields", _update)
+    return calls
+
+
+def _patch_tokenize(monkeypatch, *, return_value=None):
+    seen = []
+
+    def _tokenize(text):
+        seen.append(text)
+        return return_value if return_value is not None else text.lower().split()
+
+    monkeypatch.setattr(item.personalized_food_index, "tokenize", _tokenize)
+    return seen
+
+
+def test_enrichment_calls_update_confirmed_fields_with_tokenized_dish_name(
+    client, monkeypatch, patch_auth, mock_image_dir, captured_tasks
+):
+    record = make_record(result_gemini=PHASE1_DONE)
+    monkeypatch.setattr(item, "get_dish_image_query_by_id", lambda _id: record)
+    _patch_confirm(monkeypatch, returns="confirmed")
+    enrichment_calls = _patch_enrichment(monkeypatch, returns=object())
+    tokenized = _patch_tokenize(monkeypatch, return_value=["hainanese", "chicken", "rice"])
+
+    res = client.post("/api/item/1/confirm-step1", json=MULTI_COMPONENT_BODY)
+
+    assert res.status_code == 200
+    assert tokenized == ["Hainanese Chicken Rice"]
+    assert len(enrichment_calls) == 1
+    call = enrichment_calls[0]
+    assert call["query_id"] == 1
+    assert call["confirmed_dish_name"] == "Hainanese Chicken Rice"
+    assert call["confirmed_tokens"] == ["hainanese", "chicken", "rice"]
+
+
+def test_enrichment_confirmed_portions_sums_multiple_components(
+    client, monkeypatch, patch_auth, mock_image_dir, captured_tasks
+):
+    record = make_record(result_gemini=PHASE1_DONE)
+    monkeypatch.setattr(item, "get_dish_image_query_by_id", lambda _id: record)
+    _patch_confirm(monkeypatch, returns="confirmed")
+    enrichment_calls = _patch_enrichment(monkeypatch, returns=object())
+    _patch_tokenize(monkeypatch)
+
+    res = client.post("/api/item/1/confirm-step1", json=MULTI_COMPONENT_BODY)
+
+    assert res.status_code == 200
+    # 0.5 + 1.0 + 1.5 == 3.0
+    assert enrichment_calls[0]["confirmed_portions"] == pytest.approx(3.0)
+
+
+def test_enrichment_called_before_background_task_dispatch(
+    client, monkeypatch, patch_auth, mock_image_dir
+):
+    order = []
+
+    record = make_record(result_gemini=PHASE1_DONE)
+    monkeypatch.setattr(item, "get_dish_image_query_by_id", lambda _id: record)
+    _patch_confirm(monkeypatch, returns="confirmed")
+
+    def _update(**_kwargs):
+        order.append("enrichment")
+        return object()
+
+    monkeypatch.setattr(item.crud_personalized_food, "update_confirmed_fields", _update)
+    _patch_tokenize(monkeypatch)
+
+    from fastapi import BackgroundTasks  # pylint: disable=import-outside-toplevel
+
+    def _add_task(_self, _fn, *_a, **_kw):
+        order.append("background_task")
+
+    monkeypatch.setattr(BackgroundTasks, "add_task", _add_task)
+
+    res = client.post("/api/item/1/confirm-step1", json=CONFIRM_BODY)
+
+    assert res.status_code == 200
+    assert order == ["enrichment", "background_task"]
+
+
+def test_enrichment_swallows_none_return_and_still_schedules_phase2(
+    client, monkeypatch, patch_auth, mock_image_dir, captured_tasks, caplog
+):
+    record = make_record(result_gemini=PHASE1_DONE)
+    monkeypatch.setattr(item, "get_dish_image_query_by_id", lambda _id: record)
+    _patch_confirm(monkeypatch, returns="confirmed")
+    _patch_enrichment(monkeypatch, returns=None)
+    _patch_tokenize(monkeypatch)
+
+    with caplog.at_level("WARNING"):
+        res = client.post("/api/item/1/confirm-step1", json=CONFIRM_BODY)
+
+    assert res.status_code == 200
+    # Phase 2 still scheduled despite the row-missing case.
+    assert len(captured_tasks) == 1
+    # WARN log names the query_id.
+    assert any(
+        "Stage 4 enrichment skipped" in rec.message and "query_id=1" in rec.message
+        for rec in caplog.records
+    )
+
+
+def test_enrichment_swallows_exception_and_still_schedules_phase2(
+    client, monkeypatch, patch_auth, mock_image_dir, captured_tasks, caplog
+):
+    record = make_record(result_gemini=PHASE1_DONE)
+    monkeypatch.setattr(item, "get_dish_image_query_by_id", lambda _id: record)
+    _patch_confirm(monkeypatch, returns="confirmed")
+    _patch_enrichment(monkeypatch, raises=RuntimeError("db down"))
+    _patch_tokenize(monkeypatch)
+
+    with caplog.at_level("WARNING"):
+        res = client.post("/api/item/1/confirm-step1", json=CONFIRM_BODY)
+
+    assert res.status_code == 200
+    assert len(captured_tasks) == 1
+    assert any(
+        "Stage 4 enrichment failed" in rec.message and "db down" in rec.message
+        for rec in caplog.records
+    )
+
+
+def test_enrichment_not_called_on_duplicate_outcome(
+    client, monkeypatch, patch_auth, mock_image_dir, captured_tasks
+):
+    record = make_record(result_gemini={**PHASE1_DONE, "step1_confirmed": True})
+    monkeypatch.setattr(item, "get_dish_image_query_by_id", lambda _id: record)
+    _patch_confirm(monkeypatch, returns="duplicate")
+    enrichment_calls = _patch_enrichment(monkeypatch, returns=object())
+    _patch_tokenize(monkeypatch)
+
+    res = client.post("/api/item/1/confirm-step1", json=CONFIRM_BODY)
+
+    assert res.status_code == 409
+    assert not enrichment_calls
+    assert captured_tasks == []
+
+
+def test_enrichment_not_called_on_no_step1_outcome(
+    client, monkeypatch, patch_auth, mock_image_dir, captured_tasks
+):
+    record = make_record(result_gemini={"step": 0, "step1_data": None})
+    monkeypatch.setattr(item, "get_dish_image_query_by_id", lambda _id: record)
+    _patch_confirm(monkeypatch, returns="no_step1")
+    enrichment_calls = _patch_enrichment(monkeypatch, returns=object())
+    _patch_tokenize(monkeypatch)
+
+    res = client.post("/api/item/1/confirm-step1", json=CONFIRM_BODY)
+
+    assert res.status_code == 400
+    assert not enrichment_calls
+    assert captured_tasks == []
+
+
+def test_enrichment_not_called_on_not_found_outcome(
+    client, monkeypatch, patch_auth, mock_image_dir, captured_tasks
+):
+    record = make_record(result_gemini=PHASE1_DONE)
+    monkeypatch.setattr(item, "get_dish_image_query_by_id", lambda _id: record)
+    _patch_confirm(monkeypatch, returns="not_found")
+    enrichment_calls = _patch_enrichment(monkeypatch, returns=object())
+    _patch_tokenize(monkeypatch)
+
+    res = client.post("/api/item/1/confirm-step1", json=CONFIRM_BODY)
+
+    assert res.status_code == 404
+    assert not enrichment_calls
+    assert captured_tasks == []
