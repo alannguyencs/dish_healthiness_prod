@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ReasoningPanel from "../ReasoningPanel";
 
@@ -19,16 +19,17 @@ describe("ReasoningPanel", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  test("renders toggle, collapsed by default", () => {
+  test("renders the body non-conditionally when step2Data is present", () => {
+    // Open/close is owned by the outer <ResearchOnlyGroup> now, not by
+    // this panel — the body always renders when step2Data is present.
     render(<ReasoningPanel step2Data={fullStep2Data} />);
-    expect(screen.getByTestId("reasoning-panel-toggle")).toBeInTheDocument();
-    expect(screen.queryByTestId("reasoning-panel-body")).toBeNull();
+    expect(screen.getByTestId("reasoning-panel")).toBeInTheDocument();
+    expect(screen.getByTestId("reasoning-panel-body")).toBeInTheDocument();
+    expect(screen.queryByTestId("reasoning-panel-toggle")).toBeNull();
   });
 
-  test("expand shows all seven reasoning_* fields", () => {
+  test("renders all seven reasoning_* fields", () => {
     render(<ReasoningPanel step2Data={fullStep2Data} />);
-    fireEvent.click(screen.getByTestId("reasoning-panel-toggle"));
-    expect(screen.getByTestId("reasoning-panel-body")).toBeInTheDocument();
     expect(screen.getByTestId("reasoning-reasoning_sources")).toHaveTextContent(
       "Nutrition DB",
     );
@@ -44,21 +45,11 @@ describe("ReasoningPanel", () => {
     render(
       <ReasoningPanel step2Data={{ reasoning_calories: "Only calories" }} />,
     );
-    fireEvent.click(screen.getByTestId("reasoning-panel-toggle"));
     expect(screen.getByTestId("reasoning-reasoning_sources")).toHaveTextContent(
       "No rationale provided",
     );
     expect(
       screen.getByTestId("reasoning-reasoning_calories"),
     ).toHaveTextContent("Only calories");
-  });
-
-  test("toggle twice collapses back", () => {
-    render(<ReasoningPanel step2Data={fullStep2Data} />);
-    const btn = screen.getByTestId("reasoning-panel-toggle");
-    fireEvent.click(btn);
-    expect(screen.getByTestId("reasoning-panel-body")).toBeInTheDocument();
-    fireEvent.click(btn);
-    expect(screen.queryByTestId("reasoning-panel-body")).toBeNull();
   });
 });
