@@ -21,6 +21,14 @@ const MACRO_ROWS = [
   ["fat_g", "Fat (g)"],
 ];
 
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:2612";
+
+const resolveImageUrl = (url) => {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${API_BASE}${url}`;
+};
+
 const PersonalizationMatches = ({ matches }) => {
   if (!matches || matches.length === 0) return null;
 
@@ -46,8 +54,9 @@ const PersonalizationMatches = ({ matches }) => {
             >
               {m.image_url && (
                 <img
-                  src={m.image_url}
+                  src={resolveImageUrl(m.image_url)}
                   alt={m.description || "Prior upload"}
+                  loading="lazy"
                   className="w-16 h-16 object-cover rounded flex-shrink-0"
                 />
               )}

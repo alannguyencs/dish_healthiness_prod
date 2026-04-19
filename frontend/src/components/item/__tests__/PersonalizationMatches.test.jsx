@@ -50,7 +50,12 @@ describe("PersonalizationMatches", () => {
     expect(screen.getByTestId("persona-card-7")).toBeInTheDocument();
     expect(screen.getByText("chicken rice")).toBeInTheDocument();
     expect(screen.getByText("55% similar")).toBeInTheDocument();
-    expect(screen.getByRole("img")).toHaveAttribute("src", "/images/prior.jpg");
+    // Component prefixes relative paths with the backend base URL so the
+    // thumbnail hits FastAPI on port 2612 instead of 404ing against the
+    // React dev server on port 2512.
+    expect(screen.getByRole("img").getAttribute("src")).toMatch(
+      /\/images\/prior\.jpg$/,
+    );
   });
 
   test("shows corrected macros with User-verified badge when corrected_step2_data set", () => {
