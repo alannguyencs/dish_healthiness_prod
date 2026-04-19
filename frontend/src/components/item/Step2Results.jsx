@@ -66,10 +66,7 @@ const Step2Results = ({ step2Data, step2Corrected, onEditSave, saving }) => {
     <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
       <div className="border-b pb-4 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">
-            Step 2: Nutritional Analysis
-          </h2>
-          <p className="text-lg text-gray-600 mt-1">
+          <p className="text-2xl font-bold text-blue-600">
             {dish_name || step2Data.dish_name}
           </p>
           {isCorrected && (
