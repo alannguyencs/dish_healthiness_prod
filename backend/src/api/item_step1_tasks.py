@@ -56,7 +56,11 @@ def _resolve_reference_inputs(
         return None, None
 
     prior = reference.get("prior_step1_data")
-    if not prior:
+    confirmed_dish_name = reference.get("prior_confirmed_dish_name")
+    confirmed_portions = reference.get("prior_confirmed_portions")
+    # Keep the reference as long as the prompt builder has something to render:
+    # either prior_step1_data, or a user-verified confirmed_* value.
+    if not prior and not confirmed_dish_name and confirmed_portions is None:
         return None, None
 
     return image_bytes, reference

@@ -96,12 +96,18 @@ async def resolve_reference_for_upload(
         top = matches[0]
         prior = get_dish_image_query_by_id(top["query_id"])
         prior_step1_data = (prior.result_gemini or {}).get("step1_data") if prior else None
+        prior_row = top.get("row")
         reference = {
             "query_id": top["query_id"],
             "image_url": top["image_url"],
             "description": top["description"],
             "similarity_score": top["similarity_score"],
             "prior_step1_data": prior_step1_data,
+            # User-verified Phase 1.2 edits, if the prior was confirmed.
+            # Phase 1.1.2 prompt consumes these to echo the user's corrections
+            # on repeat uploads (see step1_component_identification.md).
+            "prior_confirmed_dish_name": getattr(prior_row, "confirmed_dish_name", None),
+            "prior_confirmed_portions": getattr(prior_row, "confirmed_portions", None),
         }
         top_similarity = top["similarity_score"]
     else:

@@ -38,13 +38,23 @@ _PERSONALIZED_STRIP_RE = re.compile(
 # ============================================================
 
 
-def _render_reference_block(prior_step1_data: Dict[str, Any]) -> str:
+def _render_reference_block(
+    prior_step1_data: Dict[str, Any],
+    confirmed_dish_name: Optional[str] = None,
+    confirmed_portions: Optional[float] = None,
+) -> str:
     """
     Render the 'Reference results (HINT ONLY)' block from prior step1_data.
+
+    When the prior was confirmed by the user (Phase 1.2), the user-corrected
+    `confirmed_dish_name` and `confirmed_portions` override the AI's original
+    proposal in the rendered block. The prompt instructs Gemini to prefer
+    the user-verified values unless the query image clearly disagrees.
 
     Only non-empty fields are rendered so the block tracks what the
     referenced dish actually has.
     """
+    has_user_edits = bool(confirmed_dish_name) or confirmed_portions is not None
     lines = [
         "## Reference results (HINT ONLY — may or may not match)",
         "",
@@ -56,9 +66,30 @@ def _render_reference_block(prior_step1_data: Dict[str, Any]) -> str:
             "trust the query image."
         ),
     ]
+    if has_user_edits:
+        lines += [
+            "",
+            (
+                "**The user manually corrected the prior dish's name and/or servings "
+                "(fields marked 'user-verified' below).** Prefer those values over the "
+                "original AI proposal when the query image shows a visually similar "
+                "dish — the user knows their own meals better than the first-pass "
+                "model did."
+            ),
+        ]
     dish_predictions = prior_step1_data.get("dish_predictions") or []
-    if dish_predictions and dish_predictions[0].get("name"):
-        lines += ["", f"**Prior dish name:** {dish_predictions[0]['name']}"]
+    ai_dish_name = dish_predictions[0].get("name") if dish_predictions else None
+    if confirmed_dish_name:
+        lines += ["", f"**Prior dish name (user-verified):** {confirmed_dish_name}"]
+        if ai_dish_name and ai_dish_name != confirmed_dish_name:
+            lines.append(f"**Prior dish name (AI original):** {ai_dish_name}")
+    elif ai_dish_name:
+        lines += ["", f"**Prior dish name:** {ai_dish_name}"]
+    if confirmed_portions is not None:
+        lines += [
+            "",
+            f"**Prior total servings (user-verified):** {confirmed_portions}",
+        ]
     components = prior_step1_data.get("components") or []
     if components:
         lines += ["", "**Prior components (name · serving sizes · predicted servings):**"]
@@ -101,12 +132,21 @@ def get_step1_component_identification_prompt(
     with open(prompt_path, "r", encoding="utf-8") as f:
         prompt = f.read()
 
-    prior = (reference or {}).get("prior_step1_data")
+    ref = reference or {}
+    prior = ref.get("prior_step1_data")
+    confirmed_dish_name = ref.get("prior_confirmed_dish_name")
+    confirmed_portions = ref.get("prior_confirmed_portions")
     has_renderable_prior = bool(prior) and (
         bool(prior.get("dish_predictions")) or bool(prior.get("components"))
     )
-    if has_renderable_prior:
-        return prompt.replace(_REFERENCE_PLACEHOLDER, _render_reference_block(prior))
+    has_user_edits = bool(confirmed_dish_name) or confirmed_portions is not None
+    if has_renderable_prior or has_user_edits:
+        block = _render_reference_block(
+            prior or {},
+            confirmed_dish_name=confirmed_dish_name,
+            confirmed_portions=confirmed_portions,
+        )
+        return prompt.replace(_REFERENCE_PLACEHOLDER, block)
     return _REFERENCE_STRIP_RE.sub("", prompt)
 
 
