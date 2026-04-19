@@ -7,9 +7,11 @@ user's rows (no persistence, no module-level cache) so there is no
 stored artefact to invalidate when the tokenizer or scoring scheme is
 later refined.
 
-Similarity is a relative ranking signal: the top hit always scores 1.0.
-See `docs/technical/dish_analysis/personalized_food_index.md` for the
-"Constraints & Edge Cases" discussion.
+Ranking uses BM25 so IDF-common terms (e.g. "rice", "curry") get
+down-weighted. The exposed `similarity_score` is a Jaccard overlap on
+the token sets (|query ∩ doc| / |query ∪ doc|) — an absolute [0, 1]
+measure that the callers' threshold constants (0.25 / 0.30 / 0.35) gate
+on meaningfully.
 """
 
 import re
@@ -66,17 +68,17 @@ def search_for_user(
             "row": PersonalizedFoodDescription,
         }
 
-    Scoring: raw BM25 scores are normalized by max-in-batch into [0, 1].
-    The top hit is always 1.0. When BM25 IDF collapses to zero on tiny
-    corpora (1-doc, or 2-doc with df == N/2), fall back to token-overlap
-    ratio so cold-start users still get a ranking signal. Ties break on
-    `query_id DESC` so more recent uploads win.
+    Scoring: rows are ranked by BM25 (IDF-aware), but `similarity_score`
+    is a Jaccard overlap on token sets — an absolute [0, 1] measure the
+    callers' thresholds gate on meaningfully. Zero-overlap rows are
+    dropped regardless of `min_similarity`. Ties break on `query_id DESC`
+    so more recent uploads win.
 
     Args:
         user_id (int): Owner whose corpus to search
         query_tokens (List[str]): Tokenized query; empty returns []
         top_k (int): Max hits to return
-        min_similarity (float): Drop hits below this normalized score
+        min_similarity (float): Drop hits whose Jaccard is below this
         exclude_query_id (Optional[int]): Exclude this query's own row so
             write-after-read callers cannot match themselves
 
@@ -95,37 +97,26 @@ def search_for_user(
     bm25 = BM25Okapi(corpus_tokens)
     bm25_scores = bm25.get_scores(list(query_tokens))
 
-    max_bm25 = max(bm25_scores) if len(bm25_scores) > 0 else 0.0
-    if max_bm25 > 0:
-        raw_scores = [max(float(s), 0.0) for s in bm25_scores]
-    else:
-        # BM25 IDF collapses to 0 (or goes negative) when df/N is degenerate
-        # — e.g. 1-doc corpus, or a term appearing in >=50% of a 2-doc
-        # corpus. Fall back to token-overlap ratio so cold-start users still
-        # get a comparable relative signal.
-        query_set = set(query_tokens)
-        raw_scores = [
-            float(len(set(doc) & query_set)) / float(len(query_set)) for doc in corpus_tokens
-        ]
-
-    max_raw = max(raw_scores) if raw_scores else 0.0
-    if max_raw <= 0:
-        return []
-
+    query_set = set(query_tokens)
     scored: List[Dict[str, Any]] = []
-    for row, raw in zip(corpus_rows, raw_scores):
-        normalized = float(raw) / float(max_raw)
-        if normalized < min_similarity:
+    for row, doc_tokens, bm25_score in zip(corpus_rows, corpus_tokens, bm25_scores):
+        doc_set = set(doc_tokens)
+        union = query_set | doc_set
+        similarity = (len(query_set & doc_set) / len(union)) if union else 0.0
+        if similarity <= 0.0 or similarity < min_similarity:
             continue
         scored.append(
             {
                 "query_id": row.query_id,
                 "image_url": row.image_url,
                 "description": row.description,
-                "similarity_score": normalized,
+                "similarity_score": similarity,
                 "row": row,
+                "_bm25": float(bm25_score),
             }
         )
 
-    scored.sort(key=lambda hit: (-hit["similarity_score"], -hit["query_id"]))
+    scored.sort(key=lambda hit: (-hit["_bm25"], -hit["similarity_score"], -hit["query_id"]))
+    for hit in scored:
+        hit.pop("_bm25", None)
     return scored[:top_k]
