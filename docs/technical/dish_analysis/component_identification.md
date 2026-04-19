@@ -68,28 +68,31 @@ update_dish_image_query_results(query_id, result_openai=None, result_gemini=pre_
 
 Failure-mode table:
 
-| Failure                              | Behavior                                   | `reference_image` | Personalization row |
-|---                                   |---                                         |---                |---                  |
-| Gemini Flash errors (rate, net, parse) | Log WARN; orchestrator returns `None`.    | `null`            | Not inserted         |
-| User has zero prior rows             | BM25 returns `[]`; orchestrator returns `None`. | `null`       | Inserted (seeds future searches) |
-| Top-1 below `THRESHOLD_PHASE_1_1_1_SIMILARITY` | `[]` after threshold filter.    | `null`            | Inserted             |
-| Caption tokenizes to `[]`            | Skip search; orchestrator returns `None`. | `null`            | Inserted with `tokens=[]` |
-| Retry and row already exists          | Caller short-circuits before orchestrator. | Unchanged (prior attempt's value preserved) | Unchanged            |
-| Retry and no row                      | Normal path.                              | New value          | Inserted             |
+| Failure                              | Behavior                                   | `flash_caption` | `reference_image` | Personalization row |
+|---                                   |---                                         |---              |---                |---                  |
+| Gemini Flash errors (rate, net, parse) | Log WARN; orchestrator returns `{flash_caption: None, reference_image: None}`. | `null` | `null`            | Not inserted         |
+| User has zero prior rows             | BM25 returns `[]`.                        | caption string  | `null`            | Inserted (seeds future searches) |
+| Top-1 below `THRESHOLD_PHASE_1_1_1_SIMILARITY` | `[]` after threshold filter.    | caption string  | `null`            | Inserted             |
+| Caption tokenizes to `[]`            | Skip search; still insert corpus row.     | caption string  | `null`            | Inserted with `tokens=[]` |
+| Retry and row already exists          | Caller short-circuits; orchestrator returns `None`. | Unchanged | Unchanged (prior attempt's value preserved) | Unchanged            |
+| Retry and no row                      | Normal path.                              | caption string  | New value          | Inserted             |
 
-`reference_image` JSON shape (stashed on `result_gemini`):
+`flash_caption` + `reference_image` JSON shape (both stashed on `result_gemini`):
 
 ```json
 {
-  "query_id": 1234,
-  "image_url": "/images/260418_200123_u7_dish1.jpg",
-  "description": "grilled chicken rice with cucumber",
-  "similarity_score": 0.87,
-  "prior_step1_data": { ...the referenced DishImageQuery's result_gemini.step1_data... }
+  "flash_caption": "grilled chicken rice with cucumber",
+  "reference_image": {
+    "query_id": 1234,
+    "image_url": "/images/260418_200123_u7_dish1.jpg",
+    "description": "grilled chicken rice with cucumber",
+    "similarity_score": 0.87,
+    "prior_step1_data": { ...the referenced DishImageQuery's result_gemini.step1_data... }
+  }
 }
 ```
 
-…or `"reference_image": null` on any of the failure / cold-start / below-threshold cases above.
+…either key can be `null` per the failure-mode table. `flash_caption` is the **current** upload's Flash output; `reference_image.description` is the matched prior row's caption.
 
 **Thresholds and scoring.** `similarity_score` is the per-user BM25 top-1 normalized by max-in-batch (see [Personalized Food Index — Algorithms](./personalized_food_index.md#algorithms)); the top hit is always `1.0`. `THRESHOLD_PHASE_1_1_1_SIMILARITY = 0.25` mainly rejects corpora with zero lexical overlap — the prompt framing in Phase 1.1.2 is the real quality control. Re-tune after real retrieval-quality data lands.
 
@@ -440,6 +443,7 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 - `components/item/AnalysisLoading.jsx` — loading spinner shown while `pollingStep1 === true`.
 - `components/item/PhaseErrorCard.jsx` — generic error card shared with Phase 2 (`headline` prop differentiates). Rendered when `result_gemini.step1_error` is present and `step1_data` is null. Hides the retry button for `error_type === "config_error"` and shows a "Try Anyway" warning at `retry_count >= 5` (soft cap).
 - `components/item/Step1ComponentEditor.jsx` — rendered once `step1_data` is present; the editor proper is documented on [User Customization](./user_customization.md). The "proposals view" portion (dish predictions list, per-component name/serving/count) is part of the same component.
+- `components/item/PersonalizedDataCard.jsx` — research-only collapsible card rendered above `<Step1ComponentEditor>` in the Step 1 view only. Reads `result_gemini.flash_caption` and `result_gemini.reference_image`. Collapsed by default; the chevron toggle reveals the flash caption and a link-wrapped reference row (thumbnail + description + `.toFixed(2)` similarity badge → `/item/{reference.query_id}`).
 
 ## Frontend — Services & Hooks
 
@@ -478,6 +482,8 @@ After receipt the analyzer appends these engineering fields to the same dict bef
 - [x] `POST /api/item/{record_id}/retry-step1` — `item_retry.py#retry_step1_analysis`
 - [x] `PhaseErrorCard.jsx` — error UI with retry button + soft-cap warning (shared with Phase 2)
 - [x] `useItemPolling.js` — polling hook with stop conditions for all four terminal states
+- [x] `result_gemini.flash_caption` — current upload's Flash caption, written in the same pre-Pro write as `reference_image`
+- [x] `PersonalizedDataCard.jsx` — research-only collapsible card on the Step 1 view
 - [x] `apiService.retryStep1()` — retry call
 - [x] `analyze_step1_component_identification_async()` — Gemini call with structured output
 - [x] `get_step1_component_identification_prompt()` — prompt loader

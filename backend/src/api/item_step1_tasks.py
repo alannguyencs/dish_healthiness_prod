@@ -90,22 +90,26 @@ async def analyze_image_background(query_id: int, file_path: str, retry_count: i
     )
 
     if user_id is not None and not is_retry_short_circuit:
-        reference = await resolve_reference_for_upload(
+        phase111_out = await resolve_reference_for_upload(
             user_id=user_id,
             query_id=query_id,
             image_path=file_path,
         )
-        # Persist reference_image immediately, before the Pro call, so a
-        # Phase 1.1.2 failure does not wipe Phase 1.1.1's output. Seed with
-        # the same `{"step": 0, "step1_data": None}` defaults persist_phase_error
-        # uses so the frontend's step-branching logic stays consistent on
-        # a subsequent failure.
+        # Persist flash_caption + reference_image immediately, before the
+        # Pro call, so a Phase 1.1.2 failure does not wipe Phase 1.1.1's
+        # output. Seed with the same `{"step": 0, "step1_data": None}`
+        # defaults persist_phase_error uses so the frontend's
+        # step-branching logic stays consistent on a subsequent failure.
         pre_blob = (
             (record_pre.result_gemini or {"step": 0, "step1_data": None}).copy()
             if record_pre
             else {"step": 0, "step1_data": None}
         )
-        pre_blob["reference_image"] = reference
+        # `phase111_out` is None only on the retry short-circuit (which we
+        # already excluded above); every other path returns a dict with
+        # both keys present.
+        pre_blob["flash_caption"] = (phase111_out or {}).get("flash_caption")
+        pre_blob["reference_image"] = (phase111_out or {}).get("reference_image")
         update_dish_image_query_results(
             query_id=query_id, result_openai=None, result_gemini=pre_blob
         )

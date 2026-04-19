@@ -26,6 +26,8 @@ If the AI call fails, the user sees a clear error message with a one-click **Try
 
 When the user has uploaded a similar dish before, the system now shows the AI **both** the new photo and the prior photo, along with a short summary of the prior analysis (dish name, components, serving size options), as a hint. The AI is explicitly told the prior dish is a hint it may disagree with — if the new photo shows something different, it trusts the new photo. Accuracy tends to improve on repeat dishes because the AI can borrow portion and preparation cues from earlier analyses by the same user. Cold-start users and dissimilar new uploads continue to run with a single image exactly as before. The user's history is strictly per-account: one user's uploads never influence another user's analyses.
 
+For research review, a collapsed **Personalized Data (Research only)** card on the Component Identification screen exposes the short AI-generated caption for the current upload and the top-1 retrieval result (thumbnail, description, similarity score). It is hidden by default, expands via a chevron toggle, and does not affect the user flow — it is a debug panel aimed at engineers and PMs.
+
 ## User Flow
 
 ```
@@ -75,6 +77,7 @@ AI first pass runs in the background
   - Cropping the photo to a specific region
   - Multi-language dish name predictions
   - Confidence scores on individual components or serving size suggestions
+  - Editable or user-facing Personalization surface on this screen — the "Personalized Data (Research only)" card is a non-editable debug panel aimed at engineers and PMs
 
 ## Acceptance Criteria
 

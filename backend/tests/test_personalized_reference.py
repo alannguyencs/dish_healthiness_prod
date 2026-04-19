@@ -84,14 +84,16 @@ def _set_caption_raises(monkeypatch, exc):
     monkeypatch.setattr(personalized_reference, "generate_fast_caption_async", fake)
 
 
-def test_resolve_reference_cold_start_returns_none_and_inserts_row(sqlite_session, caption_spy):
+def test_resolve_reference_cold_start_returns_caption_and_null_reference(
+    sqlite_session, caption_spy
+):
     _set_caption(caption_spy, "chicken rice")
     result = asyncio.run(
         personalized_reference.resolve_reference_for_upload(
             user_id=1, query_id=10, image_path="/tmp/q10.jpg"
         )
     )
-    assert result is None
+    assert result == {"flash_caption": "chicken rice", "reference_image": None}
     row = crud_personalized_food.get_row_by_query_id(10)
     assert row is not None
     assert row.description == "chicken rice"
@@ -123,10 +125,13 @@ def test_resolve_reference_warm_user_returns_reference(sqlite_session, caption_s
         )
     )
     assert result is not None
-    assert result["query_id"] == 10
-    assert result["similarity_score"] >= 0.25
-    assert result["image_url"] == "/images/q10.jpg"
-    assert result["prior_step1_data"] == {"dish_predictions": [{"name": "Chicken Rice"}]}
+    assert result["flash_caption"] == "chicken rice with cucumber"
+    ref = result["reference_image"]
+    assert ref is not None
+    assert ref["query_id"] == 10
+    assert ref["similarity_score"] >= 0.25
+    assert ref["image_url"] == "/images/q10.jpg"
+    assert ref["prior_step1_data"] == {"dish_predictions": [{"name": "Chicken Rice"}]}
 
     # New row for query_id=11 inserted with similarity_score_on_insert set
     row11 = crud_personalized_food.get_row_by_query_id(11)
@@ -148,18 +153,18 @@ def test_resolve_reference_excludes_self(sqlite_session, monkeypatch, caption_sp
     # Bypass the retry short-circuit by tricking the probe to return None
     monkeypatch.setattr(crud_personalized_food, "get_row_by_query_id", lambda _qid: None)
     # The insert will later fail with IntegrityError but the orchestrator
-    # swallows it. We only care that the returned reference does NOT have
-    # query_id == 10 (self). Since exclude_query_id=10 is passed to the
-    # search, and no other matching row exists, the return is None.
+    # swallows it. We only care that the returned reference_image does NOT
+    # have query_id == 10 (self). Since exclude_query_id=10 is passed to
+    # the search, and no other matching row exists, reference_image is None.
     result = asyncio.run(
         personalized_reference.resolve_reference_for_upload(
             user_id=1, query_id=10, image_path="/tmp/q10.jpg"
         )
     )
-    assert result is None
+    assert result == {"flash_caption": "chicken rice", "reference_image": None}
 
 
-def test_resolve_reference_below_threshold_returns_none_but_inserts_row(
+def test_resolve_reference_below_threshold_returns_null_reference_but_inserts_row(
     sqlite_session, monkeypatch, caption_spy
 ):
     # Force every BM25 normalized score below the 0.25 threshold.
@@ -177,7 +182,7 @@ def test_resolve_reference_below_threshold_returns_none_but_inserts_row(
             user_id=1, query_id=11, image_path="/tmp/q11.jpg"
         )
     )
-    assert result is None
+    assert result == {"flash_caption": "chocolate cookie", "reference_image": None}
     assert crud_personalized_food.get_row_by_query_id(11) is not None
 
 
@@ -205,7 +210,7 @@ def test_resolve_reference_graceful_degrade_on_caption_failure(sqlite_session, m
             user_id=1, query_id=10, image_path="/tmp/q10.jpg"
         )
     )
-    assert result is None
+    assert result == {"flash_caption": None, "reference_image": None}
     # No row inserted on caption failure
     assert crud_personalized_food.get_row_by_query_id(10) is None
 
@@ -217,7 +222,7 @@ def test_resolve_reference_graceful_degrade_on_image_missing(sqlite_session, mon
             user_id=1, query_id=10, image_path="/nope.jpg"
         )
     )
-    assert result is None
+    assert result == {"flash_caption": None, "reference_image": None}
     assert crud_personalized_food.get_row_by_query_id(10) is None
 
 
@@ -237,8 +242,10 @@ def test_resolve_reference_handles_prior_step1_data_missing(sqlite_session, capt
         )
     )
     assert result is not None
-    assert result["query_id"] == 10
-    assert result["prior_step1_data"] is None
+    ref = result["reference_image"]
+    assert ref is not None
+    assert ref["query_id"] == 10
+    assert ref["prior_step1_data"] is None
 
 
 def test_resolve_reference_cross_user_isolation(sqlite_session, caption_spy):
@@ -256,7 +263,7 @@ def test_resolve_reference_cross_user_isolation(sqlite_session, caption_spy):
             user_id=1, query_id=10, image_path="/tmp/q10.jpg"
         )
     )
-    assert result is None
+    assert result == {"flash_caption": "chicken rice", "reference_image": None}
     # Alice's row inserted
     assert crud_personalized_food.get_row_by_query_id(10) is not None
     # Bob's row untouched
@@ -280,7 +287,7 @@ def test_resolve_reference_empty_tokens_inserts_row_without_search(
             user_id=1, query_id=10, image_path="/tmp/q10.jpg"
         )
     )
-    assert result is None
+    assert result == {"flash_caption": "...", "reference_image": None}
     assert search_calls["count"] == 0
     row = crud_personalized_food.get_row_by_query_id(10)
     assert row is not None

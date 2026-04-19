@@ -8,9 +8,11 @@ Phase 1 background task calls before the Step 1 Pro component-ID call:
 2. `personalized_food_index.search_for_user` (per-user BM25).
 3. `crud_personalized_food.insert_description_row` (write-after-read).
 
-Returns the payload the caller stashes on `result_gemini.reference_image`,
-or None on cold start / below-threshold / graceful-degrade / retry
-short-circuit. See `docs/plan/260418_stage2_phase1_1_1_fast_caption.md`
+Returns `{flash_caption, reference_image}` — the caller stashes both keys
+on `result_gemini`. Returns `None` only on the retry short-circuit; the
+graceful-degrade / cold-start / below-threshold paths all return a dict
+with one or both keys set to `None` so the caller still persists the
+final shape. See `docs/plan/260418_stage2_phase1_1_1_fast_caption.md`
 for the full failure-mode table.
 """
 
@@ -41,19 +43,21 @@ async def resolve_reference_for_upload(
         image_path (Union[str, Path]): JPEG path on disk.
 
     Returns:
-        Optional[Dict[str, Any]]: A dict with keys
-            `{query_id, image_url, description, similarity_score,
-              prior_step1_data}`
-            on warm-start match, or None on:
-            - retry short-circuit (row already present for this query_id)
-            - fast-caption failure (graceful degrade)
-            - empty tokens (nothing to search with)
-            - cold start or below-threshold top-1
+        Optional[Dict[str, Any]]: A dict with two keys:
+            - `flash_caption` (str | None): the current upload's Flash
+              caption, or None on Flash failure.
+            - `reference_image` (dict | None): the matched prior row's
+              payload (`{query_id, image_url, description,
+              similarity_score, prior_step1_data}`) on a warm-start
+              match, or None on cold-start / below-threshold / empty
+              tokens / Flash failure.
+
+        Returns None only on the retry short-circuit (a personalization
+        row already exists for this `query_id`).
     """
     # Retry idempotency: if a prior attempt already wrote the row, do not
-    # re-run the caption/search/insert path. The existing row's payload
-    # (if any) is already persisted on result_gemini.reference_image by
-    # the earlier attempt; the caller simply preserves it.
+    # re-run the caption/search/insert path. The caller preserves any
+    # prior flash_caption / reference_image already on result_gemini.
     if crud_personalized_food.get_row_by_query_id(query_id) is not None:
         logger.info("Phase 1.1.1 skipped on retry for query_id=%s", query_id)
         return None
@@ -67,7 +71,7 @@ async def resolve_reference_for_upload(
             query_id,
             exc,
         )
-        return None
+        return {"flash_caption": None, "reference_image": None}
 
     query_tokens = personalized_food_index.tokenize(description)
 
@@ -130,4 +134,4 @@ async def resolve_reference_for_upload(
             exc,
         )
 
-    return reference
+    return {"flash_caption": description, "reference_image": reference}

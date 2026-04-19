@@ -14,3 +14,4 @@
 - [x] docs/plan/260419_stage7_phase2_3_gemini_threshold_gated_blocks.md
 - [x] docs/plan/260419_stage8_phase2_4_review_ui_and_correction.md
 - [x] docs/plan/260419_stage9_retrieval_regression_gate.md
+- [x] docs/plan/260419_personalized_data_card.md

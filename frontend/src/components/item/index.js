@@ -17,3 +17,4 @@ export { default as ItemStepTabs } from "./ItemStepTabs";
 export { default as ReasoningPanel } from "./ReasoningPanel";
 export { default as Top5DbMatches } from "./Top5DbMatches";
 export { default as PersonalizationMatches } from "./PersonalizationMatches";
+export { default as PersonalizedDataCard } from "./PersonalizedDataCard";

@@ -13,6 +13,7 @@ import {
   ReasoningPanel,
   Top5DbMatches,
   PersonalizationMatches,
+  PersonalizedDataCard,
 } from "../components/item";
 
 const ItemV2 = () => {
@@ -140,6 +141,8 @@ const ItemV2 = () => {
   const step2Error = resultGemini?.step2_error;
   const nutritionDbMatches = resultGemini?.nutrition_db_matches;
   const personalizedMatches = resultGemini?.personalized_matches;
+  const flashCaption = resultGemini?.flash_caption;
+  const referenceImage = resultGemini?.reference_image;
   const currentStep = resultGemini?.step || 0;
   const step1Confirmed = resultGemini?.step1_confirmed || false;
 
@@ -192,12 +195,18 @@ const ItemV2 = () => {
                 currentStep === 1 &&
                 step1Data &&
                 !pollingStep1)) && (
-              <Step1ComponentEditor
-                step1Data={step1Data}
-                confirmedData={confirmedStep1Data}
-                onConfirm={handleStep1Confirmation}
-                isConfirming={confirming}
-              />
+              <>
+                <PersonalizedDataCard
+                  flashCaption={flashCaption}
+                  referenceImage={referenceImage}
+                />
+                <Step1ComponentEditor
+                  step1Data={step1Data}
+                  confirmedData={confirmedStep1Data}
+                  onConfirm={handleStep1Confirmation}
+                  isConfirming={confirming}
+                />
+              </>
             )}
 
             {step1Confirmed &&

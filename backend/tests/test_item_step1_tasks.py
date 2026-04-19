@@ -46,7 +46,7 @@ def patch_phase_1_1_1_noop(monkeypatch):
     )
 
     async def _noop(**_kw):
-        return None
+        return {"flash_caption": None, "reference_image": None}
 
     monkeypatch.setattr(item_step1_tasks, "resolve_reference_for_upload", _noop)
 
@@ -103,7 +103,7 @@ def test_success_persists_step1_data_and_clears_prior_error(
 def test_analyze_image_background_persists_reference_image_key_on_cold_start(
     monkeypatch, patch_prompt, captured_writes
 ):
-    """Phase 1.1.1 runs, returns None (cold start), key persisted as null."""
+    """Phase 1.1.1 runs and returns a caption with null reference (cold start)."""
     record = make_record(result_gemini=None)
     writes, capture = captured_writes
     monkeypatch.setattr(item_step1_tasks, "update_dish_image_query_results", capture)
@@ -123,7 +123,7 @@ def test_analyze_image_background_persists_reference_image_key_on_cold_start(
     )
 
     async def fake_resolve(**_kw):
-        return None
+        return {"flash_caption": "plate of food", "reference_image": None}
 
     monkeypatch.setattr(item_step1_tasks, "resolve_reference_for_upload", fake_resolve)
 
@@ -141,11 +141,15 @@ def test_analyze_image_background_persists_reference_image_key_on_cold_start(
         )
     )
 
-    # Two writes: one post-Phase-1.1.1 (reference_image=None), one post-success.
+    # Two writes: one post-Phase-1.1.1 (caption=str, reference_image=None),
+    # one post-success that merges step1_data in.
     assert len(writes) == 2
-    assert writes[0]["result_gemini"]["reference_image"] is None
+    pre = writes[0]["result_gemini"]
+    assert pre["reference_image"] is None
+    assert pre["flash_caption"] == "plate of food"
     final = writes[1]["result_gemini"]
     assert final["reference_image"] is None
+    assert final["flash_caption"] == "plate of food"
     assert final["step1_data"]["dish_predictions"][0]["name"] == "Burger"
 
 
@@ -180,7 +184,7 @@ def test_analyze_image_background_persists_reference_image_key_on_warm_user(
     }
 
     async def fake_resolve(**_kw):
-        return reference
+        return {"flash_caption": "grilled chicken on rice", "reference_image": reference}
 
     monkeypatch.setattr(item_step1_tasks, "resolve_reference_for_upload", fake_resolve)
 
@@ -196,10 +200,13 @@ def test_analyze_image_background_persists_reference_image_key_on_warm_user(
     )
 
     assert len(writes) == 2
-    assert writes[0]["result_gemini"]["reference_image"] == reference
+    pre = writes[0]["result_gemini"]
+    assert pre["reference_image"] == reference
+    assert pre["flash_caption"] == "grilled chicken on rice"
     final = writes[1]["result_gemini"]
-    # reference_image must survive the Phase 1.1.2 merge
+    # reference_image + flash_caption must survive the Phase 1.1.2 merge
     assert final["reference_image"] == reference
+    assert final["flash_caption"] == "grilled chicken on rice"
     assert final["step1_data"]["dish_predictions"][0]["name"] == "Burger"
 
 
@@ -234,7 +241,7 @@ def test_analyze_image_background_preserves_reference_image_on_phase1_1_2_failur
     }
 
     async def fake_resolve(**_kw):
-        return reference
+        return {"flash_caption": "plate of chicken rice", "reference_image": reference}
 
     monkeypatch.setattr(item_step1_tasks, "resolve_reference_for_upload", fake_resolve)
     _set_analyzer(monkeypatch, raises=ValueError("GEMINI_API_KEY missing"))
