@@ -15,6 +15,10 @@ __pycache__/
 
 # Data and large files
 data/
+# Exception: Stage 9 retrieval-quality eval dataset is a tracked
+# test fixture (labelled ground truth; ~80 KB, no PII).
+!backend/tests/data/
+!backend/tests/data/**
 frontend/node_modules/
 *.pdf
 

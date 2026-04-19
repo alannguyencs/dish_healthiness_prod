@@ -220,13 +220,31 @@ The 0.85/0.15 split, +0.20/+0.15 bonuses, 0.8/0.2 mix, and [0.50, 0.95] scale ar
 
 - **Stage 5 — `service/nutrition_lookup.py::extract_and_lookup_nutrition`** — first caller of `collect_from_nutrition_db`. Runs per-component + dish_name queries at `min_confidence=70` and a combined-terms fallback at `min_confidence=60` when the best individual match scores below 0.75. Persists on `result_gemini.nutrition_db_matches` before the Gemini Pro call.
 - **Stage 7 — Phase 2.3 prompt (not yet wired)** — will consume `nutrition_db_matches.nutrition_matches[]` with a threshold gate (`confidence_score >= THRESHOLD_DB_INCLUDE`) to decide whether to inject a "Nutrition Database Matches" block into the Pro prompt.
-- **Stage 9 — regression gate (not yet wired)** — benchmarks `_search_dishes_direct` on the 846-query eval set with an NDCG@10 floor of 0.75.
+- **Stage 9 — regression gate** — `backend/tests/test_nutrition_retrieval_benchmark.py` runs the 846-query eval set through `_search_dishes_direct` and asserts aggregate NDCG@10 ≥ 0.75. See the "Regression gate (Stage 9)" sub-section below.
 - **Tiny corpora** — `BM25Okapi` scores all docs as `0.0` when `df = N/2` in a 2-doc corpus (log(1.5) − log(1.5) = 0). Production has 4,493 rows so this collapse is impossible; fixture-based tests use ≥ 4 rows per source to avoid it.
 - **First request is slow** — ~1 s on production data for the two SELECTs + four BM25 builds. Subsequent requests in the same process are sub-millisecond. Expected behavior; no cache-warming hook on startup (would re-introduce the import-time-crash-if-empty-DB problem the lazy singleton was designed to avoid).
 - **Re-seeding required for variation edits** — `searchable_document` is materialized at seed time. Editing `scripts/seed/_variations.py` has no effect until the seed script is re-run.
 - **Raw data JSONB spillover** — every source-CSV column is preserved in `raw_data`. Stage 7's consolidation prompt can read either the direct columns (typed) or JSON fields (untyped) depending on what the prompt template wants.
 - **Soft MyFCD join** — `nutrition_myfcd_nutrients` has no DB-level FK to `nutrition_foods`. Deleting a MyFCD food row does not cascade-delete its nutrients. This is deliberate: re-seeding will overwrite on conflict; orphaned nutrient rows are inert because the service only reads nutrients whose `ndb_id` matches a loaded food row.
 - **Thread safety of singleton** — `get_nutrition_service()` uses a `threading.Lock` to guard first-call init so two near-simultaneous FastAPI requests during warm-up do not race-build two instances.
+
+### Regression gate (Stage 9)
+
+`backend/tests/test_nutrition_retrieval_benchmark.py` + `backend/tests/data/retrieval_eval_dataset.csv` (846 queries, ~80 KB) enforce the retrieval-quality invariant that Stage 1's confidence-formula constants encode.
+
+- **How to run.** The benchmark is gated behind `@pytest.mark.benchmark`; `backend/pytest.ini` excludes it by default via `addopts = -m "not benchmark"`. To run it explicitly:
+  ```bash
+  source venv/bin/activate
+  cd backend
+  pytest -m benchmark
+  # or target the file directly:
+  pytest backend/tests/test_nutrition_retrieval_benchmark.py -m benchmark
+  ```
+- **What it asserts.** For each of the 846 queries, runs `_search_dishes_direct(query, top_k=10, min_confidence=0.0)`, extracts each match's `source_food_id` (checks `ndb_id` → `food_code` → `source_food_id` in that order), computes per-query NDCG@10 against the labeled `relevant_dish_ids`/`relevance_scores`, and asserts `mean(ndcg) >= 0.75`.
+- **Historical anchor.** The reference project measured NDCG@10 = 0.7744 on this eval set with the same BM25Okapi formula. The 0.75 floor gives 3% slack for small per-source materialization differences (CIQUAL, Malaysian ID formats) without constant false positives; a substantive drop (say to 0.72) still fires.
+- **Empty DB.** When `nutrition_foods` is empty, the benchmark emits `pytest.skip` with a message naming the seed command. The benchmark is not a fast unit test — a missing seed is an operator concern, not a CI failure.
+- **Fast-suite helpers.** Seven small unit tests in the same module (NDCG math, `_extract_match_id`, CSV loading) are NOT marked `benchmark` — they run on every pre-commit and protect the benchmark's scaffolding from silent bugs.
+- **When to re-run.** Any change to the Stage 1 scoring formula (`_nutrition_scoring.py`), the seed script's variation / synonym maps (`scripts/seed/_variations.py`), or the `searchable_document` precomputation should be followed by a `pytest -m benchmark` run against a freshly-seeded dev DB. If the aggregate dips near the floor, raise the question deliberately rather than silently accepting drift.
 
 ## Component Checklist
 
@@ -258,7 +276,7 @@ The 0.85/0.15 split, +0.20/+0.15 bonuses, 0.8/0.2 mix, and [0.50, 0.95] scale ar
 - [x] Stage 5: `NutritionCollectionService.collect_from_nutrition_db(text, min_confidence, deduplicate)` method
 - [x] Stage 5: `_nutrition_aggregation.py` helpers (`deduplicate_matches`, `aggregate_nutrition`, `calculate_optimal_nutrition`, `extract_single_match_nutrition`, `generate_recommendations`)
 - [x] Stage 7 (Phase 2.3): Step 2 prompt reads `result_gemini.nutrition_db_matches` via `__NUTRITION_DB_BLOCK__` placeholder; gated on `confidence_score >= THRESHOLD_DB_INCLUDE (80)`. See [nutritional_analysis.md § Phase 2.3](./nutritional_analysis.md#phase-23--reference-assisted-prompt-stage-7).
-- [ ] Stage 9: NDCG@10 ≥ 0.75 regression gate against the 846-query eval set
+- [x] Stage 9: NDCG@10 ≥ 0.75 regression gate against the 846-query eval set — `backend/tests/test_nutrition_retrieval_benchmark.py`, dataset at `backend/tests/data/retrieval_eval_dataset.csv`.
 
 ---
 
