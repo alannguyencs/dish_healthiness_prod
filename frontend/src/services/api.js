@@ -120,6 +120,26 @@ const apiService = {
     const response = await api.post(`/api/item/${recordId}/retry-step1`);
     return response.data;
   },
+
+  // Stage 8: save a user correction of the Step 2 nutritional analysis
+  saveStep2Correction: async (recordId, payload) => {
+    // payload should have:
+    // {
+    //   healthiness_score: int,             // 0-100
+    //   healthiness_score_rationale: string,
+    //   calories_kcal: float,
+    //   fiber_g: float,
+    //   carbs_g: float,
+    //   protein_g: float,
+    //   fat_g: float,
+    //   micronutrients: string[],
+    // }
+    const response = await api.post(
+      `/api/item/${recordId}/correction`,
+      payload,
+    );
+    return response.data;
+  },
 };
 
 export default apiService;

@@ -245,7 +245,66 @@ Written by:
 - `backend/src/api/item_tasks.py::trigger_step2_analysis_background` — re-read persisted matches, resolve bytes, plumb all three into prompt + analyzer.
 
 Read by:
-- Stage 8 (Phase 2.4 ReasoningPanel + Top-5 panels) — not yet wired.
+- Stage 8 (Phase 2.4 ReasoningPanel + Top-5 panels) — `reasoning_*` surfaces in the ReasoningPanel; `nutrition_db_matches` + `personalized_matches` surface in the Top5DbMatches + PersonalizationMatches panels respectively.
+
+### Phase 2.4 — User Review & Correction (Stage 8)
+
+Closes the loop: the Step 2 results view becomes an editable surface + three read-only reference panels, and a new `POST /api/item/{record_id}/correction` endpoint persists user corrections in two places so future similar uploads benefit from the user's verified numbers.
+
+**Endpoint** — `POST /api/item/{record_id}/correction` in `backend/src/api/item_correction.py::save_step2_correction`. Body validated against `Step2CorrectionRequest`:
+
+```python
+class Step2CorrectionRequest(BaseModel):
+    healthiness_score: int                  # 0..100
+    healthiness_score_rationale: str
+    calories_kcal: float                    # >= 0
+    fiber_g: float                          # >= 0
+    carbs_g: float                          # >= 0
+    protein_g: float                        # >= 0
+    fat_g: float                            # >= 0
+    micronutrients: List[str]               # default []
+```
+
+Dual write on success:
+
+1. `DishImageQuery.result_gemini.step2_corrected = payload` — the user override. `step2_data` is untouched (preserved for audit).
+2. `personalized_food_descriptions.corrected_step2_data = payload` — via Stage 0's existing `crud_personalized_food.update_corrected_step2_data(query_id, payload)`. Stage 6's retrieval surfaces this field on matches, so future uploads carry the override.
+
+The personalization half is wrapped in try/except-swallow-log (parallel to Stage 4's `_enrich_personalization_row`):
+
+- Row missing for this `query_id` (Phase 1.1.1 graceful-degraded earlier) → log WARN, return 200.
+- `update_corrected_step2_data` raises → log WARN, return 200.
+
+Response:
+
+```json
+{ "success": true, "record_id": 1, "step2_corrected": { ...payload echo... } }
+```
+
+**Frontend** — four new components under `frontend/src/components/item/`:
+
+- `Step2ResultsEditForm.jsx` — controlled inputs for all eight editable fields; micronutrient chip add/remove. Save passes a packaged payload to the parent via `onSave`; Cancel calls `onCancel`.
+- `ReasoningPanel.jsx` — always-visible, `<details>`-style collapsible panel below the edit card. Renders the seven `reasoning_*` strings from `step2_data` (NOT from `step2_corrected` — the AI's rationale stays visible as audit even when the user overrides). Empty string → "No rationale provided." muted placeholder.
+- `Top5DbMatches.jsx` — chip row showing up to 5 DB matches with color-coded confidence badges (≥ 85 green, 70–84 yellow, < 70 gray). Hidden when `nutrition_matches` is empty.
+- `PersonalizationMatches.jsx` — one card per match: thumbnail, description, similarity badge, macro table. Prefers `corrected_step2_data` over `prior_step2_data` (with a "User-verified" badge when present). Hidden when `personalized_matches` is empty.
+
+Plus updates:
+
+- `Step2Results.jsx` — single top-level Edit toggle; `activeData = step2_corrected || step2_data`; "Corrected by you" badge when `step2_corrected` is present.
+- `ItemV2.jsx` — composes the three panels below the results card; wires `handleStep2Correction` to `apiService.saveStep2Correction` + `reload()`.
+- `services/api.js` — `saveStep2Correction(recordId, payload)` POST helper.
+
+**Display precedence.** `Step2Results.jsx` derives `activeData = step2_corrected || step2_data`. Corrected wins for numeric fields and micronutrients; `reasoning_*` always reads from `step2_data` so the AI's case for its original numbers stays visible even after the user overrides.
+
+**Retry / re-edit flow.** The endpoint overwrites `step2_corrected` on each save — re-editing is just another POST. No transactional ordering is required across the two writes; if the personalization half fails once, a subsequent successful edit re-syncs both stores.
+
+Written by:
+- `backend/src/api/item_correction.py::save_step2_correction` — the endpoint.
+- `backend/src/api/item_correction.py::_enrich_personalization_corrected_data` — module-private swallow-log helper (parallel to Stage 4's `_enrich_personalization_row`).
+- `backend/src/api/item_schemas.py::Step2CorrectionRequest` — validation schema.
+
+Read by:
+- The three new frontend panels; future stages (Stage 9 regression gate).
 
 ## Pipeline
 
@@ -547,6 +606,15 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 - [x] Stage 7 — `_resolve_phase_2_2_image_bytes` in `item_tasks.py` + `trigger_step2_analysis_background` plumb-through
 - [x] Stage 7 — `THRESHOLD_DB_INCLUDE=80`, `THRESHOLD_PERSONALIZATION_INCLUDE=0.30`, `THRESHOLD_PHASE_2_2_IMAGE=0.35`
 - [x] Stage 7 — `_step2_blocks.py` render/trim helpers (JSON-dump trimmed subsets; keep outbound prompt under log-budget)
+- [x] Stage 8 — `POST /api/item/{record_id}/correction` endpoint in `item_correction.py`
+- [x] Stage 8 — `Step2CorrectionRequest` schema in `item_schemas.py`
+- [x] Stage 8 — `Step2ResultsEditForm.jsx` controlled edit form
+- [x] Stage 8 — `ReasoningPanel.jsx` expandable rationale panel
+- [x] Stage 8 — `Top5DbMatches.jsx` chip row
+- [x] Stage 8 — `PersonalizationMatches.jsx` card list with "User-verified" badge
+- [x] Stage 8 — `Step2Results.jsx` Edit toggle + corrected-over-original precedence
+- [x] Stage 8 — `ItemV2.jsx` panel composition + `handleStep2Correction`
+- [x] Stage 8 — `apiService.saveStep2Correction`
 - [ ] Idempotency key or dedupe on Phase 2 background task scheduling
 
 ---

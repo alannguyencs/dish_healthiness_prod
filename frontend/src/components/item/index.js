@@ -11,5 +11,9 @@ export { default as ServingsCountInput } from "./ServingsCountInput";
 // Two-step analysis components
 export { default as Step1ComponentEditor } from "./Step1ComponentEditor";
 export { default as Step2Results } from "./Step2Results";
+export { default as Step2ResultsEditForm } from "./Step2ResultsEditForm";
 export { default as PhaseErrorCard } from "./PhaseErrorCard";
 export { default as ItemStepTabs } from "./ItemStepTabs";
+export { default as ReasoningPanel } from "./ReasoningPanel";
+export { default as Top5DbMatches } from "./Top5DbMatches";
+export { default as PersonalizationMatches } from "./PersonalizationMatches";

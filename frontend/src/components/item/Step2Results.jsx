@@ -1,18 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 
+import Step2ResultsEditForm from "./Step2ResultsEditForm";
 import { resolveHealthinessTier } from "../../utils/healthiness";
 
 /**
  * Step2Results Component
  *
  * Displays Step 2 nutritional analysis results after user confirmation.
+ * Stage 8: when `step2Corrected` is present, render it over `step2Data`
+ * ("Corrected by you" badge). The Edit toggle flips the card into an
+ * edit form; Save calls `onEditSave(payload)`; Cancel reverts.
  */
-const Step2Results = ({ step2Data }) => {
+const Step2Results = ({ step2Data, step2Corrected, onEditSave, saving }) => {
+  const [editing, setEditing] = useState(false);
+
   if (!step2Data) {
     return (
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-blue-800">Step 2 analysis in progress...</p>
       </div>
+    );
+  }
+
+  const activeData = step2Corrected || step2Data;
+  const isCorrected = !!step2Corrected;
+
+  if (editing) {
+    return (
+      <Step2ResultsEditForm
+        initialValues={{
+          healthiness_score: activeData.healthiness_score,
+          healthiness_score_rationale: activeData.healthiness_score_rationale,
+          calories_kcal: activeData.calories_kcal,
+          fiber_g: activeData.fiber_g,
+          carbs_g: activeData.carbs_g,
+          protein_g: activeData.protein_g,
+          fat_g: activeData.fat_g,
+          micronutrients: activeData.micronutrients || [],
+        }}
+        saving={saving}
+        onCancel={() => setEditing(false)}
+        onSave={async (payload) => {
+          await onEditSave(payload);
+          setEditing(false);
+        }}
+      />
     );
   }
 
@@ -26,20 +58,41 @@ const Step2Results = ({ step2Data }) => {
     protein_g,
     fat_g,
     micronutrients = [],
-  } = step2Data;
+  } = activeData;
 
   const tier = resolveHealthinessTier(healthiness_score);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
-      <div className="border-b pb-4">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Step 2: Nutritional Analysis
-        </h2>
-        <p className="text-lg text-gray-600 mt-1">{dish_name}</p>
+      <div className="border-b pb-4 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Step 2: Nutritional Analysis
+          </h2>
+          <p className="text-lg text-gray-600 mt-1">
+            {dish_name || step2Data.dish_name}
+          </p>
+          {isCorrected && (
+            <span
+              className="mt-1 inline-block px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded text-xs font-semibold"
+              data-testid="step2-corrected-badge"
+            >
+              Corrected by you
+            </span>
+          )}
+        </div>
+        {onEditSave && (
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded text-sm font-semibold"
+            data-testid="step2-edit-toggle"
+          >
+            Edit
+          </button>
+        )}
       </div>
 
-      {/* Healthiness */}
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-semibold text-gray-800">Healthiness</h3>
@@ -56,14 +109,12 @@ const Step2Results = ({ step2Data }) => {
         </div>
       </div>
 
-      {/* Macronutrients Summary */}
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-gray-800 mb-3">
           Nutritional Information
         </h3>
 
         <div className="space-y-1">
-          {/* Calories and Fiber */}
           <div className="flex items-center justify-between py-2 border-b border-gray-200">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
@@ -81,7 +132,6 @@ const Step2Results = ({ step2Data }) => {
             </div>
           </div>
 
-          {/* Carbs, Protein, Fat */}
           <div className="flex items-center justify-between py-2 border-b border-gray-200">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
@@ -104,7 +154,6 @@ const Step2Results = ({ step2Data }) => {
         </div>
       </div>
 
-      {/* Micronutrients */}
       {micronutrients.length > 0 && (
         <div className="py-2 border-b border-gray-200">
           <div className="flex items-center gap-4">
@@ -114,7 +163,6 @@ const Step2Results = ({ step2Data }) => {
             </div>
             <div className="flex flex-wrap gap-2">
               {micronutrients.map((nutrient, idx) => {
-                // New rows: { name, amount_mg }. Legacy rows: bare string.
                 const name =
                   typeof nutrient === "string" ? nutrient : nutrient?.name;
                 const amount_mg =
@@ -134,7 +182,6 @@ const Step2Results = ({ step2Data }) => {
         </div>
       )}
 
-      {/* Cost/Token Info */}
       {(step2Data.model || step2Data.price_usd || step2Data.analysis_time) && (
         <div className="pt-4 border-t text-sm text-gray-500">
           <div className="flex items-center gap-6">

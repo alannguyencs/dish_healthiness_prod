@@ -10,6 +10,9 @@ import {
   Step2Results,
   PhaseErrorCard,
   ItemStepTabs,
+  ReasoningPanel,
+  Top5DbMatches,
+  PersonalizationMatches,
 } from "../components/item";
 
 const ItemV2 = () => {
@@ -31,7 +34,21 @@ const ItemV2 = () => {
   const [confirming, setConfirming] = useState(false);
   const [retryingStep2, setRetryingStep2] = useState(false);
   const [retryingStep1, setRetryingStep1] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [viewStep, setViewStep] = useState(null);
+
+  const handleStep2Correction = async (payload) => {
+    try {
+      setSaving(true);
+      await apiService.saveStep2Correction(recordId, payload);
+      await reload();
+    } catch (err) {
+      console.error("Failed to save correction:", err);
+      alert("Failed to save correction. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleStep1Confirmation = async (confirmationData) => {
     try {
@@ -119,7 +136,10 @@ const ItemV2 = () => {
   const step1Data = resultGemini?.step1_data;
   const step1Error = resultGemini?.step1_error;
   const step2Data = resultGemini?.step2_data;
+  const step2Corrected = resultGemini?.step2_corrected;
   const step2Error = resultGemini?.step2_error;
+  const nutritionDbMatches = resultGemini?.nutrition_db_matches;
+  const personalizedMatches = resultGemini?.personalized_matches;
   const currentStep = resultGemini?.step || 0;
   const step1Confirmed = resultGemini?.step1_confirmed || false;
 
@@ -199,7 +219,19 @@ const ItemV2 = () => {
 
             {((viewStep === 2 && step2Data) ||
               (viewStep === null && currentStep === 2 && step2Data)) && (
-              <Step2Results step2Data={step2Data} />
+              <>
+                <Step2Results
+                  step2Data={step2Data}
+                  step2Corrected={step2Corrected}
+                  onEditSave={handleStep2Correction}
+                  saving={saving}
+                />
+                <ReasoningPanel step2Data={step2Data} />
+                <Top5DbMatches
+                  matches={nutritionDbMatches?.nutrition_matches}
+                />
+                <PersonalizationMatches matches={personalizedMatches} />
+              </>
             )}
           </div>
         </div>

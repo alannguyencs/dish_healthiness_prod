@@ -2,6 +2,8 @@
 
 [< Prev: Component Identification](./component_identification.md) | [Parent](./index.md) | [Next: Nutritional Analysis >](./nutritional_analysis.md)
 
+> **Note:** Stage 8 (Phase 2.4) adds a symmetric "one Edit toggle" pattern on the Step 2 results view via `POST /api/item/{record_id}/correction`. The UX mirrors this Step 1 editor's single-Confirm flow. See [nutritional_analysis.md § Phase 2.4](./nutritional_analysis.md#phase-24--user-review--correction-stage-8).
+
 ## Related Docs
 - Abstract: [abstract/dish_analysis/user_customization.md](../../abstract/dish_analysis/user_customization.md)
 

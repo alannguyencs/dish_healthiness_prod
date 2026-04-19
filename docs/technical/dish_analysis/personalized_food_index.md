@@ -153,7 +153,7 @@ None. `rank-bm25` is an in-process Python library, added to `requirements.txt` a
 - [x] Stage 4 (Phase 1.2): `update_confirmed_fields` called from `confirm_step1_and_trigger_step2` (see [user_customization.md](./user_customization.md#personalization-enrichment-stage-4))
 - [x] Stage 6 (Phase 2.2): `search_for_user` called from `service/personalized_lookup.py::lookup_personalization`, gathered in parallel with Phase 2.1 inside `trigger_step2_analysis_background` (see [nutritional_analysis.md § Phase 2.2](./nutritional_analysis.md#phase-22--personalization-lookup-stage-6))
 - [x] Stage 7 (Phase 2.3): Step 2 prompt reads `result_gemini.personalized_matches` via `__PERSONALIZED_BLOCK__` placeholder; gated on `similarity_score >= 0.30` for text block, `>= 0.35` for image-B attach. See [nutritional_analysis.md § Phase 2.3](./nutritional_analysis.md#phase-23--reference-assisted-prompt-stage-7).
-- [ ] Stage 8 (Phase 2.4): `update_corrected_step2_data` called from the Step 2 correction endpoint
+- [x] Stage 8 (Phase 2.4): `update_corrected_step2_data` called from `POST /api/item/{record_id}/correction` (see [nutritional_analysis.md § Phase 2.4](./nutritional_analysis.md#phase-24--user-review--correction-stage-8)). Stage 6's `lookup_personalization` surfaces the written `corrected_step2_data` on each match so Stage 8's PersonalizationMatches panel renders the user-verified nutrients with a badge.
 
 ---
 

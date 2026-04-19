@@ -32,7 +32,15 @@ In parallel with the nutrition database lookup, the system compares the user's c
 
 ### Reasoning attribution
 
-Every macro number on the Step 2 results now ships with a one-line rationale — which database source (if any) drove the calories, which prior dish supported the protein estimate, or "LLM-only" when no external evidence cleared the confidence gates. These rationales are currently recorded on the record for debugging and operator audit; a later release adds a "Why these numbers?" panel on the review UI. Weak or absent evidence falls back explicitly to the AI's own reasoning, flagged as "LLM-only" in the attribution so nothing is silently invented.
+Every macro number on the Step 2 results now ships with a one-line rationale — which database source (if any) drove the calories, which prior dish supported the protein estimate, or "LLM-only" when no external evidence cleared the confidence gates. Weak or absent evidence falls back explicitly to the AI's own reasoning, flagged as "LLM-only" in the attribution so nothing is silently invented. The "Why these numbers?" expandable panel on the review view surfaces all seven rationales.
+
+### Reviewing and correcting the analysis
+
+Below the Step 2 headline numbers, the user sees three read-only reference panels: an expandable "Why these numbers?" rationale block, a chip row of the top database matches the AI considered (with confidence badges), and a card list of the user's own prior similar dishes (with thumbnails and nutrients).
+
+When the AI gets a number wrong the user clicks **Edit** on the Step 2 card. The healthiness score + rationale, the five macros, and the micronutrient chips all flip into inputs at once. Save persists the correction in two places: onto this meal's record (so the user sees their corrected numbers from now on) and into the user's personalization history (so future uploads of similar dishes start with the user's verified nutrients, not the AI's original guess). Cancel discards the edit without saving. The original AI numbers are kept as audit under the hood — they never disappear, they're just superseded in the UI by the user's override.
+
+Strictly per-account: one user's corrections never influence another user's analyses.
 
 ## User Flow
 
