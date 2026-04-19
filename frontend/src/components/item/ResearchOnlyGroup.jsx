@@ -10,7 +10,7 @@ import React, { useState } from "react";
  */
 const CHEVRON_DOWN = (
   <svg
-    className="w-4 h-4 text-gray-400"
+    className="w-5 h-5 text-gray-500"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -27,7 +27,7 @@ const CHEVRON_DOWN = (
 
 const CHEVRON_UP = (
   <svg
-    className="w-4 h-4 text-gray-400"
+    className="w-5 h-5 text-gray-500"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -45,26 +45,27 @@ const CHEVRON_UP = (
 const ResearchOnlyGroup = ({ children }) => {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div data-testid="research-only-group">
-      <button
-        type="button"
-        onClick={() => setExpanded((v) => !v)}
-        aria-expanded={expanded}
-        aria-controls="research-only-body"
-        data-testid="research-only-toggle"
-        className="w-full flex items-center gap-3 py-2 text-left"
-      >
-        <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-          Research only
-        </span>
-        <div className="flex-1 border-t border-gray-200" />
-        {expanded ? CHEVRON_UP : CHEVRON_DOWN}
-      </button>
+    <div data-testid="research-only-group" className="space-y-6">
+      <div className="bg-white rounded-lg shadow-md p-4">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-controls="research-only-body"
+          data-testid="research-only-toggle"
+          className="w-full flex items-center justify-between text-left"
+        >
+          <span className="text-sm font-semibold text-gray-500">
+            Research only
+          </span>
+          {expanded ? CHEVRON_UP : CHEVRON_DOWN}
+        </button>
+      </div>
       {expanded && (
         <div
           id="research-only-body"
           data-testid="research-only-body"
-          className="space-y-6 mt-2"
+          className="space-y-6"
         >
           {children}
         </div>
