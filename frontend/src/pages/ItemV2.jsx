@@ -230,12 +230,6 @@ const ItemV2 = () => {
             {((viewStep === 2 && step2Data) ||
               (viewStep === null && currentStep === 2 && step2Data)) && (
               <>
-                <Step2Results
-                  step2Data={step2Data}
-                  step2Corrected={step2Corrected}
-                  onEditSave={handleStep2Correction}
-                  saving={saving}
-                />
                 <ResearchOnlyGroup>
                   <ReasoningPanel step2Data={step2Data} />
                   <Top5DbMatches
@@ -243,6 +237,12 @@ const ItemV2 = () => {
                   />
                   <PersonalizationMatches matches={personalizedMatches} />
                 </ResearchOnlyGroup>
+                <Step2Results
+                  step2Data={step2Data}
+                  step2Corrected={step2Corrected}
+                  onEditSave={handleStep2Correction}
+                  saving={saving}
+                />
               </>
             )}
           </div>
