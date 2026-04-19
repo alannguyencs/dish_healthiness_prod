@@ -7,7 +7,7 @@ and are shared with the Phase 1 background task in `src.api.item_step1_tasks`.
 
 import logging
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from src.api._phase_errors import persist_phase_error
 from src.crud.crud_food_image_query import (
@@ -16,8 +16,30 @@ from src.crud.crud_food_image_query import (
 )
 from src.service.llm.gemini_analyzer import analyze_step2_nutritional_analysis_async
 from src.service.llm.prompts import get_step2_nutritional_analysis_prompt
+from src.service.nutrition_lookup import extract_and_lookup_nutrition
 
 logger = logging.getLogger(__name__)
+
+
+def _persist_nutrition_db_matches(query_id: int, nutrition_db_matches: Dict[str, Any]) -> None:
+    """
+    Stage 5: write `nutrition_db_matches` onto result_gemini BEFORE the
+    Gemini Pro call, so a Step 2 failure cannot destroy the lookup.
+
+    Best-effort: if the record read races with a concurrent write or
+    result_gemini is None (Phase 1 never landed), we simply skip the
+    write and Stage 7 sees no nutrition_db_matches for that query.
+    """
+    record = get_dish_image_query_by_id(query_id)
+    if not record or record.result_gemini is None:
+        logger.warning(
+            "Phase 2.1 skipped pre-Pro persist for query_id=%s (no result_gemini)",
+            query_id,
+        )
+        return
+    pre_blob = dict(record.result_gemini)
+    pre_blob["nutrition_db_matches"] = nutrition_db_matches
+    update_dish_image_query_results(query_id=query_id, result_openai=None, result_gemini=pre_blob)
 
 
 async def trigger_step2_analysis_background(
@@ -44,6 +66,12 @@ async def trigger_step2_analysis_background(
     )
 
     try:
+        # Stage 5 — Phase 2.1 nutrition DB lookup. Runs synchronously before
+        # the Pro call (in-process BM25, <50 ms once the singleton is warm)
+        # and is persisted first so a Step 2 failure cannot wipe it.
+        nutrition_db_matches = extract_and_lookup_nutrition(dish_name, components)
+        _persist_nutrition_db_matches(query_id, nutrition_db_matches)
+
         step2_prompt = get_step2_nutritional_analysis_prompt(
             dish_name=dish_name, components=components
         )

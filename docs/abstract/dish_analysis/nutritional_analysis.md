@@ -22,6 +22,10 @@ After the user confirms the component list in the previous phase, the system run
 
 If the AI call fails, the user sees a clear error message with a one-click **Try Again** button instead of an indefinite loading spinner. The user can toggle between the results view and the earlier component editor to recheck what was confirmed.
 
+### Curated nutrition database (consulted silently)
+
+Starting this phase, the system also consults a curated database of ~4,500 foods across four international sources (Malaysian, MyFCD, Anuvaad, CIQUAL) to find close matches for the confirmed dish and each of its components. The matches are recorded on the record but not yet shown to the user and not yet fed into the AI — the measurable benefit arrives when a later release lets the AI cite them for more consistent nutrition numbers. Dev environments that have not seeded the database, or dishes with no database coverage, continue to run exactly as before — the AI is never blocked on database coverage.
+
 ## User Flow
 
 ```

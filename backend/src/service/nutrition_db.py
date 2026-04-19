@@ -27,6 +27,9 @@ from typing import Any, Dict, List, Optional, Set
 from rank_bm25 import BM25Okapi
 
 from src.crud import crud_nutrition
+from src.service._nutrition_collect import (
+    collect_from_nutrition_db as _collect_from_nutrition_db,
+)
 from src.service._nutrition_scoring import direct_bm25_search
 
 logger = logging.getLogger(__name__)
@@ -185,6 +188,19 @@ class NutritionCollectionService:  # pylint: disable=too-many-instance-attribute
 
         results.sort(key=lambda hit: hit["confidence"], reverse=True)
         return [hit for hit in results if hit["confidence"] >= min_confidence][:top_k]
+
+    def collect_from_nutrition_db(
+        self,
+        text: str,
+        min_confidence: int = 70,
+        deduplicate: bool = True,
+    ) -> Dict[str, Any]:
+        """
+        Stage-7-compatible full-shape lookup. Thin delegator to
+        `_nutrition_collect.collect_from_nutrition_db` to keep this module
+        under the 300-line cap. See that module for details.
+        """
+        return _collect_from_nutrition_db(self, text, min_confidence, deduplicate)
 
     def search_nutrition_database_enhanced(
         self,

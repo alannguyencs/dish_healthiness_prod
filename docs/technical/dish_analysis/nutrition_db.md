@@ -214,7 +214,13 @@ The 0.85/0.15 split, +0.20/+0.15 bonuses, 0.8/0.2 mix, and [0.50, 0.95] scale ar
 
 ## Constraints & Edge Cases
 
-- **Empty DB** — `NutritionCollectionService()` raises `NutritionDBEmptyError` whose message names the seed command (`python -m scripts.seed.load_nutrition_db`). Stage 5 wiring should let this propagate as a 500 the first time it happens — that is the deploy-time signal that the seed step was missed.
+- **Empty DB** — `NutritionCollectionService()` raises `NutritionDBEmptyError` whose message names the seed command (`python -m scripts.seed.load_nutrition_db`). Stage 5's orchestrator (`extract_and_lookup_nutrition`) catches this and returns the Stage-7-compatible empty-response shape with `match_summary.reason = "nutrition_db_empty"`; Phase 2 Gemini proceeds as today. The operator sees the WARN line in `backend.log` — that is the "seed step was missed" signal.
+
+### Downstream consumers
+
+- **Stage 5 — `service/nutrition_lookup.py::extract_and_lookup_nutrition`** — first caller of `collect_from_nutrition_db`. Runs per-component + dish_name queries at `min_confidence=70` and a combined-terms fallback at `min_confidence=60` when the best individual match scores below 0.75. Persists on `result_gemini.nutrition_db_matches` before the Gemini Pro call.
+- **Stage 7 — Phase 2.3 prompt (not yet wired)** — will consume `nutrition_db_matches.nutrition_matches[]` with a threshold gate (`confidence_score >= THRESHOLD_DB_INCLUDE`) to decide whether to inject a "Nutrition Database Matches" block into the Pro prompt.
+- **Stage 9 — regression gate (not yet wired)** — benchmarks `_search_dishes_direct` on the 846-query eval set with an NDCG@10 floor of 0.75.
 - **Tiny corpora** — `BM25Okapi` scores all docs as `0.0` when `df = N/2` in a 2-doc corpus (log(1.5) − log(1.5) = 0). Production has 4,493 rows so this collapse is impossible; fixture-based tests use ≥ 4 rows per source to avoid it.
 - **First request is slow** — ~1 s on production data for the two SELECTs + four BM25 builds. Subsequent requests in the same process are sub-millisecond. Expected behavior; no cache-warming hook on startup (would re-introduce the import-time-crash-if-empty-DB problem the lazy singleton was designed to avoid).
 - **Re-seeding required for variation edits** — `searchable_document` is materialized at seed time. Editing `scripts/seed/_variations.py` has no effect until the seed script is re-run.
@@ -248,7 +254,9 @@ The 0.85/0.15 split, +0.20/+0.15 bonuses, 0.8/0.2 mix, and [0.50, 0.95] scale ar
 - [x] Unit tests CRUD — `backend/tests/test_crud_nutrition.py`
 - [x] Unit tests service — `backend/tests/test_nutrition_db.py`
 - [x] Unit tests seed — `backend/tests/test_seed_load_nutrition_db.py`
-- [ ] Stage 5 (Phase 2.1): `extract_and_lookup_nutrition` wired into `trigger_step2_analysis_background`
+- [x] Stage 5 (Phase 2.1): `extract_and_lookup_nutrition` wired into `trigger_step2_analysis_background` (see [nutritional_analysis.md § Phase 2.1](./nutritional_analysis.md#phase-21--nutrition-db-lookup-stage-5))
+- [x] Stage 5: `NutritionCollectionService.collect_from_nutrition_db(text, min_confidence, deduplicate)` method
+- [x] Stage 5: `_nutrition_aggregation.py` helpers (`deduplicate_matches`, `aggregate_nutrition`, `calculate_optimal_nutrition`, `extract_single_match_nutrition`, `generate_recommendations`)
 - [ ] Stage 7 (Phase 2.3): consolidation prompt reads `result_gemini.nutrition_db_matches`
 - [ ] Stage 9: NDCG@10 ≥ 0.75 regression gate against the 846-query eval set
 

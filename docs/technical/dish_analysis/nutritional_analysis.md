@@ -104,6 +104,50 @@ Written to `result_gemini.step2_error` by `_persist_step2_error` whenever the ba
 }
 ```
 
+### Phase 2.1 — Nutrition DB Lookup (Stage 5)
+
+Runs **before** the Gemini 2.5 Pro call inside `trigger_step2_analysis_background`. Consumes the Stage 1 `NutritionCollectionService` (four BM25 indices over `nutrition_foods` + `nutrition_myfcd_nutrients`). Persists the result on `result_gemini.nutrition_db_matches` immediately so Step 2 failure / retry cannot destroy the lookup.
+
+Strategy:
+
+1. Build candidate list `[dish_name, *components.component_name]`, order-preserved and deduplicated.
+2. **Stage 1 — per-query search @ `min_confidence=70`.** Run `collect_from_nutrition_db(query, 70)` for each candidate. Track `best_confidence` (top match's confidence across all queries) and `search_attempts` (per-query record of query / success / matches / top_confidence).
+3. **Stage 2 fallback — comma-joined @ `min_confidence=60`.** If `best_confidence < 0.75`, run one more lookup with `", ".join(candidates)` at the lower threshold. **Replace** the best_result only if the combined result scores higher. `search_attempts` records the combined attempt too.
+4. Write the `best_result` dict on `result_gemini.nutrition_db_matches`, augmented with `search_attempts` and `dish_candidates=[dish_name]`.
+
+Return shape (persisted on `nutrition_db_matches`):
+
+```python
+{
+    "success": True,
+    "method": "Direct BM25 Text Matching",
+    "input_text": "<winning query>",
+    "nutrition_matches": [ ... up to 10 rows ... ],
+    "total_nutrition": { total_calories, total_protein_g, total_carbohydrates_g, total_fat_g, foods_included, disclaimer, aggregation_strategy, best_match_confidence, ... },
+    "recommendations": [ ... ],
+    "match_summary": { total_matched, avg_confidence, ... },
+    "processing_info": { malaysian_foods_count, myfcd_foods_count, anuvaad_foods_count, ciqual_foods_count, min_confidence_threshold, ... },
+    "search_strategy": "individual_dish_name: <query>" | "combined_terms: <csv>",
+    "search_attempts": [ { query, success, matches, top_confidence, ... }, ... ],
+    "dish_candidates": [dish_name],
+}
+```
+
+Failure modes:
+
+- `NutritionDBEmptyError` (DB not seeded) → log WARN, persist the empty-response shape with `match_summary.reason = "nutrition_db_empty"`. Phase 2.3 runs as today.
+- Per-query exception → swallow, record `error` in the `search_attempts` entry, continue.
+- No matches across any strategy → persist the empty-response shape with `match_summary.reason = "no_matches_across_strategies"`.
+
+Written by:
+- `service/nutrition_lookup.py::extract_and_lookup_nutrition(dish_name, components)` — orchestrator.
+- `service/nutrition_db.py::NutritionCollectionService.collect_from_nutrition_db(text, min_confidence, deduplicate)` — the per-query wrapper.
+- `service/_nutrition_aggregation.py` — `deduplicate_matches / aggregate_nutrition / calculate_optimal_nutrition / extract_single_match_nutrition / generate_recommendations` helpers.
+
+Read by:
+- Stage 7 (Phase 2.3 prompt) — not yet wired.
+- Stage 8 (Phase 2.4 Top-5 DB Matches panel) — not yet wired.
+
 ## Pipeline
 
 ```
@@ -115,6 +159,16 @@ api/item.py: confirm_step1_and_trigger_step2()
   │
   ▼
 api/item_tasks.py: trigger_step2_analysis_background(query_id, image_path, dish_name, components)
+  │
+  ▼ (NEW — Phase 2.1, Stage 5)
+extract_and_lookup_nutrition(dish_name, components)
+  ├── per-candidate collect_from_nutrition_db(query, min_confidence=70)
+  ├── fallback: collect_from_nutrition_db(", ".join(candidates), min_confidence=60) when best < 0.75
+  └── returns { ... search_strategy, nutrition_matches, total_nutrition, search_attempts, ... }
+  │
+  ▼
+_persist_nutrition_db_matches(query_id, nutrition_db_matches)
+  └── writes result_gemini.nutrition_db_matches BEFORE the Pro call
   │
   ▼
 service/llm/prompts.py: get_step2_nutritional_analysis_prompt(dish_name, components)
@@ -360,6 +414,10 @@ Engineering metadata appended on receipt (same as Phase 1): `input_token`, `outp
 - [x] `ItemStepTabs.jsx` — extracted Step 1 / Step 2 progress tabs
 - [x] `apiService.getItem()` — polling call
 - [x] `apiService.retryStep2()` — retry call
+- [x] Stage 5 — `extract_and_lookup_nutrition()` + pre-Pro `_persist_nutrition_db_matches()` in `item_tasks.py`
+- [x] Stage 5 — `_nutrition_aggregation.py` helpers (`deduplicate_matches / aggregate_nutrition / calculate_optimal_nutrition / extract_single_match_nutrition / generate_recommendations`)
+- [x] Stage 5 — `NutritionCollectionService.collect_from_nutrition_db(text, min_confidence, deduplicate)` method
+- [ ] Stage 7 — Phase 2.3 prompt consumes `nutrition_db_matches` with threshold gating
 - [ ] Idempotency key or dedupe on Phase 2 background task scheduling
 
 ---

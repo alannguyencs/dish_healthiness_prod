@@ -422,6 +422,86 @@ def test_myfcd_row_carries_nested_nutrients(patch_corpus):
     assert energy["unit"] == "Kcal"
 
 
+# -----------------------------------------------------------------------------
+# Stage 5 — collect_from_nutrition_db (full return shape wrapper)
+# -----------------------------------------------------------------------------
+
+
+def _stub_search(svc, matches):
+    """Monkeypatch `_search_dishes_direct` on an instance to return fixtures."""
+
+    def _inner(user_input, top_k=10, min_confidence=0.1):  # noqa: ARG001
+        return list(matches)
+
+    svc._search_dishes_direct = _inner  # type: ignore[attr-defined]
+
+
+def test_collect_from_nutrition_db_returns_full_shape(four_source_corpus):
+    svc = nutrition_db.NutritionCollectionService()
+    fixture = [
+        {
+            "matched_food_name": "Chicken Rice",
+            "source": "malaysian_food_calories",
+            "confidence": 0.8,
+            "confidence_score": 80.0,
+            "nutrition_data": {"calories": 500},
+            "search_method": "Direct BM25",
+            "raw_bm25_score": 2.5,
+            "matched_keywords": 2,
+            "total_keywords": 2,
+        }
+    ]
+    _stub_search(svc, fixture)
+    out = svc.collect_from_nutrition_db("chicken rice", min_confidence=70)
+
+    assert out["success"] is True
+    assert out["input_text"] == "chicken rice"
+    assert out["method"] == "Direct BM25 Text Matching"
+    assert len(out["nutrition_matches"]) == 1
+    assert out["total_nutrition"]["total_calories"] == pytest.approx(500)
+    assert isinstance(out["recommendations"], list) and out["recommendations"]
+    assert out["match_summary"]["total_matched"] == 1
+    assert out["match_summary"]["avg_confidence"] == pytest.approx(80.0)
+    assert out["processing_info"]["min_confidence_threshold"] == 70
+
+
+def test_collect_from_nutrition_db_raises_on_empty_text(four_source_corpus):
+    svc = nutrition_db.NutritionCollectionService()
+    with pytest.raises(ValueError):
+        svc.collect_from_nutrition_db("   ", min_confidence=70)
+
+
+def test_collect_from_nutrition_db_returns_empty_shape_on_no_matches(four_source_corpus):
+    svc = nutrition_db.NutritionCollectionService()
+    _stub_search(svc, [])
+    out = svc.collect_from_nutrition_db("unknown food", min_confidence=70)
+    assert out["nutrition_matches"] == []
+    assert out["match_summary"]["total_matched"] == 0
+    assert out["match_summary"]["reason"] == "no_relevant_dishes"
+
+
+def test_collect_from_nutrition_db_avg_confidence_is_rounded(four_source_corpus):
+    svc = nutrition_db.NutritionCollectionService()
+    fixture = [
+        {
+            "matched_food_name": f"X{i}",
+            "source": "malaysian_food_calories",
+            "confidence": c,
+            "confidence_score": round(c * 100, 1),
+            "nutrition_data": {"calories": 100 * (i + 1)},
+            "search_method": "Direct BM25",
+            "raw_bm25_score": 1.0,
+            "matched_keywords": 1,
+            "total_keywords": 1,
+        }
+        for i, c in enumerate([0.9, 0.7, 0.5])
+    ]
+    _stub_search(svc, fixture)
+    out = svc.collect_from_nutrition_db("mixed", min_confidence=50)
+    # (0.9 + 0.7 + 0.5) / 3 = 0.7 → 70.0
+    assert out["match_summary"]["avg_confidence"] == pytest.approx(70.0)
+
+
 def test_normalize_text_strips_diacritics_and_punctuation():
     cases = [
         ("Chicken Rice", "chicken rice"),
