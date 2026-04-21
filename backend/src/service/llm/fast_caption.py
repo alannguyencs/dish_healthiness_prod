@@ -1,10 +1,11 @@
 """
-Gemini 2.0 Flash fast-caption helper.
+Gemini 2.5 Flash fast-caption helper.
 
 Phase 1.1.1 primitive: one short, free-text dish description per uploaded
-image. Plain-text response (no structured output, no Pydantic schema, no
-thinking budget) — cheaper and lower-latency than the Phase 1.1.2 Pro
-call that follows it.
+image. Plain-text response (no structured output, no Pydantic schema) with
+`thinking_budget=0` to disable 2.5 Flash's default reasoning step — keeps
+this call cheaper and lower-latency than the Phase 1.1.2 Pro call that
+follows it.
 
 Reused by `src.service.personalized_reference.resolve_reference_for_upload`
 and nowhere else in Stage 2.
@@ -28,7 +29,7 @@ _CAPTION_INSTRUCTIONS = (
 
 async def generate_fast_caption_async(image_path: Union[str, Path]) -> str:
     """
-    Run Gemini 2.0 Flash against the uploaded image and return a short
+    Run Gemini 2.5 Flash against the uploaded image and return a short
     dish description.
 
     Args:
@@ -59,9 +60,12 @@ async def generate_fast_caption_async(image_path: Union[str, Path]) -> str:
 
         def _sync_gemini_call():
             return client.models.generate_content(
-                model="gemini-2.0-flash",
+                model="gemini-2.5-flash",
                 contents=[_CAPTION_INSTRUCTIONS, image_part],
-                config=types.GenerateContentConfig(temperature=0),
+                config=types.GenerateContentConfig(
+                    temperature=0,
+                    thinking_config=types.ThinkingConfig(thinking_budget=0),
+                ),
             )
 
         response = await loop.run_in_executor(None, _sync_gemini_call)
