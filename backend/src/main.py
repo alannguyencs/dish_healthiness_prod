@@ -30,13 +30,8 @@ def configure_logging():
     """
     logging.basicConfig(
         level=logging.INFO,
-        format=(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        ),
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler('app.log', encoding='utf-8')
-        ]
+        format=("%(asctime)s - %(name)s - %(levelname)s - %(message)s"),
+        handlers=[logging.StreamHandler(), logging.FileHandler("app.log", encoding="utf-8")],
     )
 
 
@@ -60,21 +55,20 @@ def create_app() -> FastAPI:
     logger.info("Database tables created/verified")
 
     # Create FastAPI app
-    app = FastAPI(
+    fastapi_app = FastAPI(
         title=settings.PROJECT_NAME,
         openapi_url=f"{settings.API_V1_STR}/openapi.json",
-        docs_url="/api-docs"
+        docs_url="/api-docs",
     )
 
     # Add session middleware for cookie-based authentication
-    app.add_middleware(
-        SessionMiddleware,
-        secret_key="your-secret-key-change-in-production"
+    fastapi_app.add_middleware(
+        SessionMiddleware, secret_key="your-secret-key-change-in-production"
     )
 
     # Configure CORS origins from environment variable
     allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "http://localhost:2512")
-    
+
     # If ALLOWED_ORIGINS is "*", allow all origins
     # Note: When using "*", allow_credentials must be False
     if allowed_origins_env == "*":
@@ -82,20 +76,17 @@ def create_app() -> FastAPI:
         allow_credentials = False
     else:
         # Split by comma and strip whitespace, or use as single origin
-        allowed_origins = [
-            origin.strip() 
-            for origin in allowed_origins_env.split(",")
-        ]
+        allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",")]
         # Always include localhost for development
         if "http://localhost:2512" not in allowed_origins:
             allowed_origins.append("http://localhost:2512")
         allow_credentials = True
-    
-    logger.info(f"CORS allowed origins: {allowed_origins}")
-    logger.info(f"CORS allow credentials: {allow_credentials}")
-    
+
+    logger.info("CORS allowed origins: %s", allowed_origins)
+    logger.info("CORS allow credentials: %s", allow_credentials)
+
     # Add CORS middleware for React frontend
-    app.add_middleware(
+    fastapi_app.add_middleware(
         CORSMiddleware,
         allow_origins=allowed_origins,
         allow_credentials=allow_credentials,
@@ -104,15 +95,15 @@ def create_app() -> FastAPI:
     )
 
     # Mount static files directory for serving images
-    app.mount("/images", StaticFiles(directory=str(IMAGE_DIR)), name="images")
-    logger.info(f"Mounted static files at /images -> {IMAGE_DIR}")
+    fastapi_app.mount("/images", StaticFiles(directory=str(IMAGE_DIR)), name="images")
+    logger.info("Mounted static files at /images -> %s", IMAGE_DIR)
 
     # Include API router
-    app.include_router(api_router)
+    fastapi_app.include_router(api_router)
     logger.info("API router included")
 
     logger.info("Application initialization complete")
-    return app
+    return fastapi_app
 
 
 # Create the FastAPI app instance
@@ -127,10 +118,7 @@ async def root():
     Returns:
         dict: Welcome message
     """
-    return {
-        "message": "Dish Healthiness API",
-        "docs": "/api-docs"
-    }
+    return {"message": "Dish Healthiness API", "docs": "/api-docs"}
 
 
 @app.get("/health")
@@ -142,4 +130,3 @@ async def health():
         dict: Health status
     """
     return {"status": "healthy"}
-

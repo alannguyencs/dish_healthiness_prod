@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R237014",
+  "food_name": "ICE CHOCHOLATE BLENDED, WITH WHIPPING CREAM",
+  "serving_unit": "Unknown serving",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 234.5775,
+      "value_per_serving": 0.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 82.55,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 0.67666666666667,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 0.11,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 58.26,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 0.3,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.27,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 8.62,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 7.1675,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.5825,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.21,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.66,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

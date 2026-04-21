@@ -1,0 +1,140 @@
+{
+  "ndb_id": "R112023",
+  "food_name": "SAUCE, THOUSAND ISLAND",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 14.9834,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 25.977286382333,
+      "value_per_serving": 4.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 88.896666666667,
+      "value_per_serving": 13.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 12.888333333333,
+      "value_per_serving": 2.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 37.015333333333,
+      "value_per_serving": 6.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Threonine": {
+      "value_per_100g": 0.040125,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Isoleucine": {
+      "value_per_100g": 0.03725,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Leucine": {
+      "value_per_100g": 0.275875,
+      "value_per_serving": 0.041,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Lysine": {
+      "value_per_100g": 0.055375,
+      "value_per_serving": 0.008,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Cystine": {
+      "value_per_100g": 0.035583333333333,
+      "value_per_serving": 0.005,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Tyrosine": {
+      "value_per_100g": 0.013375,
+      "value_per_serving": 0.002,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Methionine": {
+      "value_per_100g": 0.017166666666667,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Phenylalanine": {
+      "value_per_100g": 0.03525,
+      "value_per_serving": 0.005,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Arginine": {
+      "value_per_100g": 0.041125,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Valine": {
+      "value_per_100g": 0.0465,
+      "value_per_serving": 0.007,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Histidine": {
+      "value_per_100g": 0.020375,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Alanine": {
+      "value_per_100g": 0.043375,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Aspartic acid": {
+      "value_per_100g": 0.08775,
+      "value_per_serving": 0.013,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glutamic acid": {
+      "value_per_100g": 0.210125,
+      "value_per_serving": 0.031,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glycine": {
+      "value_per_100g": 0.03,
+      "value_per_serving": 0.004,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Proline": {
+      "value_per_100g": 0.100625,
+      "value_per_serving": 0.015,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Serine": {
+      "value_per_100g": 0.058375,
+      "value_per_serving": 0.009,
+      "unit": "g",
+      "category": "Amino Acids"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Amino Acids"
+  ],
+  "total_nutrients": 21
+}

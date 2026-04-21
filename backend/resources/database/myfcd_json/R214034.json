@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R214034",
+  "food_name": "TRADITIONAL MALAYSIAN KUIH, GLUTINUOS RICE FLOUR BASED STUFFED WITH GRATED COCONUT COATED WITH MUNG BEAN POWDER (KUIH TEPUNG GOMAK)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 48.82,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 5.73,
+      "value_per_serving": 2.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 5.04,
+      "value_per_serving": 2.46,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.39333333333333,
+      "value_per_serving": 0.19,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.29666666666667,
+      "value_per_serving": 0.14,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

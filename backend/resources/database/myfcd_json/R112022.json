@@ -1,0 +1,246 @@
+{
+  "ndb_id": "R112022",
+  "food_name": "OIL, VEGETABLE (MINYAK SAYURAN)",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 3.308,
+  "nutrients": {
+    "Water": {
+      "value_per_100g": 0.21333333333333,
+      "value_per_serving": 0.01,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 99.706666666667,
+      "value_per_serving": 3.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 0.26713510333333,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 12.629559363333,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin A (Retinol)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "β-Carotene": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Lycopene": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Lutein": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Alpha-tocopherol (Vitamin E)": {
+      "value_per_100g": 1.3033333333333,
+      "value_per_serving": 0.04,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Vitamin K": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Ergocalciferol (D2)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Fatty acids, total saturated": {
+      "value_per_100g": 36.96,
+      "value_per_serving": 1.223,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total monounsaturated": {
+      "value_per_100g": 43.363333333333,
+      "value_per_serving": 1.434,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total polyunsaturated": {
+      "value_per_100g": 18.49,
+      "value_per_serving": 0.612,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "C 8:0": {
+      "value_per_100g": 0.03,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 10:0": {
+      "value_per_100g": 0.21,
+      "value_per_serving": 0.007,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 12:0": {
+      "value_per_100g": 0.25,
+      "value_per_serving": 0.008,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:0": {
+      "value_per_100g": 0.78666666666667,
+      "value_per_serving": 0.026,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 31.473333333333,
+      "value_per_serving": 1.041,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:0": {
+      "value_per_100g": 0.30666666666667,
+      "value_per_serving": 0.01,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 24:0": {
+      "value_per_100g": 0.10333333333333,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 3.7,
+      "value_per_serving": 0.122,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 22:0": {
+      "value_per_100g": 0.27333333333333,
+      "value_per_serving": 0.009,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:1": {
+      "value_per_100g": 0.19,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:1, cis n-9": {
+      "value_per_100g": 42.963333333333,
+      "value_per_serving": 1.421,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:1, n-9": {
+      "value_per_100g": 0.21,
+      "value_per_serving": 0.007,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:2, cis, n-6": {
+      "value_per_100g": 18.256666666667,
+      "value_per_serving": 0.604,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:3, cis, n-3": {
+      "value_per_100g": 0.17333333333333,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:3, n-6": {
+      "value_per_100g": 0.18,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "Energy": {
+      "value_per_100g": 897.68,
+      "value_per_serving": 29.7,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 0.079999999999998,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Vitamins",
+    "Lipids",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated",
+    "Fatty Acids, Poly Unsaturated"
+  ],
+  "total_nutrients": 38
+}

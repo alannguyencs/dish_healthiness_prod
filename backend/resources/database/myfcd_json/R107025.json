@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R107025",
+  "food_name": "JAM, PINEAPPLE (JEM NENAS)",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 18.2,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 69.063333333333,
+      "value_per_serving": 12.57,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 13.733333333333,
+      "value_per_serving": 2.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 27.97,
+      "value_per_serving": 5.09,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 27.36,
+      "value_per_serving": 4.98,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

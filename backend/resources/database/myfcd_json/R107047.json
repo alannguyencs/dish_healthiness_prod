@@ -1,0 +1,61 @@
+{
+  "ndb_id": "R107047",
+  "food_name": "Unknown Food",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 4.0733,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 2.661,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 2.96,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin A (Retinol)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "β-Carotene": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Lutein": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Vitamin K": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Ergocalciferol (D2)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins"
+  ],
+  "total_nutrients": 8
+}

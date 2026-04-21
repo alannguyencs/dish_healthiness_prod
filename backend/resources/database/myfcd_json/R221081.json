@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R221081",
+  "food_name": "RICE, ARAB (NASI ARAB)",
+  "serving_unit": "1 cup",
+  "serving_size_grams": 117.46,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 222.35333333333,
+      "value_per_serving": 261.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 46.476666666667,
+      "value_per_serving": 54.59,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 5.1966666666667,
+      "value_per_serving": 6.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 4.2733333333333,
+      "value_per_serving": 5.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 40.776666666667,
+      "value_per_serving": 47.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 1.7833333333333,
+      "value_per_serving": 2.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.4933333333333,
+      "value_per_serving": 1.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 1.15,
+      "value_per_serving": 1.35,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.33,
+      "value_per_serving": 0.39,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.50666666666667,
+      "value_per_serving": 0.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.30333333333333,
+      "value_per_serving": 0.36,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.01,
+      "value_per_serving": 0.01,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0066666666666667,
+      "value_per_serving": 0.01,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

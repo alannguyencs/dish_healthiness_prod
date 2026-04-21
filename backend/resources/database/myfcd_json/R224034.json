@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R224034",
+  "food_name": "MIX VEGETABLES, STIR FRIED (SAYUR CAMPUR GORENG)",
+  "serving_unit": "1 cup",
+  "serving_size_grams": 164.3,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 146.55,
+      "value_per_serving": 241.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 66.466666666667,
+      "value_per_serving": 109.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 4.4,
+      "value_per_serving": 7.23,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 6.39,
+      "value_per_serving": 10.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 17.86,
+      "value_per_serving": 29.34,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 4.8533333333333,
+      "value_per_serving": 8.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.03,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 7.7066666666667,
+      "value_per_serving": 12.66,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 3.6766666666667,
+      "value_per_serving": 6.04,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 2.2966666666667,
+      "value_per_serving": 3.77,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.6733333333333,
+      "value_per_serving": 2.75,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.056666666666667,
+      "value_per_serving": 0.09,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

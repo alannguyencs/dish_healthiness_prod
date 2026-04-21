@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R221110",
+  "food_name": "NASI ARAB SET MANDY (AYAM)",
+  "serving_unit": "1 set",
+  "serving_size_grams": 468.26,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 147.64,
+      "value_per_serving": 691.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 64.976666666667,
+      "value_per_serving": 304.26,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 3.7366666666667,
+      "value_per_serving": 17.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 3.842539,
+      "value_per_serving": 17.99,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 24.526666666667,
+      "value_per_serving": 114.85,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 1.1333333333333,
+      "value_per_serving": 5.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.7833333333333,
+      "value_per_serving": 8.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 1.4533333333333,
+      "value_per_serving": 6.81,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.33333333333333,
+      "value_per_serving": 1.56,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.51333333333333,
+      "value_per_serving": 2.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.60333333333333,
+      "value_per_serving": 2.83,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.01,
+      "value_per_serving": 0.05,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

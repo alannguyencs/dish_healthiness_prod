@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R113026",
+  "food_name": "DESSERT, SWEET LOTUS SEED SOUP (LIN-CHI-KANG)",
+  "serving_unit": "1 bowl",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 17.16,
+      "value_per_serving": 42.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 13.89,
+      "value_per_serving": 34.73,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.69,
+      "value_per_serving": 4.22,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.5833333333333,
+      "value_per_serving": 3.96,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

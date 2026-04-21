@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R225015",
+  "food_name": "ROJAK PASTE",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 23.13,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 31.58,
+      "value_per_serving": 7.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 25.676666666667,
+      "value_per_serving": 5.94,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 3.1433333333333,
+      "value_per_serving": 0.73,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 2.7533333333333,
+      "value_per_serving": 0.64,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

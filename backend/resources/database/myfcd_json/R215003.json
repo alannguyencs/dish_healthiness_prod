@@ -1,0 +1,73 @@
+{
+  "ndb_id": "R215003",
+  "food_name": "CAKAR AYAM",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 37.5,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 423.034798204,
+      "value_per_serving": 158.64,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 6.405,
+      "value_per_serving": 2.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 1.0,
+      "value_per_serving": 0.38,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 17.05,
+      "value_per_serving": 6.39,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 66.396199551,
+      "value_per_serving": 24.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 9.148800449,
+      "value_per_serving": 3.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 4.4,
+      "value_per_serving": 1.65,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 4.3525,
+      "value_per_serving": 1.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 66.83113822,
+      "value_per_serving": 25.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 26.817115315,
+      "value_per_serving": 10.0,
+      "unit": "μg",
+      "category": "Minerals"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals"
+  ],
+  "total_nutrients": 10
+}

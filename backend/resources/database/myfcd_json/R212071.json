@@ -1,0 +1,97 @@
+{
+  "ndb_id": "R212071",
+  "food_name": "LEPAT LABU",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 65.0,
+  "nutrients": {
+    "Water": {
+      "value_per_100g": 57.35,
+      "value_per_serving": 37.28,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 3.0042,
+      "value_per_serving": 1.95,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 2.98025,
+      "value_per_serving": 1.94,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 4.068106248,
+      "value_per_serving": 2.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 5.975,
+      "value_per_serving": 3.88,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 5.9815,
+      "value_per_serving": 3.89,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 48.425218635,
+      "value_per_serving": 31.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 7.7579979665,
+      "value_per_serving": 5.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Energy": {
+      "value_per_100g": 169.228825008,
+      "value_per_serving": 110.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 32.597443752,
+      "value_per_serving": 21.19,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals"
+  ],
+  "total_nutrients": 14
+}

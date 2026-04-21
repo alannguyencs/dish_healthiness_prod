@@ -1,0 +1,37 @@
+{
+  "ndb_id": "R113055",
+  "food_name": "Unknown Food",
+  "serving_unit": "1 tea bag",
+  "serving_size_grams": 2.1736666666667,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 230.9247419,
+      "value_per_serving": 5.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 40.732666666667,
+      "value_per_serving": 1.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Lutein": {
+      "value_per_100g": 1.3145,
+      "value_per_serving": 0.03,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 39.677826666667,
+      "value_per_serving": 1.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins"
+  ],
+  "total_nutrients": 4
+}

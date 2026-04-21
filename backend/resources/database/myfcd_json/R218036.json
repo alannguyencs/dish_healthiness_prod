@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R218036",
+  "food_name": "DESSERT, BREAD PUDDING",
+  "serving_unit": "1 SLICE",
+  "serving_size_grams": 132.68,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 15.49,
+      "value_per_serving": 20.55,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 5.2,
+      "value_per_serving": 6.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 2.4233333333333,
+      "value_per_serving": 3.22,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 2.6366666666667,
+      "value_per_serving": 3.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 4.7133333333333,
+      "value_per_serving": 6.25,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.52333333333333,
+      "value_per_serving": 0.69,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

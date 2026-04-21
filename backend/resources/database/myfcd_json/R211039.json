@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R211039",
+  "food_name": "KUIH TALAM LABU",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 51.5,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 9.4933333333333,
+      "value_per_serving": 4.89,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 9.37,
+      "value_per_serving": 4.83,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.08,
+      "value_per_serving": 0.04,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.043333333333333,
+      "value_per_serving": 0.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

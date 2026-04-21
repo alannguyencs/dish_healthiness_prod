@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R111057",
+  "food_name": "YOGURT, LOW FAT, NATURAL",
+  "serving_unit": "1 cup",
+  "serving_size_grams": 140.0,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 7.94,
+      "value_per_serving": 11.12,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 4.24,
+      "value_per_serving": 5.94,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.71333333333333,
+      "value_per_serving": 1.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 2.9866666666667,
+      "value_per_serving": 4.18,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

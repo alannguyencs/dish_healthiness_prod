@@ -1,0 +1,84 @@
+{
+  "ndb_id": "R212009",
+  "food_name": "CAKE, SPONGE (KEK SPAN)",
+  "serving_unit": "1 slice",
+  "serving_size_grams": 18.78,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 471.14,
+      "value_per_serving": 88.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 7.12,
+      "value_per_serving": 1.34,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 18.78,
+      "value_per_serving": 3.53,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 68.41,
+      "value_per_serving": 12.85,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 4.5266666666667,
+      "value_per_serving": 0.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.1633333333333,
+      "value_per_serving": 0.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 9.0933333333333,
+      "value_per_serving": 1.71,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 9.0933333333333,
+      "value_per_serving": 1.71,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 12
+}

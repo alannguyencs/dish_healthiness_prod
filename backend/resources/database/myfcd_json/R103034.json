@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R103034",
+  "food_name": "SAUCE, SOYA, LIGHT",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 6.07,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 99.64,
+      "value_per_serving": 6.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 59.963333333333,
+      "value_per_serving": 3.64,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 2.68,
+      "value_per_serving": 0.16,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 22.23,
+      "value_per_serving": 1.35,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.4066666666667,
+      "value_per_serving": 0.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 12.72,
+      "value_per_serving": 0.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 15.38,
+      "value_per_serving": 0.93,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 8.7866666666667,
+      "value_per_serving": 0.53,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 4.8533333333333,
+      "value_per_serving": 0.29,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 1.74,
+      "value_per_serving": 0.11,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

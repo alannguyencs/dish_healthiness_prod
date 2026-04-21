@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R113052",
+  "food_name": "TEA, KUNDUR, PACKET, WITH ADDED SUGAR",
+  "serving_unit": "1 cup",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 2.4966666666667,
+      "value_per_serving": 4.99,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 2.3466666666667,
+      "value_per_serving": 4.69,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.15,
+      "value_per_serving": 0.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

@@ -1,0 +1,231 @@
+{
+  "ndb_id": "R102004",
+  "food_name": "FLOUR, SAGO (TEPUNG SAGU)",
+  "serving_unit": "Unknown serving",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 348.21166666667,
+      "value_per_serving": 0.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 10.563333333333,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 0.20166666666667,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 0.098333333333333,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 86.63,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.3916666666667,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.115,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Calcium": {
+      "value_per_100g": 3.1666666666667,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iron, Fe": {
+      "value_per_100g": 1.28,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Magnesium, Mg": {
+      "value_per_100g": 3.6,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 10.666666666667,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 12.5,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Sodium, Na": {
+      "value_per_100g": 7.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Zinc, Zn": {
+      "value_per_100g": 0.31,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Copper, Cu": {
+      "value_per_100g": 0.215,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Selenium, Se": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Manganese, Mn": {
+      "value_per_100g": 0.034166666666667,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 16.313333333333,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin K": {
+      "value_per_100g": 0.27,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Cholecalciferol (D3)": {
+      "value_per_100g": 0.19,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Threonine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Isoleucine": {
+      "value_per_100g": 0.015833333333333,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Leucine": {
+      "value_per_100g": 0.023,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Lysine": {
+      "value_per_100g": 0.0175,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Methionine": {
+      "value_per_100g": 0.0645,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Tyrosine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Phenylalanine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Valine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Arginine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Alanine": {
+      "value_per_100g": 0.001,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Aspartic acid": {
+      "value_per_100g": 0.00016666666666667,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glutamic acid": {
+      "value_per_100g": 0.00016666666666667,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glycine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Proline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Serine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Vitamins",
+    "Amino Acids"
+  ],
+  "total_nutrients": 36
+}

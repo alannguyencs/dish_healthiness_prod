@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R111054",
+  "food_name": "YOGURT, DRINKING, PASTEURISED, NATURAL FLAVOUR",
+  "serving_unit": "1 Glass",
+  "serving_size_grams": 250.0,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 6.34,
+      "value_per_serving": 15.85,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 3.5933333333333,
+      "value_per_serving": 8.98,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.55666666666667,
+      "value_per_serving": 1.39,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.41,
+      "value_per_serving": 1.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 1.78,
+      "value_per_serving": 4.45,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

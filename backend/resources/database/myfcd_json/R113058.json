@@ -1,0 +1,84 @@
+{
+  "ndb_id": "R113058",
+  "food_name": "SOYA BEAN DRINK, PACKET, WITH REGULAR ADDED SUGAR",
+  "serving_unit": "1 cup",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 405.99,
+      "value_per_serving": 812.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 1.58,
+      "value_per_serving": 3.16,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 1.31,
+      "value_per_serving": 2.62,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 96.97,
+      "value_per_serving": 193.94,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.14,
+      "value_per_serving": 0.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 5.06,
+      "value_per_serving": 10.12,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 5.06,
+      "value_per_serving": 10.12,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 12
+}

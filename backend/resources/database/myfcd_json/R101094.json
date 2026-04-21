@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R101094",
+  "food_name": "BUN, CHEESE (BAN KEJU)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 55.0,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 415.39666666667,
+      "value_per_serving": 228.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 16.781666666667,
+      "value_per_serving": 9.23,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 12.216666666667,
+      "value_per_serving": 6.72,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 20.256666666667,
+      "value_per_serving": 11.14,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 46.056666666667,
+      "value_per_serving": 25.33,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.8766666666667,
+      "value_per_serving": 1.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.8133333333333,
+      "value_per_serving": 1.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 6.17,
+      "value_per_serving": 3.39,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 1.56,
+      "value_per_serving": 0.86,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.92,
+      "value_per_serving": 1.06,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 2.6866666666667,
+      "value_per_serving": 1.48,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

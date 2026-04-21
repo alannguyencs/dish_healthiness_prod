@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = "HS256"
 
 # Password hashing context
-bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def authenticate_user(username: str, password: str) -> Union[Users, bool]:
@@ -50,10 +50,7 @@ def authenticate_user(username: str, password: str) -> Union[Users, bool]:
     return user
 
 
-def create_access_token(
-    data: dict,
-    expires_delta: Optional[timedelta] = None
-) -> str:
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """
     Create a JWT access token.
 
@@ -121,4 +118,3 @@ def authenticate_user_from_request(request: Request) -> Union[Users, bool]:
         return False
 
     return user
-

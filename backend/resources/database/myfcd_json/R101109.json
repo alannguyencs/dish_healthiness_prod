@@ -1,0 +1,84 @@
+{
+  "ndb_id": "R101109",
+  "food_name": "COOKIES, PEANUT",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 34.47,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 513.58666666667,
+      "value_per_serving": 177.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 11.613333333333,
+      "value_per_serving": 4.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 26.186666666667,
+      "value_per_serving": 9.03,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 57.863333333333,
+      "value_per_serving": 19.95,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.9,
+      "value_per_serving": 1.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.4366666666667,
+      "value_per_serving": 0.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 7.1833333333333,
+      "value_per_serving": 2.48,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 7.1833333333333,
+      "value_per_serving": 2.48,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 12
+}

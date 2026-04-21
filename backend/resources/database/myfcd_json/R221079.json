@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R221079",
+  "food_name": "RICE, \"DAGANG\" (NASI DAGANG)(COMPLETE SET)",
+  "serving_unit": "1 set",
+  "serving_size_grams": 214.0,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 196.41333333333,
+      "value_per_serving": 420.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 55.143333333333,
+      "value_per_serving": 118.01,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 6.6633333333333,
+      "value_per_serving": 14.26,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 6.3333333333333,
+      "value_per_serving": 13.55,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 28.19,
+      "value_per_serving": 60.33,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 1.7333333333333,
+      "value_per_serving": 3.7,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.9366666666667,
+      "value_per_serving": 4.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 3.03,
+      "value_per_serving": 6.48,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.009822235,
+      "value_per_serving": 0.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.20894917,
+      "value_per_serving": 2.59,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.7217534,
+      "value_per_serving": 3.68,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.08,
+      "value_per_serving": 0.17,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.00695299,
+      "value_per_serving": 0.01,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

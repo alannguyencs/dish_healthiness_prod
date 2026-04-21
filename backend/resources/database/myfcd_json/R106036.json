@@ -1,0 +1,300 @@
+{
+  "ndb_id": "R106036",
+  "food_name": "DRAGON FRUIT, WHITE (BUAH NAGA, ISI PUTIH)",
+  "serving_unit": "1 half",
+  "serving_size_grams": 246.355,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 52.5,
+      "value_per_serving": 129.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 87.05,
+      "value_per_serving": 214.45,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 1.6,
+      "value_per_serving": 3.94,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 0.15,
+      "value_per_serving": 0.37,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 10.55,
+      "value_per_serving": 25.99,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 1.1,
+      "value_per_serving": 2.7,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.65,
+      "value_per_serving": 1.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 8.5,
+      "value_per_serving": 20.94,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 5.4805,
+      "value_per_serving": 13.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 2.081,
+      "value_per_serving": 5.13,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.9405,
+      "value_per_serving": 2.32,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Calcium": {
+      "value_per_100g": 7.75,
+      "value_per_serving": 19.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iron, Fe": {
+      "value_per_100g": 0.2,
+      "value_per_serving": 0.49,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Magnesium, Mg": {
+      "value_per_100g": 26.8,
+      "value_per_serving": 66.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 24.5,
+      "value_per_serving": 60.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 181.95,
+      "value_per_serving": 448.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Sodium, Na": {
+      "value_per_100g": 16.95,
+      "value_per_serving": 42.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Zinc, Zn": {
+      "value_per_100g": 0.45,
+      "value_per_serving": 1.11,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Copper, Cu": {
+      "value_per_100g": 0.15,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Selenium, Se": {
+      "value_per_100g": 2.6,
+      "value_per_serving": 6.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Manganese, Mn": {
+      "value_per_100g": 0.2,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin C": {
+      "value_per_100g": 2.55,
+      "value_per_serving": 6.3,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Fatty acids, total saturated": {
+      "value_per_100g": 0.05,
+      "value_per_serving": 0.123,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total monounsaturated": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total polyunsaturated": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total trans": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Cholesterol": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Lipids"
+    },
+    "C 13:0": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 8:0": {
+      "value_per_100g": 0.001053,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 10:0": {
+      "value_per_100g": 0.0012985,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 12:0": {
+      "value_per_100g": 0.008755,
+      "value_per_serving": 0.022,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:0": {
+      "value_per_100g": 0.000236,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:0": {
+      "value_per_100g": 0.0065095,
+      "value_per_serving": 0.016,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 15:0": {
+      "value_per_100g": 0.000135,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:0": {
+      "value_per_100g": 0.000185,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 0.0425405,
+      "value_per_serving": 0.105,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 0.010546,
+      "value_per_serving": 0.026,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:1": {
+      "value_per_100g": 0.000425,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 17:1": {
+      "value_per_100g": 0.000284,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 15:1": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 16:1": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:1, cis n-9": {
+      "value_per_100g": 7.15e-05,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:2": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 20:3": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:2, cis, n-6": {
+      "value_per_100g": 0.0128325,
+      "value_per_serving": 0.032,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:3, cis, n-3": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Vitamins",
+    "Lipids",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated",
+    "Fatty Acids, Poly Unsaturated"
+  ],
+  "total_nutrients": 47
+}

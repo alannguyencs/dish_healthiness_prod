@@ -1,0 +1,183 @@
+{
+  "ndb_id": "R107005",
+  "food_name": "CORDIAL ROOT BEER (KORDIAL RUT BIR)",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 11.5339,
+  "nutrients": {
+    "Water": {
+      "value_per_100g": 44.145,
+      "value_per_serving": 5.09,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 0.14675,
+      "value_per_serving": 0.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.065,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 15.0,
+      "value_per_serving": 1.73,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 5.787,
+      "value_per_serving": 0.67,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 5.5885,
+      "value_per_serving": 0.64,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 3.63475,
+      "value_per_serving": 0.42,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Calcium": {
+      "value_per_100g": 1.9405,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iron, Fe": {
+      "value_per_100g": 0.287,
+      "value_per_serving": 0.03,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Magnesium, Mg": {
+      "value_per_100g": 0.65,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 0.309432222,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 0.4225,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Sodium, Na": {
+      "value_per_100g": 2.405,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Zinc, Zn": {
+      "value_per_100g": 0.193,
+      "value_per_serving": 0.02,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Copper, Cu": {
+      "value_per_100g": 0.0525,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 8.26312086,
+      "value_per_serving": 1.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin A (Retinol)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "β-Carotene": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Lutein": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Ergocalciferol (D2)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Glycine": {
+      "value_per_100g": 0.0035,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Alanine": {
+      "value_per_100g": 0.0015,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Aspartic acid": {
+      "value_per_100g": 0.009,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Energy": {
+      "value_per_100g": 223.16,
+      "value_per_serving": 25.74,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 55.64325,
+      "value_per_serving": 6.42,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Vitamins",
+    "Amino Acids"
+  ],
+  "total_nutrients": 28
+}

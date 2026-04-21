@@ -1,0 +1,84 @@
+{
+  "ndb_id": "R113050",
+  "food_name": "TEA, CHRYSANTHEMUM, PACKET, WITH ADDED SUGAR",
+  "serving_unit": "1 cup",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 398.28,
+      "value_per_serving": 797.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 99.57,
+      "value_per_serving": 199.14,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 0.43,
+      "value_per_serving": 0.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 7.96,
+      "value_per_serving": 15.92,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 6.8966666666667,
+      "value_per_serving": 13.79,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.0633333333333,
+      "value_per_serving": 2.13,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 12
+}

@@ -1,0 +1,307 @@
+{
+  "ndb_id": "R102017",
+  "food_name": "TAPIOCA CHIPS, PLAIN, SALTED (KEREPEK UBI KAYU, BERGARAM)",
+  "serving_unit": "1 bowl",
+  "serving_size_grams": 90.466666,
+  "nutrients": {
+    "Water": {
+      "value_per_100g": 1.09,
+      "value_per_serving": 0.99,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 1.95,
+      "value_per_serving": 1.76,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 23.233333333333,
+      "value_per_serving": 21.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 5.765,
+      "value_per_serving": 5.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 2.4466666666667,
+      "value_per_serving": 2.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 2.85,
+      "value_per_serving": 2.58,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.19333333333333,
+      "value_per_serving": 0.17,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 2.6733333333333,
+      "value_per_serving": 2.42,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 84.666666666667,
+      "value_per_serving": 77.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Selenium, Se": {
+      "value_per_100g": 0.013,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Manganese, Mn": {
+      "value_per_100g": 0.40133333333333,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 27.303333333333,
+      "value_per_serving": 25.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin K": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Ergocalciferol (D2)": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Cholecalciferol (D3)": {
+      "value_per_100g": 0.45666666666667,
+      "value_per_serving": 0.41,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Fatty acids, total saturated": {
+      "value_per_100g": 46.483333333333,
+      "value_per_serving": 42.052,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total monounsaturated": {
+      "value_per_100g": 44.643333333333,
+      "value_per_serving": 40.387,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "Fatty acids, total polyunsaturated": {
+      "value_per_100g": 8.6633333333333,
+      "value_per_serving": 7.837,
+      "unit": "g",
+      "category": "Lipids"
+    },
+    "C 10:0": {
+      "value_per_100g": 0.2,
+      "value_per_serving": 0.181,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 12:0": {
+      "value_per_100g": 0.8,
+      "value_per_serving": 0.724,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:0": {
+      "value_per_100g": 0.81,
+      "value_per_serving": 0.733,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 41.013333333333,
+      "value_per_serving": 37.103,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:0": {
+      "value_per_100g": 0.11,
+      "value_per_serving": 0.1,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 3.6233333333333,
+      "value_per_serving": 3.278,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:1, n-9": {
+      "value_per_100g": 44.643333333333,
+      "value_per_serving": 40.387,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:2, cis, n-6": {
+      "value_per_100g": 8.41,
+      "value_per_serving": 7.608,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:3, cis, n-3": {
+      "value_per_100g": 0.18333333333333,
+      "value_per_serving": 0.166,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "C 18:3, n-6": {
+      "value_per_100g": 0.105,
+      "value_per_serving": 0.095,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "Threonine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Isoleucine": {
+      "value_per_100g": 0.023666666666667,
+      "value_per_serving": 0.021,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Leucine": {
+      "value_per_100g": 0.038333333333333,
+      "value_per_serving": 0.035,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Lysine": {
+      "value_per_100g": 0.043666666666667,
+      "value_per_serving": 0.04,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Tyrosine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Phenylalanine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Valine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Arginine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Alanine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Aspartic acid": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glutamic acid": {
+      "value_per_100g": 0.00066666666666667,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glycine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Proline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Serine": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Energy": {
+      "value_per_100g": 478.96,
+      "value_per_serving": 433.3,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 65.515,
+      "value_per_serving": 59.27,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Vitamins",
+    "Lipids",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated",
+    "Fatty Acids, Poly Unsaturated",
+    "Amino Acids"
+  ],
+  "total_nutrients": 48
+}

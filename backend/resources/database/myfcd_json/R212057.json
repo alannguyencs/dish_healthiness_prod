@@ -1,0 +1,236 @@
+{
+  "ndb_id": "R212057",
+  "food_name": "CARA BERLAUK",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 13.5,
+  "nutrients": {
+    "Water": {
+      "value_per_100g": 62.9,
+      "value_per_serving": 8.49,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 5.6786,
+      "value_per_serving": 0.77,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 1.7472,
+      "value_per_serving": 0.24,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 3.094400538,
+      "value_per_serving": 0.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.75,
+      "value_per_serving": 0.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 2.775,
+      "value_per_serving": 0.37,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.99,
+      "value_per_serving": 0.13,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 1.78675,
+      "value_per_serving": 0.24,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Calcium": {
+      "value_per_100g": 1.8,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iron, Fe": {
+      "value_per_100g": 0.699,
+      "value_per_serving": 0.09,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Magnesium, Mg": {
+      "value_per_100g": 18.82,
+      "value_per_serving": 3.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 50.589421885,
+      "value_per_serving": 7.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 82.25,
+      "value_per_serving": 11.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Sodium, Na": {
+      "value_per_100g": 117.6,
+      "value_per_serving": 16.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Zinc, Zn": {
+      "value_per_100g": 0.425,
+      "value_per_serving": 0.06,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Copper, Cu": {
+      "value_per_100g": 0.116,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 25.353895735,
+      "value_per_serving": 3.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Threonine": {
+      "value_per_100g": 0.16425,
+      "value_per_serving": 0.022,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Isoleucine": {
+      "value_per_100g": 0.189,
+      "value_per_serving": 0.026,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Leucine": {
+      "value_per_100g": 0.35175,
+      "value_per_serving": 0.047,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Lysine": {
+      "value_per_100g": 0.207,
+      "value_per_serving": 0.028,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Tyrosine": {
+      "value_per_100g": 0.09125,
+      "value_per_serving": 0.012,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Phenylalanine": {
+      "value_per_100g": 0.195,
+      "value_per_serving": 0.026,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Valine": {
+      "value_per_100g": 0.243,
+      "value_per_serving": 0.033,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Arginine": {
+      "value_per_100g": 0.1815,
+      "value_per_serving": 0.025,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Histidine": {
+      "value_per_100g": 0.0985,
+      "value_per_serving": 0.013,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Alanine": {
+      "value_per_100g": 0.2085,
+      "value_per_serving": 0.028,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Aspartic acid": {
+      "value_per_100g": 0.33925,
+      "value_per_serving": 0.046,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glutamic acid": {
+      "value_per_100g": 2.5055,
+      "value_per_serving": 0.338,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glycine": {
+      "value_per_100g": 0.16875,
+      "value_per_serving": 0.023,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Proline": {
+      "value_per_100g": 0.489,
+      "value_per_serving": 0.066,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Serine": {
+      "value_per_100g": 0.24825,
+      "value_per_serving": 0.034,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Energy": {
+      "value_per_100g": 141.758397848,
+      "value_per_serving": 19.14,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 25.829799462,
+      "value_per_serving": 3.49,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Amino Acids"
+  ],
+  "total_nutrients": 37
+}

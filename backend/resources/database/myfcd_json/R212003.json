@@ -1,0 +1,194 @@
+{
+  "ndb_id": "R212003",
+  "food_name": "BAHULU KEMBOJA",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 236.5,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 209.528104084,
+      "value_per_serving": 495.53,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 49.6,
+      "value_per_serving": 117.3,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 6.50045,
+      "value_per_serving": 15.37,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 8.646,
+      "value_per_serving": 20.45,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 26.428076021,
+      "value_per_serving": 62.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 8.340473979,
+      "value_per_serving": 19.7,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.485,
+      "value_per_serving": 1.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Calcium": {
+      "value_per_100g": 1.532,
+      "value_per_serving": 4.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Magnesium, Mg": {
+      "value_per_100g": 18.42,
+      "value_per_serving": 44.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 69.93827061,
+      "value_per_serving": 165.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Potassium, K": {
+      "value_per_100g": 112.1,
+      "value_per_serving": 265.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Sodium, Na": {
+      "value_per_100g": 35.46,
+      "value_per_serving": 84.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Zinc, Zn": {
+      "value_per_100g": 0.508,
+      "value_per_serving": 1.2,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Copper, Cu": {
+      "value_per_100g": 0.139,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 41.36467726,
+      "value_per_serving": 98.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Threonine": {
+      "value_per_100g": 0.20025,
+      "value_per_serving": 0.474,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Isoleucine": {
+      "value_per_100g": 0.2295,
+      "value_per_serving": 0.543,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Leucine": {
+      "value_per_100g": 0.401,
+      "value_per_serving": 0.948,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Lysine": {
+      "value_per_100g": 0.29475,
+      "value_per_serving": 0.697,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Tyrosine": {
+      "value_per_100g": 0.104,
+      "value_per_serving": 0.246,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Phenylalanine": {
+      "value_per_100g": 0.21175,
+      "value_per_serving": 0.501,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Valine": {
+      "value_per_100g": 0.31,
+      "value_per_serving": 0.733,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Arginine": {
+      "value_per_100g": 0.2545,
+      "value_per_serving": 0.602,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Histidine": {
+      "value_per_100g": 0.10275,
+      "value_per_serving": 0.243,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Alanine": {
+      "value_per_100g": 0.271,
+      "value_per_serving": 0.641,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Aspartic acid": {
+      "value_per_100g": 0.497,
+      "value_per_serving": 1.175,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glutamic acid": {
+      "value_per_100g": 2.23375,
+      "value_per_serving": 5.283,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Glycine": {
+      "value_per_100g": 0.16925,
+      "value_per_serving": 0.4,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Proline": {
+      "value_per_100g": 0.40225,
+      "value_per_serving": 0.951,
+      "unit": "g",
+      "category": "Amino Acids"
+    },
+    "Serine": {
+      "value_per_100g": 0.29825,
+      "value_per_serving": 0.705,
+      "unit": "g",
+      "category": "Amino Acids"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Amino Acids"
+  ],
+  "total_nutrients": 30
+}

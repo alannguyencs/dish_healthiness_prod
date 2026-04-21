@@ -1,0 +1,185 @@
+{
+  "ndb_id": "R114015",
+  "food_name": "CHOCOLATE, HAZELNUT (COKLAT KACANG BADAM)",
+  "serving_unit": "1 small bar",
+  "serving_size_grams": 5.2405,
+  "nutrients": {
+    "Water": {
+      "value_per_100g": 1.285,
+      "value_per_serving": 0.07,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 9.4287666666667,
+      "value_per_serving": 0.49,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 29.926666666667,
+      "value_per_serving": 1.57,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Calcium": {
+      "value_per_100g": 205.2,
+      "value_per_serving": 11.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Magnesium, Mg": {
+      "value_per_100g": 82.483333333333,
+      "value_per_serving": 4.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Phosphorus, P": {
+      "value_per_100g": 198.22166666667,
+      "value_per_serving": 10.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 24.625,
+      "value_per_serving": 1.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Vitamin K": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "Choline": {
+      "value_per_100g": 36.225,
+      "value_per_serving": 2.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Ergocalciferol (D2)": {
+      "value_per_100g": 0.041166666666667,
+      "value_per_serving": 0.002,
+      "unit": "μg",
+      "category": "Vitamins"
+    },
+    "C 13:0": {
+      "value_per_100g": 0.00605,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 8:0": {
+      "value_per_100g": 0.058555,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 10:0": {
+      "value_per_100g": 0.1248675,
+      "value_per_serving": 0.007,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 12:0": {
+      "value_per_100g": 0.49483166666667,
+      "value_per_serving": 0.026,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:0": {
+      "value_per_100g": 0.58578,
+      "value_per_serving": 0.031,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 15:0": {
+      "value_per_100g": 0.022091,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 17:0": {
+      "value_per_100g": 0.0561565,
+      "value_per_serving": 0.003,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 16:0": {
+      "value_per_100g": 7.2049633333333,
+      "value_per_serving": 0.378,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 20:0": {
+      "value_per_100g": 0.60616633333333,
+      "value_per_serving": 0.032,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 18:0": {
+      "value_per_100g": 8.0240683333333,
+      "value_per_serving": 0.421,
+      "unit": "g",
+      "category": "Fatty Acids, Saturated"
+    },
+    "C 14:1": {
+      "value_per_100g": 0.03145875,
+      "value_per_serving": 0.002,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 17:1": {
+      "value_per_100g": 0.013344,
+      "value_per_serving": 0.001,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 16:1": {
+      "value_per_100g": 0.106731,
+      "value_per_serving": 0.006,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:1, cis n-9": {
+      "value_per_100g": 10.680805,
+      "value_per_serving": 0.56,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 20:1, n-9": {
+      "value_per_100g": 0.104532,
+      "value_per_serving": 0.005,
+      "unit": "g",
+      "category": "Fatty Acids, Mono Unsaturated"
+    },
+    "C 18:2, cis, n-6": {
+      "value_per_100g": 1.2166766666667,
+      "value_per_serving": 0.064,
+      "unit": "g",
+      "category": "Fatty Acids, Poly Unsaturated"
+    },
+    "Energy": {
+      "value_per_100g": 544.49333333333,
+      "value_per_serving": 28.53,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 59.359566666667,
+      "value_per_serving": 3.11,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates",
+    "Minerals",
+    "Vitamins",
+    "Fatty Acids, Saturated",
+    "Fatty Acids, Mono Unsaturated",
+    "Fatty Acids, Poly Unsaturated"
+  ],
+  "total_nutrients": 28
+}

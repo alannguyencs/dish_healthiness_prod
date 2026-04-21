@@ -1,0 +1,84 @@
+{
+  "ndb_id": "R107017",
+  "food_name": "HONEY",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 11.63,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 399.81333333333,
+      "value_per_serving": 46.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 0.046666666666667,
+      "value_per_serving": 0.01,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 99.906666666667,
+      "value_per_serving": 11.62,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.046666666666667,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 67.666666666667,
+      "value_per_serving": 7.87,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 27.57,
+      "value_per_serving": 3.21,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 38.696666666667,
+      "value_per_serving": 4.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 1.4,
+      "value_per_serving": 0.16,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 12
+}

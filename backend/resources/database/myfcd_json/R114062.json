@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R114062",
+  "food_name": "CHOCOLATE SPREAD",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 25.48,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 19.786666666667,
+      "value_per_serving": 5.04,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 14.97,
+      "value_per_serving": 3.81,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 10.64,
+      "value_per_serving": 2.71,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 1.27,
+      "value_per_serving": 0.32,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

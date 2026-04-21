@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R110126",
+  "food_name": "SAUCE, OYSTER FLAVOURED",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 11.37,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 8.8733333333333,
+      "value_per_serving": 1.01,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 8.02,
+      "value_per_serving": 0.91,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.85333333333333,
+      "value_per_serving": 0.1,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

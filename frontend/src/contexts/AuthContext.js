@@ -1,71 +1,78 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useEffect
-} from 'react';
-import apiService from '../services/api';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import apiService from "../services/api";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
 
-    useEffect(() => {
-        // For now, assume not authenticated on mount
-        setLoading(false);
-    }, []);
-
-    const login = async (username, password) => {
-        try {
-            const data = await apiService.login(username, password);
-            if (data.success) {
-                setUser(data.user);
-                setAuthenticated(true);
-                return { success: true };
-            }
-            return { success: false, message: data.message };
-        } catch (error) {
-            return {
-                success: false,
-                message: error.response?.data?.message || 'Login failed',
-            };
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await apiService.getSession();
+        if (!cancelled && data?.success) {
+          setUser(data.user);
+          setAuthenticated(true);
         }
+      } catch (_err) {
+        // 401 or network error — leave unauthenticated.
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
     };
+  }, []);
 
-    const logout = async () => {
-        try {
-            await apiService.logout();
-        } catch (error) {
-            console.error('Logout error:', error);
-        } finally {
-            setUser(null);
-            setAuthenticated(false);
-        }
-    };
+  const login = async (username, password) => {
+    try {
+      const data = await apiService.login(username, password);
+      if (data.success) {
+        setUser(data.user);
+        setAuthenticated(true);
+        return { success: true };
+      }
+      return { success: false, message: data.message };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Login failed",
+      };
+    }
+  };
 
-    const value = {
-        user,
-        authenticated,
-        loading,
-        login,
-        logout,
-    };
+  const logout = async () => {
+    try {
+      await apiService.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setUser(null);
+      setAuthenticated(false);
+    }
+  };
 
-    return (
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    );
+  const value = {
+    user,
+    authenticated,
+    loading,
+    login,
+    logout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within AuthProvider');
-    }
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+  return context;
 };
 
 export default AuthContext;
-

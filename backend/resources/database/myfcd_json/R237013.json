@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R237013",
+  "food_name": "PEARL MILK TEA (WITH BREWED TEA, MILK, SUGAR SYRUP, TAPIOCA PEARLS), NORMAL SUGAR",
+  "serving_unit": "1 cup",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 9.55,
+      "value_per_serving": 23.88,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 5.1033333333333,
+      "value_per_serving": 12.76,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 2.445,
+      "value_per_serving": 6.11,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 3.335,
+      "value_per_serving": 8.34,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.315,
+      "value_per_serving": 0.79,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.58,
+      "value_per_serving": 1.45,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

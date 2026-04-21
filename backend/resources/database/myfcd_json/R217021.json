@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R217021",
+  "food_name": "DESSERT, BLACK GLUTINOUS RICE PORRIDGE (BUBUR PULUT HITAM)",
+  "serving_unit": "1 BOWL",
+  "serving_size_grams": 396.96,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 228.95,
+      "value_per_serving": 909.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 44.835,
+      "value_per_serving": 177.98,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 2.5766666666667,
+      "value_per_serving": 10.23,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 4.17,
+      "value_per_serving": 16.55,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 45.276666666667,
+      "value_per_serving": 179.73,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.3766666666667,
+      "value_per_serving": 9.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.76333333333333,
+      "value_per_serving": 3.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 2.7466666666667,
+      "value_per_serving": 10.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 2.46,
+      "value_per_serving": 9.77,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.18333333333333,
+      "value_per_serving": 0.73,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.10333333333333,
+      "value_per_serving": 0.41,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R212010",
+  "food_name": "CAKE, SWISS ROLL (KEK SWISS ROLL)",
+  "serving_unit": "1 slice",
+  "serving_size_grams": 28.63,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 14.676666666667,
+      "value_per_serving": 4.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 13.74,
+      "value_per_serving": 3.93,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.44666666666667,
+      "value_per_serving": 0.13,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.49,
+      "value_per_serving": 0.14,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

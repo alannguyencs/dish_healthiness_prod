@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R218011",
+  "food_name": "CREAM ROLL, VANILLA FLAVOUR",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 40.13,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 369.64333333333,
+      "value_per_serving": 148.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 28.252666666667,
+      "value_per_serving": 11.34,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 6.86,
+      "value_per_serving": 2.75,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 20.706666666667,
+      "value_per_serving": 8.31,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 38.96,
+      "value_per_serving": 15.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 4.1533333333333,
+      "value_per_serving": 1.7,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.0666666666667,
+      "value_per_serving": 0.4,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 4.3033333333333,
+      "value_per_serving": 1.73,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 1.04,
+      "value_per_serving": 0.42,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.8,
+      "value_per_serving": 0.32,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.9866666666667,
+      "value_per_serving": 0.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.47,
+      "value_per_serving": 0.19,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

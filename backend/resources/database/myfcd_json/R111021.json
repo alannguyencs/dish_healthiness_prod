@@ -1,0 +1,38 @@
+{
+  "ndb_id": "R111021",
+  "food_name": "CREAM CHEESE (KRIM KEJU)",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 25.98866667,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 86.063,
+      "value_per_serving": 22.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 26.7675,
+      "value_per_serving": 7.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    },
+    "Cholesterol": {
+      "value_per_100g": 51.805231948333,
+      "value_per_serving": 13.0,
+      "unit": "mg",
+      "category": "Lipids"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins",
+    "Lipids"
+  ],
+  "total_nutrients": 4
+}

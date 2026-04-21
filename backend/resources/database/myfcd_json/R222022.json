@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R222022",
+  "food_name": "CHICKEN CHOP (BELAHAN AYAM TANPA TULANG)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 172.8,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 263.65666666667,
+      "value_per_serving": 456.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 47.42,
+      "value_per_serving": 81.94,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 16.9,
+      "value_per_serving": 29.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 15.496666666667,
+      "value_per_serving": 26.78,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 14.146666666667,
+      "value_per_serving": 24.45,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 5.5666666666667,
+      "value_per_serving": 9.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.47,
+      "value_per_serving": 0.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 3.0066666666667,
+      "value_per_serving": 5.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.67666666666667,
+      "value_per_serving": 1.17,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.71,
+      "value_per_serving": 1.23,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.0733333333333,
+      "value_per_serving": 1.85,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.54666666666667,
+      "value_per_serving": 0.94,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

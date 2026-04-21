@@ -1,0 +1,31 @@
+{
+  "ndb_id": "R114047",
+  "food_name": "Unknown Food",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 9.566683333,
+  "nutrients": {
+    "Phosphorus, P": {
+      "value_per_100g": 14.037083333333,
+      "value_per_serving": 1.0,
+      "unit": "mg",
+      "category": "Minerals"
+    },
+    "Iodine": {
+      "value_per_100g": 6.6033333333333,
+      "value_per_serving": 1.0,
+      "unit": "μg",
+      "category": "Minerals"
+    },
+    "Choline": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "mg",
+      "category": "Vitamins"
+    }
+  },
+  "categories": [
+    "Minerals",
+    "Vitamins"
+  ],
+  "total_nutrients": 3
+}

@@ -1,0 +1,78 @@
+{
+  "ndb_id": "R222008",
+  "food_name": "BEEF, FLOSS (SERUNDING DAGING)",
+  "serving_unit": "1 bowl",
+  "serving_size_grams": 35.4,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 434.85333333333,
+      "value_per_serving": 154.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 6.8166666666667,
+      "value_per_serving": 2.41,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 23.076666666667,
+      "value_per_serving": 8.17,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 20.253333333333,
+      "value_per_serving": 7.17,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 40.066666666667,
+      "value_per_serving": 14.18,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 8.0,
+      "value_per_serving": 2.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.7866666666667,
+      "value_per_serving": 0.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 28.516666666667,
+      "value_per_serving": 10.09,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 14.633333333333,
+      "value_per_serving": 5.18,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.08,
+      "value_per_serving": 0.38,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 1.66,
+      "value_per_serving": 0.59,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 11
+}

@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R218037",
+  "food_name": "DESSERT, PUDDING, MILK (PUDING SUSU)",
+  "serving_unit": "1 piece",
+  "serving_size_grams": 39.06,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 222.51666666667,
+      "value_per_serving": 87.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 44.453666666667,
+      "value_per_serving": 17.36,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 2.02,
+      "value_per_serving": 0.79,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 2.9433333333333,
+      "value_per_serving": 1.15,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 46.99,
+      "value_per_serving": 18.35,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.9866666666667,
+      "value_per_serving": 1.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.61,
+      "value_per_serving": 0.2,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 18.786666666667,
+      "value_per_serving": 7.34,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 12.873333333333,
+      "value_per_serving": 5.03,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 2.62,
+      "value_per_serving": 1.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 2.3133333333333,
+      "value_per_serving": 0.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 1.47,
+      "value_per_serving": 0.57,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

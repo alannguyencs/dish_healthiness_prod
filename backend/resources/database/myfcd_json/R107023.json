@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R107023",
+  "food_name": "JAM, MANGO (JEM MEMPELAM)",
+  "serving_unit": "1 tablespoon",
+  "serving_size_grams": 31.34,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 19.756666666667,
+      "value_per_serving": 6.19,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 16.42,
+      "value_per_serving": 5.15,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 1.3366666666667,
+      "value_per_serving": 0.42,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 2.0,
+      "value_per_serving": 0.63,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}

@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R221088",
+  "food_name": "RICE, KERABU (NASI KERABU)(COMPLETE SET)",
+  "serving_unit": "1 set",
+  "serving_size_grams": 168.47,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 208.98666666667,
+      "value_per_serving": 352.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 47.09,
+      "value_per_serving": 79.33,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 4.0033333333333,
+      "value_per_serving": 6.74,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 2.9866666666667,
+      "value_per_serving": 5.03,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 41.523333333333,
+      "value_per_serving": 69.95,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.8233333333333,
+      "value_per_serving": 4.8,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 1.5733333333333,
+      "value_per_serving": 2.7,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 1.5166666666667,
+      "value_per_serving": 2.56,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 0.013333333333333,
+      "value_per_serving": 0.02,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.71666666666667,
+      "value_per_serving": 1.21,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.55666666666667,
+      "value_per_serving": 0.94,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.22,
+      "value_per_serving": 0.37,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

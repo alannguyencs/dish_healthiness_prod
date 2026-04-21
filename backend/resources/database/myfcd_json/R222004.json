@@ -1,0 +1,90 @@
+{
+  "ndb_id": "R222004",
+  "food_name": "BEEF RENDANG (RENDANG DAGING LEMBU)",
+  "serving_unit": "1 bowl",
+  "serving_size_grams": 293.15,
+  "nutrients": {
+    "Energy": {
+      "value_per_100g": 360.1,
+      "value_per_serving": 1056.0,
+      "unit": "Kcal",
+      "category": "Proximates"
+    },
+    "Water": {
+      "value_per_100g": 35.52,
+      "value_per_serving": 104.13,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Protein": {
+      "value_per_100g": 18.756666666667,
+      "value_per_serving": 54.99,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fat": {
+      "value_per_100g": 23.46,
+      "value_per_serving": 68.77,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Carbohydrate": {
+      "value_per_100g": 18.483333333333,
+      "value_per_serving": 54.18,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total dietary fibre": {
+      "value_per_100g": 2.9333333333333,
+      "value_per_serving": 8.6,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Ash": {
+      "value_per_100g": 0.84666666666667,
+      "value_per_serving": 2.5,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Total sugars": {
+      "value_per_100g": 7.9966666666667,
+      "value_per_serving": 23.44,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 14.633333333333,
+      "value_per_serving": 42.9,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.77333333333333,
+      "value_per_serving": 2.27,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.85666666666667,
+      "value_per_serving": 2.51,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 13
+}

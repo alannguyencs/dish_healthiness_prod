@@ -1,0 +1,48 @@
+{
+  "ndb_id": "R111045",
+  "food_name": "MILK, UHT, CHOCOLATE FLAVOUR",
+  "serving_unit": "1 cup",
+  "serving_size_grams": null,
+  "nutrients": {
+    "Total sugars": {
+      "value_per_100g": 6.34,
+      "value_per_serving": 12.68,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Sucrose": {
+      "value_per_100g": 2.0666666666667,
+      "value_per_serving": 4.13,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Glucose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Fructose": {
+      "value_per_100g": 0.39333333333333,
+      "value_per_serving": 0.79,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Lactose": {
+      "value_per_100g": 3.88,
+      "value_per_serving": 7.76,
+      "unit": "g",
+      "category": "Proximates"
+    },
+    "Maltose": {
+      "value_per_100g": 0.0,
+      "value_per_serving": 0.0,
+      "unit": "g",
+      "category": "Proximates"
+    }
+  },
+  "categories": [
+    "Proximates"
+  ],
+  "total_nutrients": 6
+}
