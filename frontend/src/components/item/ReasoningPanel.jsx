@@ -4,13 +4,14 @@ import React from "react";
  * ReasoningPanel
  *
  * Stage 8 panel that renders the seven `reasoning_*` strings from
- * `step2_data` (the AI's original rationale — even when the user has
- * overridden the numbers, the AI's reasoning stays visible as audit).
+ * `nutrition_data` (the AI's original rationale — even when the user
+ * has overridden the numbers, the AI's reasoning stays visible as
+ * audit).
  *
  * The panel's own collapse toggle was removed: the outer
  * <ResearchOnlyGroup> chevron is the single source of open/closed for
  * all research panels. Rendering here is non-conditional — if
- * step2_data is present, the body shows.
+ * nutritionData is present, the body shows.
  *
  * Empty-string reasoning_* fields render as a muted placeholder so the
  * user can see every metric has been accounted for.
@@ -25,8 +26,8 @@ const FIELDS = [
   ["reasoning_micronutrients", "Micronutrients"],
 ];
 
-const ReasoningPanel = ({ step2Data }) => {
-  if (!step2Data) return null;
+const ReasoningPanel = ({ nutritionData }) => {
+  if (!nutritionData) return null;
 
   return (
     <div
@@ -38,7 +39,7 @@ const ReasoningPanel = ({ step2Data }) => {
       </h3>
       <div className="mt-3 space-y-2" data-testid="reasoning-panel-body">
         {FIELDS.map(([key, label]) => {
-          const text = step2Data[key];
+          const text = nutritionData[key];
           const body = text && text.trim() ? text : "No rationale provided.";
           return (
             <div

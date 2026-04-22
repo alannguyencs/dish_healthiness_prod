@@ -3,12 +3,12 @@ Stage 8 — POST /api/item/{record_id}/correction.
 
 Persists a user correction of the Step 2 nutritional analysis. Lives in
 its own module so `backend/src/api/item.py` stays under the 300-line file
-cap (parallel to `item_retry.py` / `item_step1_tasks.py`).
+cap (parallel to `item_retry.py` / `item_identification_tasks.py`).
 
 Dual write:
-  1. `DishImageQuery.result_gemini.step2_corrected` — the user override,
-     preserving `step2_data` untouched for audit.
-  2. `personalized_food_descriptions.corrected_step2_data` — same payload
+  1. `DishImageQuery.result_gemini.nutrition_corrected` — the user override,
+     preserving `nutrition_data` untouched for audit.
+  2. `personalized_food_descriptions.corrected_nutrition_data` — same payload
      written onto the personalization row via Stage 0's CRUD so future
      Phase 2.2 retrieval surfaces the user-verified nutrients.
 
@@ -23,14 +23,14 @@ from typing import Any, Dict
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-from src.api.item_schemas import AiAssistantCorrectionRequest, Step2CorrectionRequest
+from src.api.item_schemas import AiAssistantCorrectionRequest, NutritionCorrectionRequest
 from src.auth import authenticate_user_from_request
 from src.crud import crud_personalized_food
 from src.crud.crud_food_image_query import (
     get_dish_image_query_by_id,
     update_dish_image_query_results,
 )
-from src.service.llm.step2_assistant import revise_step2_with_hint
+from src.service.llm.nutrition_assistant import revise_nutrition_with_hint
 
 logger = logging.getLogger(__name__)
 
@@ -42,10 +42,10 @@ def _enrich_personalization_corrected_data(record_id: int, payload: Dict[str, An
     Stage 8: mirror the user correction onto the personalization row.
 
     Fire-and-forget — failures must not bounce the user since the main
-    `result_gemini.step2_corrected` write already landed.
+    `result_gemini.nutrition_corrected` write already landed.
     """
     try:
-        updated_row = crud_personalized_food.update_corrected_step2_data(
+        updated_row = crud_personalized_food.update_corrected_nutrition_data(
             query_id=record_id,
             payload=payload,
         )
@@ -60,17 +60,17 @@ def _enrich_personalization_corrected_data(record_id: int, payload: Dict[str, An
 
 
 @router.post("/{record_id}/correction")
-async def save_step2_correction(
+async def save_nutrition_correction(
     record_id: int,
     request: Request,
-    correction: Step2CorrectionRequest,
+    correction: NutritionCorrectionRequest,
 ) -> JSONResponse:
     """
     Save a user correction of the Step 2 nutritional analysis.
 
-    Writes `result_gemini.step2_corrected` (preserving `step2_data` for
+    Writes `result_gemini.nutrition_corrected` (preserving `nutrition_data` for
     audit) and best-effort mirrors the payload onto
-    `personalized_food_descriptions.corrected_step2_data`.
+    `personalized_food_descriptions.corrected_nutrition_data`.
     """
     logger.info("Step 2 correction request for record_id=%s", record_id)
 
@@ -91,7 +91,7 @@ async def save_step2_correction(
     payload = correction.model_dump()
 
     new_blob = dict(record.result_gemini)
-    new_blob["step2_corrected"] = payload
+    new_blob["nutrition_corrected"] = payload
     update_dish_image_query_results(
         query_id=record_id,
         result_openai=None,
@@ -104,14 +104,14 @@ async def save_step2_correction(
         content={
             "success": True,
             "record_id": record_id,
-            "step2_corrected": payload,
+            "nutrition_corrected": payload,
         }
     )
 
 
 def _compose_ai_assistant_payload(revised: Dict[str, Any], user_hint: str) -> Dict[str, Any]:
     """
-    Shape the revised Gemini output into the `step2_corrected` payload,
+    Shape the revised Gemini output into the `nutrition_corrected` payload,
     dropping engineering metadata fields and stamping the audit hint.
     """
     return {
@@ -153,7 +153,7 @@ async def save_ai_assistant_correction(
     if not record or record.user_id != user.id:
         raise HTTPException(status_code=404, detail="Record not found")
 
-    if not record.result_gemini or not record.result_gemini.get("step2_data"):
+    if not record.result_gemini or not record.result_gemini.get("nutrition_data"):
         raise HTTPException(
             status_code=400,
             detail="Step 2 analysis has not completed; nothing to revise.",
@@ -164,7 +164,7 @@ async def save_ai_assistant_correction(
         raise HTTPException(status_code=422, detail="Prompt must not be empty")
 
     try:
-        revised = await revise_step2_with_hint(record_id, user_hint)
+        revised = await revise_nutrition_with_hint(record_id, user_hint)
     except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.exception("AI Assistant revision failed for record_id=%s", record_id)
         raise HTTPException(status_code=502, detail="AI revision failed") from exc
@@ -172,7 +172,7 @@ async def save_ai_assistant_correction(
     payload = _compose_ai_assistant_payload(revised, user_hint)
 
     new_blob = dict(record.result_gemini)
-    new_blob["step2_corrected"] = payload
+    new_blob["nutrition_corrected"] = payload
     update_dish_image_query_results(
         query_id=record_id,
         result_openai=None,
@@ -185,6 +185,6 @@ async def save_ai_assistant_correction(
         content={
             "success": True,
             "record_id": record_id,
-            "step2_corrected": payload,
+            "nutrition_corrected": payload,
         }
     )

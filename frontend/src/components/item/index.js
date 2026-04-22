@@ -8,11 +8,11 @@ export { default as DishPredictions } from "./DishPredictions";
 export { default as ServingSizeSelector } from "./ServingSizeSelector";
 export { default as ServingsCountInput } from "./ServingsCountInput";
 
-// Two-step analysis components
-export { default as Step1ComponentEditor } from "./Step1ComponentEditor";
-export { default as Step2Results } from "./Step2Results";
-export { default as Step2ResultsEditForm } from "./Step2ResultsEditForm";
-export { default as Step2AiAssistantPanel } from "./Step2AiAssistantPanel";
+// Two-phase analysis components
+export { default as IdentificationComponentEditor } from "./IdentificationComponentEditor";
+export { default as NutritionResults } from "./NutritionResults";
+export { default as NutritionResultsEditForm } from "./NutritionResultsEditForm";
+export { default as NutritionAiAssistantPanel } from "./NutritionAiAssistantPanel";
 export { default as PhaseErrorCard } from "./PhaseErrorCard";
 export { default as ItemStepTabs } from "./ItemStepTabs";
 export { default as ReasoningPanel } from "./ReasoningPanel";

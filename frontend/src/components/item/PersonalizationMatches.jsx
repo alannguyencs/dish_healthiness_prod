@@ -7,9 +7,9 @@ import React from "react";
  * own upload corpus (Stage 6's `result_gemini.personalized_matches`).
  *
  * Each card shows thumbnail + description + similarity badge + macros.
- * When the match carries `corrected_step2_data` (Stage 8 write from a
+ * When the match carries `corrected_nutrition_data` (Stage 8 write from a
  * prior correction the user made on this dish), the card prefers those
- * nutrients over `prior_step2_data` and shows a "User-verified" badge.
+ * nutrients over `prior_nutrition_data` and shows a "User-verified" badge.
  *
  * Hidden when the list is empty or absent.
  */
@@ -43,8 +43,8 @@ const PersonalizationMatches = ({ matches }) => {
       <div className="space-y-3">
         {matches.map((m, idx) => {
           const activeNutrients =
-            m.corrected_step2_data || m.prior_step2_data || {};
-          const userVerified = !!m.corrected_step2_data;
+            m.corrected_nutrition_data || m.prior_nutrition_data || {};
+          const userVerified = !!m.corrected_nutrition_data;
           const similarityPct = Math.round((m.similarity_score || 0) * 100);
           return (
             <div

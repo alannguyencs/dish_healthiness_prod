@@ -28,9 +28,9 @@ VALID_PAYLOAD = {
 
 
 PHASE2_DONE = {
-    "step": 2,
-    "step1_data": {"dish_predictions": [{"name": "Chicken Rice"}]},
-    "step2_data": {
+    "phase": 2,
+    "identification_data": {"dish_predictions": [{"name": "Chicken Rice"}]},
+    "nutrition_data": {
         "dish_name": "Chicken Rice",
         "calories_kcal": 600,
         "healthiness_score": 50,
@@ -55,7 +55,7 @@ def _patch_update_personalization(monkeypatch, *, returns=None, raises=None):
         return returns
 
     monkeypatch.setattr(
-        item_correction.crud_personalized_food, "update_corrected_step2_data", _update
+        item_correction.crud_personalized_food, "update_corrected_nutrition_data", _update
     )
     return calls
 
@@ -132,14 +132,14 @@ def test_happy_path_writes_step2_corrected_preserving_step2_data(
     assert len(writes) == 1
     written = writes[0]["result_gemini"]
     # step2_corrected landed
-    assert written["step2_corrected"]["calories_kcal"] == 450
-    assert written["step2_corrected"]["micronutrients"] == ["Iron", "Magnesium"]
+    assert written["nutrition_corrected"]["calories_kcal"] == 450
+    assert written["nutrition_corrected"]["micronutrients"] == ["Iron", "Magnesium"]
     # step2_data preserved
-    assert written["step2_data"]["calories_kcal"] == 600
-    assert written["step2_data"]["dish_name"] == "Chicken Rice"
+    assert written["nutrition_data"]["calories_kcal"] == 600
+    assert written["nutrition_data"]["dish_name"] == "Chicken Rice"
 
 
-def test_happy_path_calls_update_corrected_step2_data(
+def test_happy_path_calls_update_corrected_nutrition_data(
     client, monkeypatch, patch_auth, captured_writes
 ):
     record = make_record(result_gemini=PHASE2_DONE)
@@ -209,7 +209,7 @@ def test_response_body_carries_step2_corrected_payload(
     body = res.json()
     assert body["success"] is True
     assert body["record_id"] == 1
-    assert body["step2_corrected"]["calories_kcal"] == 450
+    assert body["nutrition_corrected"]["calories_kcal"] == 450
 
 
 def test_saves_correction_does_not_destroy_other_result_gemini_keys(
@@ -231,4 +231,4 @@ def test_saves_correction_does_not_destroy_other_result_gemini_keys(
     # personalized_matches preserved
     assert "personalized_matches" in final
     # step1_data preserved
-    assert "step1_data" in final
+    assert "identification_data" in final

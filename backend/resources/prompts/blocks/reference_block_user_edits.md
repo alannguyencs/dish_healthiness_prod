@@ -1,0 +1,1 @@
+**The user manually corrected the prior dish's name and/or servings (fields marked 'user-verified' below).** Prefer those values over the original AI proposal when the query image shows a visually similar dish — the user knows their own meals better than the first-pass model did.

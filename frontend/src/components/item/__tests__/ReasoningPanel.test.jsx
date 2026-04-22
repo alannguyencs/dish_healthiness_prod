@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ReasoningPanel from "../ReasoningPanel";
 
-const fullStep2Data = {
+const fullNutritionData = {
   reasoning_sources: "Nutrition DB: Chicken Rice (malaysian, 88%)",
   reasoning_calories: "DB top match scaled to serving",
   reasoning_fiber: "Estimated from components",
@@ -14,22 +14,22 @@ const fullStep2Data = {
 };
 
 describe("ReasoningPanel", () => {
-  test("returns null when step2Data is missing", () => {
-    const { container } = render(<ReasoningPanel step2Data={null} />);
+  test("returns null when nutritionData is missing", () => {
+    const { container } = render(<ReasoningPanel nutritionData={null} />);
     expect(container).toBeEmptyDOMElement();
   });
 
-  test("renders the body non-conditionally when step2Data is present", () => {
+  test("renders the body non-conditionally when nutritionData is present", () => {
     // Open/close is owned by the outer <ResearchOnlyGroup> now, not by
-    // this panel — the body always renders when step2Data is present.
-    render(<ReasoningPanel step2Data={fullStep2Data} />);
+    // this panel — the body always renders when nutritionData is present.
+    render(<ReasoningPanel nutritionData={fullNutritionData} />);
     expect(screen.getByTestId("reasoning-panel")).toBeInTheDocument();
     expect(screen.getByTestId("reasoning-panel-body")).toBeInTheDocument();
     expect(screen.queryByTestId("reasoning-panel-toggle")).toBeNull();
   });
 
   test("renders all seven reasoning_* fields", () => {
-    render(<ReasoningPanel step2Data={fullStep2Data} />);
+    render(<ReasoningPanel nutritionData={fullNutritionData} />);
     expect(screen.getByTestId("reasoning-reasoning_sources")).toHaveTextContent(
       "Nutrition DB",
     );
@@ -43,7 +43,9 @@ describe("ReasoningPanel", () => {
 
   test("empty reasoning fields render as 'No rationale provided'", () => {
     render(
-      <ReasoningPanel step2Data={{ reasoning_calories: "Only calories" }} />,
+      <ReasoningPanel
+        nutritionData={{ reasoning_calories: "Only calories" }}
+      />,
     );
     expect(screen.getByTestId("reasoning-reasoning_sources")).toHaveTextContent(
       "No rationale provided",

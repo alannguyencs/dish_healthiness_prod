@@ -16,7 +16,7 @@ class ComponentConfirmation(BaseModel):
     number_of_servings: float = Field(..., ge=0.1, le=10.0, description="Number of servings")
 
 
-class Step1ConfirmationRequest(BaseModel):
+class IdentificationConfirmationRequest(BaseModel):
     """Request body for confirming Step 1 data and triggering Step 2."""
 
     selected_dish_name: str = Field(..., description="User-selected or custom dish name")
@@ -25,15 +25,15 @@ class Step1ConfirmationRequest(BaseModel):
     )
 
 
-class Step2CorrectionRequest(BaseModel):
+class NutritionCorrectionRequest(BaseModel):
     """
     Request body for POST /api/item/{record_id}/correction (Stage 8).
 
     Field names mirror `Step2NutritionalAnalysis` so the frontend can submit
     the same keys the AI's original response used. Written onto
-    `result_gemini.step2_corrected` while `result_gemini.step2_data` is
+    `result_gemini.nutrition_corrected` while `result_gemini.nutrition_data` is
     preserved for audit; additionally flows into
-    `personalized_food_descriptions.corrected_step2_data` so future
+    `personalized_food_descriptions.corrected_nutrition_data` so future
     Phase 2.2 retrieval surfaces the user-verified nutrients.
     """
 

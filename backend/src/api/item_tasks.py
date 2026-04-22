@@ -2,7 +2,7 @@
 Background tasks for Phase 2 (Nutritional Analysis).
 
 Error classification + persistence helpers live in `src.api._phase_errors`
-and are shared with the Phase 1 background task in `src.api.item_step1_tasks`.
+and are shared with the Phase 1 background task in `src.api.item_identification_tasks`.
 """
 
 import asyncio
@@ -17,8 +17,8 @@ from src.crud.crud_food_image_query import (
     update_dish_image_query_results,
 )
 from src.service import nutrition_lookup
-from src.service.llm.gemini_analyzer import analyze_step2_nutritional_analysis_async
-from src.service.llm.prompts import get_step2_nutritional_analysis_prompt
+from src.service.llm.nutrition_analyzer import analyze_nutritional_analysis_async
+from src.service.llm.prompts import get_nutritional_analysis_prompt
 from src.service.nutrition_lookup import extract_and_lookup_nutrition
 from src.service.personalized_lookup import lookup_personalization
 
@@ -142,7 +142,7 @@ async def _gather_pre_pro_lookups(
     return nutrition_db_matches, personalized_matches
 
 
-async def trigger_step2_analysis_background(
+async def trigger_nutrition_analysis_background(
     query_id: int,
     image_path: Path,
     dish_name: str,
@@ -185,16 +185,16 @@ async def trigger_step2_analysis_background(
         # reference-assisted path.
         reference_image_bytes = _resolve_phase_2_2_image_bytes(personalized_matches)
 
-        step2_prompt = get_step2_nutritional_analysis_prompt(
+        nutrition_prompt = get_nutritional_analysis_prompt(
             dish_name=dish_name,
             components=components,
             nutrition_db_matches=nutrition_db_matches,
             personalized_matches=personalized_matches,
         )
 
-        step2_result = await analyze_step2_nutritional_analysis_async(
+        nutrition_result = await analyze_nutritional_analysis_async(
             image_path=image_path,
-            analysis_prompt=step2_prompt,
+            analysis_prompt=nutrition_prompt,
             gemini_model="gemini-2.5-pro",
             thinking_budget=-1,
             reference_image_bytes=reference_image_bytes,
@@ -206,17 +206,17 @@ async def trigger_step2_analysis_background(
             return
 
         result_gemini = query_record.result_gemini.copy()
-        result_gemini["step"] = 2
-        result_gemini["step2_data"] = step2_result
-        result_gemini["step1_confirmed"] = True
+        result_gemini["phase"] = 2
+        result_gemini["nutrition_data"] = nutrition_result
+        result_gemini["identification_confirmed"] = True
         # Clear any prior error now that we have a successful result.
-        result_gemini.pop("step2_error", None)
+        result_gemini.pop("nutrition_error", None)
 
         if "iterations" in result_gemini and len(result_gemini["iterations"]) > 0:
             current_iter_idx = result_gemini.get("current_iteration", 1) - 1
             if 0 <= current_iter_idx < len(result_gemini["iterations"]):
-                result_gemini["iterations"][current_iter_idx]["step"] = 2
-                result_gemini["iterations"][current_iter_idx]["step2_data"] = step2_result
+                result_gemini["iterations"][current_iter_idx]["phase"] = 2
+                result_gemini["iterations"][current_iter_idx]["nutrition_data"] = nutrition_result
                 result_gemini["iterations"][current_iter_idx]["metadata"][
                     "confirmed_dish_name"
                 ] = dish_name
@@ -231,4 +231,4 @@ async def trigger_step2_analysis_background(
 
     except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.error("Failed Step 2 analysis for query %s: %s", query_id, exc, exc_info=True)
-        persist_phase_error(query_id, exc, retry_count, "step2_error")
+        persist_phase_error(query_id, exc, retry_count, "nutrition_error")

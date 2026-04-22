@@ -12,8 +12,8 @@ from pathlib import Path
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-from src.api.item_step1_tasks import analyze_image_background
-from src.api.item_tasks import trigger_step2_analysis_background
+from src.api.item_identification_tasks import analyze_image_background
+from src.api.item_tasks import trigger_nutrition_analysis_background
 from src.auth import authenticate_user_from_request
 from src.configs import IMAGE_DIR
 from src.crud.crud_food_image_query import (
@@ -26,8 +26,8 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/item", tags=["item"])
 
 
-@router.post("/{record_id}/retry-step2")
-async def retry_step2_analysis(
+@router.post("/{record_id}/retry-nutrition")
+async def retry_nutrition_analysis(
     record_id: int,
     request: Request,
     background_tasks: BackgroundTasks,
@@ -35,8 +35,8 @@ async def retry_step2_analysis(
     """
     Re-run Step 2 nutritional analysis after a prior failure.
 
-    Clears `result_gemini.step2_error`, increments retry_count, and
-    re-schedules `trigger_step2_analysis_background` using the
+    Clears `result_gemini.nutrition_error`, increments retry_count, and
+    re-schedules `trigger_nutrition_analysis_background` using the
     confirmed dish name and components stored on the record.
     """
     logger.info("Step 2 retry request for record_id=%s", record_id)
@@ -50,11 +50,11 @@ async def retry_step2_analysis(
         raise HTTPException(status_code=404, detail="Record not found")
 
     result_gemini = record.result_gemini or {}
-    if not result_gemini.get("step1_confirmed"):
+    if not result_gemini.get("identification_confirmed"):
         raise HTTPException(status_code=400, detail="Step 1 has not been confirmed")
-    if result_gemini.get("step2_data"):
+    if result_gemini.get("nutrition_data"):
         raise HTTPException(status_code=400, detail="Step 2 is already complete")
-    if not result_gemini.get("step2_error"):
+    if not result_gemini.get("nutrition_error"):
         raise HTTPException(status_code=400, detail="No prior error to retry")
 
     if not record.image_url:
@@ -64,15 +64,15 @@ async def retry_step2_analysis(
     if not image_path.exists():
         raise HTTPException(status_code=404, detail="Image file no longer exists on disk")
 
-    prior_retry = int(result_gemini["step2_error"].get("retry_count", 0))
+    prior_retry = int(result_gemini["nutrition_error"].get("retry_count", 0))
     new_retry_count = prior_retry + 1
 
     cleared = result_gemini.copy()
-    cleared.pop("step2_error", None)
+    cleared.pop("nutrition_error", None)
     update_dish_image_query_results(query_id=record_id, result_openai=None, result_gemini=cleared)
 
     background_tasks.add_task(
-        trigger_step2_analysis_background,
+        trigger_nutrition_analysis_background,
         record_id,
         image_path,
         result_gemini["confirmed_dish_name"],
@@ -86,13 +86,13 @@ async def retry_step2_analysis(
             "message": "Step 2 analysis re-scheduled.",
             "record_id": record_id,
             "retry_count": new_retry_count,
-            "step2_in_progress": True,
+            "nutrition_in_progress": True,
         }
     )
 
 
-@router.post("/{record_id}/retry-step1")
-async def retry_step1_analysis(
+@router.post("/{record_id}/retry-identification")
+async def retry_identification_analysis(
     record_id: int,
     request: Request,
     background_tasks: BackgroundTasks,
@@ -100,7 +100,7 @@ async def retry_step1_analysis(
     """
     Re-run Phase 1 (Component Identification) after a prior failure.
 
-    Clears `result_gemini.step1_error`, increments retry_count, and
+    Clears `result_gemini.identification_error`, increments retry_count, and
     re-schedules `analyze_image_background` against the existing image file.
     """
     logger.info("Step 1 retry request for record_id=%s", record_id)
@@ -114,9 +114,9 @@ async def retry_step1_analysis(
         raise HTTPException(status_code=404, detail="Record not found")
 
     result_gemini = record.result_gemini or {}
-    if result_gemini.get("step1_data"):
+    if result_gemini.get("identification_data"):
         raise HTTPException(status_code=400, detail="Step 1 is already complete")
-    if not result_gemini.get("step1_error"):
+    if not result_gemini.get("identification_error"):
         raise HTTPException(status_code=400, detail="No prior error to retry")
 
     if not record.image_url:
@@ -126,11 +126,11 @@ async def retry_step1_analysis(
     if not image_path.exists():
         raise HTTPException(status_code=404, detail="Image file no longer exists on disk")
 
-    prior_retry = int(result_gemini["step1_error"].get("retry_count", 0))
+    prior_retry = int(result_gemini["identification_error"].get("retry_count", 0))
     new_retry_count = prior_retry + 1
 
     cleared = result_gemini.copy()
-    cleared.pop("step1_error", None)
+    cleared.pop("identification_error", None)
     update_dish_image_query_results(query_id=record_id, result_openai=None, result_gemini=cleared)
 
     background_tasks.add_task(
@@ -143,6 +143,6 @@ async def retry_step1_analysis(
             "message": "Step 1 analysis re-scheduled.",
             "record_id": record_id,
             "retry_count": new_retry_count,
-            "step1_in_progress": True,
+            "identification_in_progress": True,
         }
     )

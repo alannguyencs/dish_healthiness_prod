@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse
 from PIL import Image
 from pydantic import BaseModel
 
-from src.api.item_step1_tasks import analyze_image_background
+from src.api.item_identification_tasks import analyze_image_background
 from src.auth import authenticate_user_from_request
 from src.configs import IMAGE_DIR
 from src.crud.crud_food_image_query import (

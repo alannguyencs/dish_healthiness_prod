@@ -26,14 +26,14 @@ def _hit(
     image_url=None,
     description=None,
     similarity_score=0.9,
-    corrected_step2_data=None,
+    corrected_nutrition_data=None,
 ):
     return {
         "query_id": query_id,
         "image_url": image_url,
         "description": description,
         "similarity_score": similarity_score,
-        "row": SimpleNamespace(corrected_step2_data=corrected_step2_data),
+        "row": SimpleNamespace(corrected_nutrition_data=corrected_nutrition_data),
     }
 
 
@@ -74,7 +74,7 @@ def test_lookup_personalization_cold_start_returns_empty(monkeypatch):
     assert not out
 
 
-def test_lookup_personalization_populates_prior_step2_data_from_referenced_record(monkeypatch):
+def test_lookup_personalization_populates_prior_nutrition_data_from_referenced_record(monkeypatch):
     hit = _hit(
         42, image_url="/images/prior.jpg", description="chicken rice", similarity_score=0.88
     )
@@ -85,7 +85,7 @@ def test_lookup_personalization_populates_prior_step2_data_from_referenced_recor
     )
 
     referenced = SimpleNamespace(
-        result_gemini={"step2_data": {"calories_kcal": 500, "dish_name": "Chicken Rice"}}
+        result_gemini={"nutrition_data": {"calories_kcal": 500, "dish_name": "Chicken Rice"}}
     )
     monkeypatch.setattr(personalized_lookup, "get_dish_image_query_by_id", lambda _id: referenced)
 
@@ -96,11 +96,11 @@ def test_lookup_personalization_populates_prior_step2_data_from_referenced_recor
     assert out[0]["query_id"] == 42
     assert out[0]["image_url"] == "/images/prior.jpg"
     assert out[0]["similarity_score"] == pytest.approx(0.88)
-    assert out[0]["prior_step2_data"]["calories_kcal"] == 500
-    assert out[0]["corrected_step2_data"] is None
+    assert out[0]["prior_nutrition_data"]["calories_kcal"] == 500
+    assert out[0]["corrected_nutrition_data"] is None
 
 
-def test_lookup_personalization_prior_step2_data_null_when_referenced_has_no_step2(
+def test_lookup_personalization_prior_nutrition_data_null_when_referenced_has_no_step2(
     monkeypatch,
 ):
     hit = _hit(42)
@@ -109,16 +109,16 @@ def test_lookup_personalization_prior_step2_data_null_when_referenced_has_no_ste
         "search_for_user",
         lambda *_a, **_kw: [hit],
     )
-    referenced = SimpleNamespace(result_gemini={"step2_data": None})
+    referenced = SimpleNamespace(result_gemini={"nutrition_data": None})
     monkeypatch.setattr(personalized_lookup, "get_dish_image_query_by_id", lambda _id: referenced)
 
     out = lookup_personalization(1, 100, "c", "Chicken Rice")
-    assert out[0]["prior_step2_data"] is None
+    assert out[0]["prior_nutrition_data"] is None
 
 
-def test_lookup_personalization_passes_corrected_step2_data_from_row(monkeypatch):
+def test_lookup_personalization_passes_corrected_nutrition_data_from_row(monkeypatch):
     corrected = {"calories_kcal": 420, "healthiness": "moderate"}
-    hit = _hit(42, corrected_step2_data=corrected)
+    hit = _hit(42, corrected_nutrition_data=corrected)
     monkeypatch.setattr(
         personalized_lookup.personalized_food_index,
         "search_for_user",
@@ -127,11 +127,11 @@ def test_lookup_personalization_passes_corrected_step2_data_from_row(monkeypatch
     monkeypatch.setattr(
         personalized_lookup,
         "get_dish_image_query_by_id",
-        lambda _id: SimpleNamespace(result_gemini={"step2_data": {"x": 1}}),
+        lambda _id: SimpleNamespace(result_gemini={"nutrition_data": {"x": 1}}),
     )
 
     out = lookup_personalization(1, 100, "c", "Chicken Rice")
-    assert out[0]["corrected_step2_data"] == corrected
+    assert out[0]["corrected_nutrition_data"] == corrected
 
 
 def test_lookup_personalization_calls_search_for_user_with_exclude_query_id(monkeypatch):
@@ -164,7 +164,7 @@ def test_lookup_personalization_drops_row_key_from_output(monkeypatch):
     monkeypatch.setattr(
         personalized_lookup,
         "get_dish_image_query_by_id",
-        lambda _id: SimpleNamespace(result_gemini={"step2_data": {}}),
+        lambda _id: SimpleNamespace(result_gemini={"nutrition_data": {}}),
     )
     out = lookup_personalization(1, 100, "c", "Dish")
     assert "row" not in out[0]
@@ -184,7 +184,7 @@ def test_lookup_personalization_empty_tokens_skips_search(monkeypatch):
 
 
 def test_lookup_personalization_handles_missing_referenced_record(monkeypatch):
-    """Referenced DishImageQuery lookup returns None → prior_step2_data=None."""
+    """Referenced DishImageQuery lookup returns None → prior_nutrition_data=None."""
     hit = _hit(42)
     monkeypatch.setattr(
         personalized_lookup.personalized_food_index,
@@ -194,4 +194,4 @@ def test_lookup_personalization_handles_missing_referenced_record(monkeypatch):
     monkeypatch.setattr(personalized_lookup, "get_dish_image_query_by_id", lambda _id: None)
     out = lookup_personalization(1, 100, "c", "Dish")
     assert len(out) == 1
-    assert out[0]["prior_step2_data"] is None
+    assert out[0]["prior_nutrition_data"] is None

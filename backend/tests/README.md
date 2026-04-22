@@ -19,7 +19,7 @@ The first run installs nothing — the deps (`pytest`, `pytest-asyncio`, `httpx`
 | File | Scope |
 |------|-------|
 | `test_item_tasks.py` | Unit tests for `_classify_step2_error` (5 buckets) and `_persist_step2_error` (mocked CRUD writes). |
-| `test_item_retry.py` | FastAPI `TestClient` tests for `POST /api/item/{id}/retry-step2` — auth, ownership, 400 guards, success path, retry counter. |
+| `test_item_retry.py` | FastAPI `TestClient` tests for `POST /api/item/{id}/retry-nutrition` — auth, ownership, 400 guards, success path, retry counter. |
 
 ## How fixtures work
 

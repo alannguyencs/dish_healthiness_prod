@@ -4,10 +4,10 @@ Phase 2.2 (Stage 6) — per-user personalization retrieval.
 Queries the user's `personalized_food_descriptions` corpus with the union
 of caption tokens (from Phase 1.1.1 reference_image.description) and
 confirmed_dish_name tokens (from Stage 4 post-confirm). Each hit is joined
-back to its DishImageQuery to carry `prior_step2_data`, and to the
-personalization row itself for `corrected_step2_data` (Stage 8 writes).
+back to its DishImageQuery to carry `prior_nutrition_data`, and to the
+personalization row itself for `corrected_nutrition_data` (Stage 8 writes).
 
-Called from `trigger_step2_analysis_background` in parallel with
+Called from `trigger_nutrition_analysis_background` in parallel with
 `extract_and_lookup_nutrition` via `asyncio.gather`. Signature is sync;
 the caller schedules the call on the default executor via
 `asyncio.to_thread`.
@@ -49,12 +49,12 @@ def lookup_personalization(
     Return up to `top_k` historical personalization matches for `user_id`.
 
     Each match carries:
-        query_id             — referenced DishImageQuery id
-        image_url            — referenced dish's image URL
-        description          — Phase 1.1.1 caption on the referenced row
-        similarity_score     — 0..1 max-in-batch normalized
-        prior_step2_data     — referenced DishImageQuery.result_gemini.step2_data, or None
-        corrected_step2_data — personalization row's corrected_step2_data, or None
+        query_id                 — referenced DishImageQuery id
+        image_url                — referenced dish's image URL
+        description              — Phase 1.1.1 caption on the referenced row
+        similarity_score         — 0..1 max-in-batch normalized
+        prior_nutrition_data     — referenced DishImageQuery.result_gemini.nutrition_data, or None
+        corrected_nutrition_data — personalization row's corrected_nutrition_data, or None
 
     Self-excluding: `search_for_user` is called with
     `exclude_query_id=query_id` so the current upload never matches itself.
@@ -74,18 +74,20 @@ def lookup_personalization(
     matches: List[Dict[str, Any]] = []
     for hit in hits:
         referenced = get_dish_image_query_by_id(hit["query_id"])
-        prior_step2_data = None
+        prior_nutrition_data = None
         if referenced and referenced.result_gemini:
-            prior_step2_data = referenced.result_gemini.get("step2_data")
-        corrected_step2_data = getattr(hit.get("row"), "corrected_step2_data", None)
+            prior_nutrition_data = referenced.result_gemini.get("nutrition_data")
+        corrected_nutrition_data = getattr(
+            hit.get("row"), "corrected_nutrition_data", None
+        )
         matches.append(
             {
                 "query_id": hit["query_id"],
                 "image_url": hit["image_url"],
                 "description": hit["description"],
                 "similarity_score": hit["similarity_score"],
-                "prior_step2_data": prior_step2_data,
-                "corrected_step2_data": corrected_step2_data,
+                "prior_nutrition_data": prior_nutrition_data,
+                "corrected_nutrition_data": corrected_nutrition_data,
             }
         )
     return matches

@@ -48,7 +48,7 @@ Per-user retrieval of prior food uploads. Scoped strictly by `user_id` at the SQ
 | `confirmed_dish_name` | TEXT | yes | Stage 4 | user-confirmed dish name |
 | `confirmed_portions` | FLOAT | yes | Stage 4 | sum of confirmed component servings |
 | `confirmed_tokens` | JSONB | yes | Stage 4 | tokenized `confirmed_dish_name`; Stage 6 queries are the union of `tokens` + `confirmed_tokens` |
-| `corrected_step2_data` | JSONB | yes | Stage 8 | user manual nutrient corrections, ground truth for Stage 6 lookups |
+| `corrected_nutrition_data` | JSONB | yes | Stage 8 | user manual nutrient corrections, ground truth for Stage 6 lookups |
 | `created_at` | TIMESTAMP | no | Stage 0 | set on insert |
 | `updated_at` | TIMESTAMP | no | Stage 0 | bumped on every write |
 
@@ -115,7 +115,7 @@ No class. Module-level functions so later callers (Stages 2, 4, 6) can import di
 |---|---|
 | `insert_description_row(user_id, query_id, *, image_url, description, tokens, similarity_score_on_insert)` | Stage 2 write path. Raises `IntegrityError` on duplicate `query_id`. Sets `created_at == updated_at` at insert. |
 | `update_confirmed_fields(query_id, *, confirmed_dish_name, confirmed_portions, confirmed_tokens)` | Stage 4 write. Returns `None` if the row does not exist (Stage 4 logs and moves on). |
-| `update_corrected_step2_data(query_id, payload)` | Stage 8 write. Returns `None` on missing row. |
+| `update_corrected_nutrition_data(query_id, payload)` | Stage 8 write. Returns `None` on missing row. |
 | `get_all_rows_for_user(user_id, *, exclude_query_id)` | Used by `search_for_user` to build the per-request corpus. Deterministic `id ASC` order. `exclude_query_id` is how Stage 2's write-after-read contract prevents self-matching. |
 
 The module is deliberately **not** re-exported from the `crud_food_image_query.py` facade: that facade is scoped to `DishImageQuery` concerns. Callers import the new module directly.
@@ -142,7 +142,7 @@ None. `rank-bm25` is an in-process Python library, added to `requirements.txt` a
 - [x] `PersonalizedFoodDescription` ORM class — `backend/src/models.py`
 - [x] CRUD `insert_description_row` — `backend/src/crud/crud_personalized_food.py`
 - [x] CRUD `update_confirmed_fields`
-- [x] CRUD `update_corrected_step2_data`
+- [x] CRUD `update_corrected_nutrition_data`
 - [x] CRUD `get_all_rows_for_user` with `exclude_query_id`
 - [x] Service `tokenize` — `backend/src/service/personalized_food_index.py`
 - [x] Service `search_for_user` with max-in-batch normalization + token-overlap fallback
@@ -150,10 +150,10 @@ None. `rank-bm25` is an in-process Python library, added to `requirements.txt` a
 - [x] Unit tests CRUD — `backend/tests/test_crud_personalized_food.py`
 - [x] Unit tests index — `backend/tests/test_personalized_food_index.py`
 - [x] Stage 2 (Phase 1.1.1): fast-caption + retrieval wired into `analyze_image_background` (see [component_identification.md](./component_identification.md#phase-111--fast-caption--reference-retrieval))
-- [x] Stage 4 (Phase 1.2): `update_confirmed_fields` called from `confirm_step1_and_trigger_step2` (see [user_customization.md](./user_customization.md#personalization-enrichment-stage-4))
-- [x] Stage 6 (Phase 2.2): `search_for_user` called from `service/personalized_lookup.py::lookup_personalization`, gathered in parallel with Phase 2.1 inside `trigger_step2_analysis_background` (see [nutritional_analysis.md § Phase 2.2](./nutritional_analysis.md#phase-22--personalization-lookup-stage-6))
-- [x] Stage 7 (Phase 2.3): Step 2 prompt reads `result_gemini.personalized_matches` via `__PERSONALIZED_BLOCK__` placeholder; gated on `similarity_score >= 0.30` for text block, `>= 0.35` for image-B attach. See [nutritional_analysis.md § Phase 2.3](./nutritional_analysis.md#phase-23--reference-assisted-prompt-stage-7).
-- [x] Stage 8 (Phase 2.4): `update_corrected_step2_data` called from `POST /api/item/{record_id}/correction` (see [nutritional_analysis.md § Phase 2.4](./nutritional_analysis.md#phase-24--user-review--correction-stage-8)). Stage 6's `lookup_personalization` surfaces the written `corrected_step2_data` on each match so Stage 8's PersonalizationMatches panel renders the user-verified nutrients with a badge.
+- [x] Stage 4 (Phase 1.2): `update_confirmed_fields` called from `confirm_identification_and_trigger_nutrition` (see [user_customization.md](./user_customization.md#personalization-enrichment-stage-4))
+- [x] Stage 6 (Phase 2.2): `search_for_user` called from `service/personalized_lookup.py::lookup_personalization`, gathered in parallel with Phase 2.1 inside `trigger_nutrition_analysis_background` (see [nutritional_analysis.md § Phase 2.2](./nutritional_analysis.md#phase-22--personalization-lookup-stage-6))
+- [x] Stage 7 (Phase 2.3): Nutritional Analysis prompt reads `result_gemini.personalized_matches` via `__PERSONALIZED_BLOCK__` placeholder; gated on `similarity_score >= 0.30` for text block, `>= 0.35` for image-B attach. See [nutritional_analysis.md § Phase 2.3](./nutritional_analysis.md#phase-23--reference-assisted-prompt-stage-7).
+- [x] Stage 8 (Phase 2.4): `update_corrected_nutrition_data` called from `POST /api/item/{record_id}/correction` (see [nutritional_analysis.md § Phase 2.4](./nutritional_analysis.md#phase-24--user-review--correction-stage-8)). Stage 6's `lookup_personalization` surfaces the written `corrected_nutrition_data` on each match so Stage 8's PersonalizationMatches panel renders the user-verified nutrients with a badge.
 
 ---
 

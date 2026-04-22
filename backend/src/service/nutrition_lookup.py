@@ -7,7 +7,7 @@ a comma-joined combined-terms fallback when the best individual match
 scores below 0.75.
 
 Public surface: one function, `extract_and_lookup_nutrition`. Called from
-`trigger_step2_analysis_background` before the Gemini 2.5 Pro call so the
+`trigger_nutrition_analysis_background` before the Gemini 2.5 Pro call so the
 resulting dict can be persisted on `result_gemini.nutrition_db_matches`
 and survive any subsequent Step 2 failure / retry.
 

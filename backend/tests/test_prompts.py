@@ -1,7 +1,7 @@
 """
 Tests for src/service/llm/prompts.py — Phase 1.1.2 reference-block substitution.
 
-The prompt file at backend/resources/step1_component_identification.md
+The prompt file at backend/resources/prompts/component_identification.md
 carries a single `__REFERENCE_BLOCK__` placeholder. Stage 3's prompt
 helper either substitutes a rendered reference block (when prior
 step1_data is non-empty) or strips the placeholder line entirely.
@@ -11,8 +11,8 @@ step1_data is non-empty) or strips the placeholder line entirely.
 # pylint: disable=redefined-outer-name,unused-argument
 
 from src.service.llm.prompts import (
-    get_step1_component_identification_prompt,
-    get_step2_nutritional_analysis_prompt,
+    get_component_identification_prompt,
+    get_nutritional_analysis_prompt,
 )
 
 
@@ -36,23 +36,23 @@ _FULL_PRIOR = {
 }
 
 
-def test_get_step1_prompt_strips_placeholder_when_reference_is_none():
-    prompt = get_step1_component_identification_prompt()
+def test_get_component_identification_prompt_strips_placeholder_when_reference_is_none():
+    prompt = get_component_identification_prompt()
     assert "__REFERENCE_BLOCK__" not in prompt
     assert "## Reference results" not in prompt
 
 
-def test_get_step1_prompt_strips_placeholder_when_prior_step1_data_is_none():
-    prompt = get_step1_component_identification_prompt(
-        reference={"query_id": 1, "prior_step1_data": None}
+def test_get_component_identification_prompt_strips_placeholder_when_prior_identification_data_is_none():
+    prompt = get_component_identification_prompt(
+        reference={"query_id": 1, "prior_identification_data": None}
     )
     assert "__REFERENCE_BLOCK__" not in prompt
     assert "## Reference results" not in prompt
 
 
-def test_get_step1_prompt_substitutes_block_with_full_prior_data():
-    prompt = get_step1_component_identification_prompt(
-        reference={"query_id": 1, "prior_step1_data": _FULL_PRIOR}
+def test_get_component_identification_prompt_substitutes_block_with_full_prior_data():
+    prompt = get_component_identification_prompt(
+        reference={"query_id": 1, "prior_identification_data": _FULL_PRIOR}
     )
     assert "__REFERENCE_BLOCK__" not in prompt
     assert "## Reference results (HINT ONLY — may or may not match)" in prompt
@@ -61,32 +61,32 @@ def test_get_step1_prompt_substitutes_block_with_full_prior_data():
     assert "White Rice · 1/2 cup, 1 cup · 1.5" in prompt
 
 
-def test_get_step1_prompt_omits_dish_name_line_when_dish_predictions_empty():
+def test_get_component_identification_prompt_omits_dish_name_line_when_dish_predictions_empty():
     prior = {"dish_predictions": [], "components": _FULL_PRIOR["components"]}
-    prompt = get_step1_component_identification_prompt(reference={"prior_step1_data": prior})
+    prompt = get_component_identification_prompt(reference={"prior_identification_data": prior})
     assert "## Reference results" in prompt
     assert "**Prior dish name:**" not in prompt
     assert "Grilled Chicken" in prompt
 
 
-def test_get_step1_prompt_omits_components_block_when_components_empty():
+def test_get_component_identification_prompt_omits_components_block_when_components_empty():
     prior = {"dish_predictions": _FULL_PRIOR["dish_predictions"], "components": []}
-    prompt = get_step1_component_identification_prompt(reference={"prior_step1_data": prior})
+    prompt = get_component_identification_prompt(reference={"prior_identification_data": prior})
     assert "**Prior dish name:** Chicken Rice" in prompt
     assert "**Prior components" not in prompt
 
 
-def test_get_step1_prompt_handles_missing_component_fields_defensively():
+def test_get_component_identification_prompt_handles_missing_component_fields_defensively():
     prior = {
         "dish_predictions": [{"name": "X"}],
         "components": [{"component_name": "Mystery"}],
     }
-    prompt = get_step1_component_identification_prompt(reference={"prior_step1_data": prior})
+    prompt = get_component_identification_prompt(reference={"prior_identification_data": prior})
     assert "- Mystery ·  · 1.0" in prompt
 
 
-def test_get_step1_prompt_strips_placeholder_on_empty_prior_data():
-    prompt = get_step1_component_identification_prompt(reference={"prior_step1_data": {}})
+def test_get_component_identification_prompt_strips_placeholder_on_empty_prior_data():
+    prompt = get_component_identification_prompt(reference={"prior_identification_data": {}})
     assert "__REFERENCE_BLOCK__" not in prompt
     assert "## Reference results" not in prompt
 
@@ -130,14 +130,14 @@ def _persona_match(*, similarity_score, query_id=42, corrected=None, prior=None)
         "image_url": f"/images/prior_{query_id}.jpg",
         "description": "chicken rice",
         "similarity_score": similarity_score,
-        "prior_step2_data": prior
+        "prior_nutrition_data": prior
         or {"calories_kcal": 480, "protein_g": 20, "carbs_g": 55, "fat_g": 14, "fiber_g": 1},
-        "corrected_step2_data": corrected,
+        "corrected_nutrition_data": corrected,
     }
 
 
 def test_step2_prompt_strips_both_placeholders_on_no_matches():
-    prompt = get_step2_nutritional_analysis_prompt("Beef Burger", _SAMPLE_COMPONENTS)
+    prompt = get_nutritional_analysis_prompt("Beef Burger", _SAMPLE_COMPONENTS)
     assert "__NUTRITION_DB_BLOCK__" not in prompt
     assert "__PERSONALIZED_BLOCK__" not in prompt
     assert "## Nutrition Database Matches" not in prompt
@@ -146,7 +146,7 @@ def test_step2_prompt_strips_both_placeholders_on_no_matches():
 
 def test_step2_prompt_substitutes_db_block_when_confidence_ge_threshold():
     payload = _db_payload([_db_match(confidence_score=85)])
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, nutrition_db_matches=payload
     )
     assert "__NUTRITION_DB_BLOCK__" not in prompt
@@ -161,7 +161,7 @@ def test_step2_prompt_substitutes_db_block_when_confidence_ge_threshold():
 
 def test_step2_prompt_strips_db_block_when_confidence_below_threshold():
     payload = _db_payload([_db_match(confidence_score=75)])
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, nutrition_db_matches=payload
     )
     assert "## Nutrition Database Matches" not in prompt
@@ -169,7 +169,7 @@ def test_step2_prompt_strips_db_block_when_confidence_below_threshold():
 
 def test_step2_prompt_strips_db_block_when_nutrition_matches_empty():
     payload = _db_payload([])
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, nutrition_db_matches=payload
     )
     assert "## Nutrition Database Matches" not in prompt
@@ -177,7 +177,7 @@ def test_step2_prompt_strips_db_block_when_nutrition_matches_empty():
 
 def test_step2_prompt_substitutes_personalization_block_when_similarity_ge_threshold():
     matches = [_persona_match(similarity_score=0.55)]
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, personalized_matches=matches
     )
     assert "__PERSONALIZED_BLOCK__" not in prompt
@@ -191,13 +191,13 @@ def test_step2_prompt_substitutes_personalization_block_when_similarity_ge_thres
 
 def test_step2_prompt_strips_personalization_block_when_top_below_threshold():
     matches = [_persona_match(similarity_score=0.25)]
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, personalized_matches=matches
     )
     assert "## Personalization Matches" not in prompt
 
 
-def test_step2_prompt_carries_corrected_step2_data_when_present():
+def test_step2_prompt_carries_corrected_nutrition_data_when_present():
     corrected = {
         "calories_kcal": 420,
         "protein_g": 25,
@@ -206,10 +206,10 @@ def test_step2_prompt_carries_corrected_step2_data_when_present():
         "fiber_g": 2,
     }
     matches = [_persona_match(similarity_score=0.70, corrected=corrected)]
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, personalized_matches=matches
     )
-    assert '"corrected_step2_data"' in prompt
+    assert '"corrected_nutrition_data"' in prompt
     assert '"calories_kcal": 420' in prompt
 
 
@@ -217,7 +217,7 @@ def test_step2_prompt_trims_to_top_5_matches():
     matches = [
         _persona_match(similarity_score=1.0 - (i * 0.05), query_id=100 + i) for i in range(10)
     ]
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, personalized_matches=matches
     )
     # There should be at most 5 personalization-match entries in the rendered
@@ -228,7 +228,7 @@ def test_step2_prompt_trims_to_top_5_matches():
 def test_step2_prompt_db_block_precedes_personalization_block():
     db_payload = _db_payload([_db_match(confidence_score=90)])
     persona = [_persona_match(similarity_score=0.75)]
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice",
         _SAMPLE_COMPONENTS,
         nutrition_db_matches=db_payload,
@@ -247,15 +247,15 @@ def test_step2_prompt_handles_malformed_match_payload_defensively():
         "confidence_score": 95,
     }
     payload = _db_payload([broken_match])
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, nutrition_db_matches=payload
     )
     assert "## Nutrition Database Matches" in prompt
 
 
-def test_step2_prompt_null_corrected_step2_data_renders_as_null():
+def test_step2_prompt_null_corrected_nutrition_data_renders_as_null():
     matches = [_persona_match(similarity_score=0.60, corrected=None)]
-    prompt = get_step2_nutritional_analysis_prompt(
+    prompt = get_nutritional_analysis_prompt(
         "Chicken Rice", _SAMPLE_COMPONENTS, personalized_matches=matches
     )
-    assert '"corrected_step2_data": null' in prompt
+    assert '"corrected_nutrition_data": null' in prompt

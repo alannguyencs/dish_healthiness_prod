@@ -115,7 +115,7 @@ def test_resolve_reference_warm_user_returns_reference(sqlite_session, caption_s
     dish_query_basic.update_dish_image_query_results(
         query_id=10,
         result_openai=None,
-        result_gemini={"step1_data": {"dish_predictions": [{"name": "Chicken Rice"}]}},
+        result_gemini={"identification_data": {"dish_predictions": [{"name": "Chicken Rice"}]}},
     )
 
     _set_caption(caption_spy, "chicken rice with cucumber")
@@ -131,7 +131,7 @@ def test_resolve_reference_warm_user_returns_reference(sqlite_session, caption_s
     assert ref["query_id"] == 10
     assert ref["similarity_score"] >= 0.25
     assert ref["image_url"] == "/images/q10.jpg"
-    assert ref["prior_step1_data"] == {"dish_predictions": [{"name": "Chicken Rice"}]}
+    assert ref["prior_identification_data"] == {"dish_predictions": [{"name": "Chicken Rice"}]}
 
     # New row for query_id=11 inserted with similarity_score_on_insert set
     row11 = crud_personalized_food.get_row_by_query_id(11)
@@ -226,7 +226,7 @@ def test_resolve_reference_graceful_degrade_on_image_missing(sqlite_session, mon
     assert crud_personalized_food.get_row_by_query_id(10) is None
 
 
-def test_resolve_reference_handles_prior_step1_data_missing(sqlite_session, caption_spy):
+def test_resolve_reference_handles_prior_identification_data_missing(sqlite_session, caption_spy):
     crud_personalized_food.insert_description_row(
         user_id=1,
         query_id=10,
@@ -245,7 +245,7 @@ def test_resolve_reference_handles_prior_step1_data_missing(sqlite_session, capt
     ref = result["reference_image"]
     assert ref is not None
     assert ref["query_id"] == 10
-    assert ref["prior_step1_data"] is None
+    assert ref["prior_identification_data"] is None
 
 
 def test_resolve_reference_cross_user_isolation(sqlite_session, caption_spy):

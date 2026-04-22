@@ -11,18 +11,20 @@ import apiService from "../services/api";
  *
  * Returns:
  *   - item, loading, error (initial fetch state)
- *   - pollingStep1, pollingStep2 (which spinner to show, if any)
- *   - confirmedStep1Data (parsed for the editor's re-entry path)
+ *   - pollingIdentification, pollingNutrition (which spinner to show, if any)
+ *   - confirmedIdentificationData (parsed for the editor's re-entry path)
  *   - reload(): force a fresh fetch + re-evaluation
- *   - startPollingStep1() / startPollingStep2(): re-arm after a user retry/confirm
+ *   - startPollingIdentification() / startPollingNutrition(): re-arm after a
+ *     user retry/confirm
  */
 const useItemPolling = (recordId) => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pollingStep1, setPollingStep1] = useState(false);
-  const [pollingStep2, setPollingStep2] = useState(false);
-  const [confirmedStep1Data, setConfirmedStep1Data] = useState(null);
+  const [pollingIdentification, setPollingIdentification] = useState(false);
+  const [pollingNutrition, setPollingNutrition] = useState(false);
+  const [confirmedIdentificationData, setConfirmedIdentificationData] =
+    useState(null);
   const intervalRef = useRef(null);
 
   const stopPolling = useCallback(() => {
@@ -35,39 +37,48 @@ const useItemPolling = (recordId) => {
   const evaluateState = useCallback(
     (resultGemini) => {
       if (!resultGemini) {
-        setPollingStep1(true);
+        setPollingIdentification(true);
         return;
       }
       if (
         resultGemini.confirmed_components &&
         resultGemini.confirmed_dish_name
       ) {
-        setConfirmedStep1Data({
+        setConfirmedIdentificationData({
           selected_dish_name: resultGemini.confirmed_dish_name,
           components: resultGemini.confirmed_components,
         });
       }
 
-      if (!resultGemini.step1_data && !resultGemini.step1_error) {
-        setPollingStep1(true);
-      } else if (resultGemini.step1_error && !resultGemini.step1_data) {
-        setPollingStep1(false);
-        setPollingStep2(false);
-        stopPolling();
-      } else if (resultGemini.step === 1 && !resultGemini.step1_confirmed) {
-        setPollingStep1(false);
-        setPollingStep2(false);
+      if (
+        !resultGemini.identification_data &&
+        !resultGemini.identification_error
+      ) {
+        setPollingIdentification(true);
+      } else if (
+        resultGemini.identification_error &&
+        !resultGemini.identification_data
+      ) {
+        setPollingIdentification(false);
+        setPollingNutrition(false);
         stopPolling();
       } else if (
-        resultGemini.step1_confirmed &&
-        !resultGemini.step2_data &&
-        !resultGemini.step2_error
+        resultGemini.phase === 1 &&
+        !resultGemini.identification_confirmed
       ) {
-        setPollingStep1(false);
-        setPollingStep2(true);
+        setPollingIdentification(false);
+        setPollingNutrition(false);
+        stopPolling();
+      } else if (
+        resultGemini.identification_confirmed &&
+        !resultGemini.nutrition_data &&
+        !resultGemini.nutrition_error
+      ) {
+        setPollingIdentification(false);
+        setPollingNutrition(true);
       } else {
-        setPollingStep1(false);
-        setPollingStep2(false);
+        setPollingIdentification(false);
+        setPollingNutrition(false);
         stopPolling();
       }
     },
@@ -83,13 +94,13 @@ const useItemPolling = (recordId) => {
         const rg = data.result_gemini;
         if (!rg) return;
         if (
-          (rg.step === 1 && !rg.step1_confirmed) ||
-          rg.step1_error ||
-          rg.step2_data ||
-          rg.step2_error
+          (rg.phase === 1 && !rg.identification_confirmed) ||
+          rg.identification_error ||
+          rg.nutrition_data ||
+          rg.nutrition_error
         ) {
-          setPollingStep1(false);
-          setPollingStep2(false);
+          setPollingIdentification(false);
+          setPollingNutrition(false);
           stopPolling();
         }
       } catch (err) {
@@ -108,8 +119,8 @@ const useItemPolling = (recordId) => {
     } catch (err) {
       console.error(err);
       setError("Failed to load item details");
-      setPollingStep1(false);
-      setPollingStep2(false);
+      setPollingIdentification(false);
+      setPollingNutrition(false);
       stopPolling();
     } finally {
       setLoading(false);
@@ -118,8 +129,8 @@ const useItemPolling = (recordId) => {
 
   // Whenever a polling flag flips on, ensure the interval is running.
   useEffect(() => {
-    if (pollingStep1 || pollingStep2) startPolling();
-  }, [pollingStep1, pollingStep2, startPolling]);
+    if (pollingIdentification || pollingNutrition) startPolling();
+  }, [pollingIdentification, pollingNutrition, startPolling]);
 
   useEffect(() => {
     reload();
@@ -127,20 +138,20 @@ const useItemPolling = (recordId) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recordId]);
 
-  const startPollingStep1 = () => setPollingStep1(true);
-  const startPollingStep2 = () => setPollingStep2(true);
+  const startPollingIdentification = () => setPollingIdentification(true);
+  const startPollingNutrition = () => setPollingNutrition(true);
 
   return {
     item,
     loading,
     error,
-    pollingStep1,
-    pollingStep2,
-    confirmedStep1Data,
-    setConfirmedStep1Data,
+    pollingIdentification,
+    pollingNutrition,
+    confirmedIdentificationData,
+    setConfirmedIdentificationData,
     reload,
-    startPollingStep1,
-    startPollingStep2,
+    startPollingIdentification,
+    startPollingNutrition,
   };
 };
 

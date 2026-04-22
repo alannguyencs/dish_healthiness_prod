@@ -12,15 +12,15 @@ from pathlib import Path
 from fastapi import APIRouter, Request, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse
 
-from src.api.item_schemas import Step1ConfirmationRequest
-from src.api.item_tasks import trigger_step2_analysis_background
+from src.api.item_schemas import IdentificationConfirmationRequest
+from src.api.item_tasks import trigger_nutrition_analysis_background
 from src.auth import authenticate_user_from_request
 from src.crud import crud_personalized_food
 from src.crud.crud_food_image_query import (
     get_dish_image_query_by_id,
     get_current_iteration,
     update_metadata,
-    confirm_step1_atomic,
+    confirm_identification_atomic,
 )
 from src.schemas import MetadataUpdate
 from src.service import personalized_food_index
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/item", tags=["item"])
 
 
-def _enrich_personalization_row(record_id: int, confirmation: Step1ConfirmationRequest) -> None:
+def _enrich_personalization_row(record_id: int, confirmation: IdentificationConfirmationRequest) -> None:
     """
     Stage 4 (Phase 1.2) enrichment: mirror the user-verified dish name and
     portion total onto the personalization row so future uploads can match
@@ -199,12 +199,12 @@ async def update_item_metadata(
         raise HTTPException(status_code=500, detail=f"Error updating metadata: {str(e)}") from e
 
 
-@router.post("/{record_id}/confirm-step1")
-async def confirm_step1_and_trigger_step2(
+@router.post("/{record_id}/confirm-identification")
+async def confirm_identification_and_trigger_nutrition(
     record_id: int,
     request: Request,
     background_tasks: BackgroundTasks,
-    confirmation: Step1ConfirmationRequest,
+    confirmation: IdentificationConfirmationRequest,
 ) -> JSONResponse:
     """
     Confirm Step 1 data and trigger Step 2 nutritional analysis.
@@ -216,7 +216,7 @@ async def confirm_step1_and_trigger_step2(
         record_id (int): The ID of the dish image query record
         request (Request): FastAPI request object
         background_tasks (BackgroundTasks): FastAPI background tasks
-        confirmation (Step1ConfirmationRequest): Confirmed Step 1 data
+        confirmation (IdentificationConfirmationRequest): Confirmed Step 1 data
 
     Returns:
         JSONResponse: Success response with confirmation status
@@ -255,9 +255,9 @@ async def confirm_step1_and_trigger_step2(
     components_data = [comp.model_dump() for comp in confirmation.components]
 
     # Atomic check-and-set: row-locks the record and only flips
-    # step1_confirmed once, so a double-tapped Confirm cannot enqueue two
+    # identification_confirmed once, so a double-tapped Confirm cannot enqueue two
     # Phase-2 background tasks.
-    outcome = confirm_step1_atomic(
+    outcome = confirm_identification_atomic(
         record_id,
         confirmed_dish_name=confirmation.selected_dish_name,
         confirmed_components=components_data,
@@ -276,7 +276,7 @@ async def confirm_step1_and_trigger_step2(
     _enrich_personalization_row(record_id, confirmation)
 
     background_tasks.add_task(
-        trigger_step2_analysis_background,
+        trigger_nutrition_analysis_background,
         record_id,
         image_path,
         confirmation.selected_dish_name,
@@ -289,6 +289,6 @@ async def confirm_step1_and_trigger_step2(
             "message": "Step 1 confirmed. Step 2 analysis in progress...",
             "record_id": record_id,
             "confirmed_dish_name": confirmation.selected_dish_name,
-            "step2_in_progress": True,
+            "nutrition_in_progress": True,
         }
     )

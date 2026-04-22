@@ -99,7 +99,7 @@ const apiService = {
   },
 
   // NEW: Step 1 confirmation endpoint (triggers Step 2)
-  confirmStep1: async (recordId, confirmationData) => {
+  confirmIdentification: async (recordId, confirmationData) => {
     // confirmationData should have:
     // {
     //   selected_dish_name: string,
@@ -108,26 +108,26 @@ const apiService = {
     //   ]
     // }
     const response = await api.post(
-      `/api/item/${recordId}/confirm-step1`,
+      `/api/item/${recordId}/confirm-identification`,
       confirmationData,
     );
     return response.data;
   },
 
   // Retry Step 2 nutritional analysis after a prior failure
-  retryStep2: async (recordId) => {
-    const response = await api.post(`/api/item/${recordId}/retry-step2`);
+  retryNutrition: async (recordId) => {
+    const response = await api.post(`/api/item/${recordId}/retry-nutrition`);
     return response.data;
   },
 
   // Retry Step 1 component identification after a prior failure
-  retryStep1: async (recordId) => {
-    const response = await api.post(`/api/item/${recordId}/retry-step1`);
+  retryIdentification: async (recordId) => {
+    const response = await api.post(`/api/item/${recordId}/retry-identification`);
     return response.data;
   },
 
   // Stage 8: save a user correction of the Step 2 nutritional analysis
-  saveStep2Correction: async (recordId, payload) => {
+  saveNutritionCorrection: async (recordId, payload) => {
     // payload should have:
     // {
     //   healthiness_score: int,             // 0-100

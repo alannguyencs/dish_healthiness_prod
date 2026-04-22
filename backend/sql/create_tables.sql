@@ -49,7 +49,7 @@ END $$;
 -- Stage 0 writes user_id, query_id, created_at, updated_at.
 -- Stage 2 fills image_url, description, tokens, similarity_score_on_insert.
 -- Stage 4 fills confirmed_dish_name, confirmed_portions, confirmed_tokens.
--- Stage 8 fills corrected_step2_data.
+-- Stage 8 fills corrected_nutrition_data.
 CREATE TABLE IF NOT EXISTS personalized_food_descriptions (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id),
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS personalized_food_descriptions (
     confirmed_dish_name TEXT,
     confirmed_portions FLOAT,
     confirmed_tokens JSONB,
-    corrected_step2_data JSONB,
+    corrected_nutrition_data JSONB,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );

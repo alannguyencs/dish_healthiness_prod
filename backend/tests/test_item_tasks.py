@@ -60,7 +60,7 @@ def patch_prompt(monkeypatch):
     # fixture signature accepts them all.
     monkeypatch.setattr(
         item_tasks,
-        "get_step2_nutritional_analysis_prompt",
+        "get_nutritional_analysis_prompt",
         lambda **_kw: "STEP2 PROMPT",
     )
 
@@ -91,14 +91,14 @@ def _set_analyzer(monkeypatch, *, returns=None, raises=None):
             raise raises
         return returns
 
-    monkeypatch.setattr(item_tasks, "analyze_step2_nutritional_analysis_async", fake)
+    monkeypatch.setattr(item_tasks, "analyze_nutritional_analysis_async", fake)
 
 
 def test_phase2_task_persists_nutrition_db_matches_before_pro_call(
     monkeypatch, patch_prompt, patch_lookup, captured_writes
 ):
     """The first write must carry nutrition_db_matches before the Pro call runs."""
-    record = make_record(result_gemini={"step": 1, "step1_data": {}, "step1_confirmed": True})
+    record = make_record(result_gemini={"phase": 1, "identification_data": {}, "identification_confirmed": True})
     writes, capture = captured_writes
 
     def _get_record(_id):
@@ -111,7 +111,7 @@ def test_phase2_task_persists_nutrition_db_matches_before_pro_call(
     _set_analyzer(monkeypatch, returns={"dish_name": "Chicken Rice", "calories_kcal": 500})
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="Chicken Rice",
@@ -128,7 +128,7 @@ def test_phase2_task_persists_nutrition_db_matches_before_pro_call(
 def test_phase2_task_preserves_nutrition_db_matches_on_pro_success(
     monkeypatch, patch_prompt, patch_lookup, captured_writes
 ):
-    record = make_record(result_gemini={"step": 1, "step1_data": {}, "step1_confirmed": True})
+    record = make_record(result_gemini={"phase": 1, "identification_data": {}, "identification_confirmed": True})
     writes, capture = captured_writes
 
     def _get_record(_id):
@@ -141,7 +141,7 @@ def test_phase2_task_preserves_nutrition_db_matches_on_pro_success(
     _set_analyzer(monkeypatch, returns={"dish_name": "Chicken Rice", "calories_kcal": 500})
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="Chicken Rice",
@@ -150,15 +150,15 @@ def test_phase2_task_preserves_nutrition_db_matches_on_pro_success(
     )
 
     final = writes[-1]["result_gemini"]
-    assert final["step"] == 2
+    assert final["phase"] == 2
     assert final["nutrition_db_matches"] == NUTRITION_FIXTURE
-    assert final["step2_data"]["calories_kcal"] == 500
+    assert final["nutrition_data"]["calories_kcal"] == 500
 
 
 def test_phase2_task_preserves_nutrition_db_matches_on_pro_failure(
     monkeypatch, patch_prompt, patch_lookup, captured_writes
 ):
-    record = make_record(result_gemini={"step": 1, "step1_data": {}, "step1_confirmed": True})
+    record = make_record(result_gemini={"phase": 1, "identification_data": {}, "identification_confirmed": True})
     writes, capture = captured_writes
 
     def _get_record(_id):
@@ -173,7 +173,7 @@ def test_phase2_task_preserves_nutrition_db_matches_on_pro_failure(
     _set_analyzer(monkeypatch, raises=ValueError("GEMINI_API_KEY missing"))
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="Chicken Rice",
@@ -187,7 +187,7 @@ def test_phase2_task_preserves_nutrition_db_matches_on_pro_failure(
     assert writes[0]["result_gemini"]["nutrition_db_matches"] == NUTRITION_FIXTURE
     error_blob = writes[-1]["result_gemini"]
     assert error_blob["nutrition_db_matches"] == NUTRITION_FIXTURE
-    assert error_blob["step2_error"]["retry_count"] == 2
+    assert error_blob["nutrition_error"]["retry_count"] == 2
 
 
 def test_phase2_task_empty_db_still_schedules_and_succeeds(
@@ -211,7 +211,7 @@ def test_phase2_task_empty_db_still_schedules_and_succeeds(
         item_tasks, "extract_and_lookup_nutrition", lambda *_a, **_kw: empty_result
     )
 
-    record = make_record(result_gemini={"step": 1, "step1_data": {}, "step1_confirmed": True})
+    record = make_record(result_gemini={"phase": 1, "identification_data": {}, "identification_confirmed": True})
     writes, capture = captured_writes
 
     def _get_record(_id):
@@ -224,7 +224,7 @@ def test_phase2_task_empty_db_still_schedules_and_succeeds(
     _set_analyzer(monkeypatch, returns={"dish_name": "Chicken Rice", "calories_kcal": 500})
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="Chicken Rice",
@@ -233,7 +233,7 @@ def test_phase2_task_empty_db_still_schedules_and_succeeds(
     )
 
     assert writes[0]["result_gemini"]["nutrition_db_matches"]["nutrition_matches"] == []
-    assert writes[-1]["result_gemini"]["step2_data"]["calories_kcal"] == 500
+    assert writes[-1]["result_gemini"]["nutrition_data"]["calories_kcal"] == 500
 
 
 def test_phase2_task_skips_pre_pro_persist_when_no_result_gemini(
@@ -253,7 +253,7 @@ def test_phase2_task_skips_pre_pro_persist_when_no_result_gemini(
     _set_analyzer(monkeypatch, returns={"dish_name": "X", "calories_kcal": 100})
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="X",
@@ -278,8 +278,8 @@ PERSONALIZATION_FIXTURE = [
         "image_url": "/images/prior.jpg",
         "description": "chicken rice hainanese",
         "similarity_score": 0.82,
-        "prior_step2_data": {"calories_kcal": 480, "dish_name": "Chicken Rice"},
-        "corrected_step2_data": None,
+        "prior_nutrition_data": {"calories_kcal": 480, "dish_name": "Chicken Rice"},
+        "corrected_nutrition_data": None,
     }
 ]
 
@@ -310,9 +310,9 @@ def test_phase2_task_persists_personalized_matches_pre_pro(
     """Stage 6: first write carries both nutrition_db_matches AND personalized_matches."""
     record = make_record(
         result_gemini={
-            "step": 1,
-            "step1_data": {},
-            "step1_confirmed": True,
+            "phase": 1,
+            "identification_data": {},
+            "identification_confirmed": True,
             "reference_image": {"description": "chicken rice"},
         }
     )
@@ -332,7 +332,7 @@ def test_phase2_task_persists_personalized_matches_pre_pro(
     _set_analyzer(monkeypatch, returns={"dish_name": "Chicken Rice", "calories_kcal": 500})
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="Chicken Rice",
@@ -354,9 +354,9 @@ def test_phase2_task_preserves_personalized_matches_on_pro_success(
 ):
     record = make_record(
         result_gemini={
-            "step": 1,
-            "step1_data": {},
-            "step1_confirmed": True,
+            "phase": 1,
+            "identification_data": {},
+            "identification_confirmed": True,
             "reference_image": {"description": "chicken rice"},
         }
     )
@@ -376,7 +376,7 @@ def test_phase2_task_preserves_personalized_matches_on_pro_success(
     _set_analyzer(monkeypatch, returns={"dish_name": "Chicken Rice", "calories_kcal": 500})
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="Chicken Rice",
@@ -385,7 +385,7 @@ def test_phase2_task_preserves_personalized_matches_on_pro_success(
     )
 
     final = writes[-1]["result_gemini"]
-    assert final["step"] == 2
+    assert final["phase"] == 2
     assert final["personalized_matches"] == PERSONALIZATION_FIXTURE
 
 
@@ -394,9 +394,9 @@ def test_phase2_task_preserves_personalized_matches_on_pro_failure(
 ):
     record = make_record(
         result_gemini={
-            "step": 1,
-            "step1_data": {},
-            "step1_confirmed": True,
+            "phase": 1,
+            "identification_data": {},
+            "identification_confirmed": True,
             "reference_image": {"description": "chicken rice"},
         }
     )
@@ -418,7 +418,7 @@ def test_phase2_task_preserves_personalized_matches_on_pro_failure(
     _set_analyzer(monkeypatch, raises=ValueError("GEMINI_API_KEY missing"))
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="Chicken Rice",
@@ -429,7 +429,7 @@ def test_phase2_task_preserves_personalized_matches_on_pro_failure(
 
     error_blob = writes[-1]["result_gemini"]
     assert error_blob["personalized_matches"] == PERSONALIZATION_FIXTURE
-    assert error_blob["step2_error"]["retry_count"] == 1
+    assert error_blob["nutrition_error"]["retry_count"] == 1
 
 
 def test_phase2_task_phase_2_2_exception_degrades_to_empty_list(
@@ -438,9 +438,9 @@ def test_phase2_task_phase_2_2_exception_degrades_to_empty_list(
     """Phase 2.2 raises → personalized_matches=[]; Phase 2.1 still lands; Pro call still runs."""
     record = make_record(
         result_gemini={
-            "step": 1,
-            "step1_data": {},
-            "step1_confirmed": True,
+            "phase": 1,
+            "identification_data": {},
+            "identification_confirmed": True,
             "reference_image": {"description": "chicken rice"},
         }
     )
@@ -461,7 +461,7 @@ def test_phase2_task_phase_2_2_exception_degrades_to_empty_list(
 
     with caplog.at_level("WARNING"):
         asyncio.run(
-            item_tasks.trigger_step2_analysis_background(
+            item_tasks.trigger_nutrition_analysis_background(
                 query_id=1,
                 image_path="/tmp/x.jpg",
                 dish_name="Chicken Rice",
@@ -473,7 +473,7 @@ def test_phase2_task_phase_2_2_exception_degrades_to_empty_list(
     assert pre_pro["personalized_matches"] == []
     assert pre_pro["nutrition_db_matches"] == NUTRITION_FIXTURE
     final = writes[-1]["result_gemini"]
-    assert final["step2_data"]["calories_kcal"] == 500
+    assert final["nutrition_data"]["calories_kcal"] == 500
     assert any(
         "Phase 2.2 raised" in rec.message and "personalization index down" in rec.message
         for rec in caplog.records
@@ -486,9 +486,9 @@ def test_phase2_task_phase_2_1_exception_degrades_to_empty_shape(
     """Phase 2.1 raises → nutrition empty-shape; personalization + Pro call still run."""
     record = make_record(
         result_gemini={
-            "step": 1,
-            "step1_data": {},
-            "step1_confirmed": True,
+            "phase": 1,
+            "identification_data": {},
+            "identification_confirmed": True,
             "reference_image": {"description": "chicken rice"},
         }
     )
@@ -511,7 +511,7 @@ def test_phase2_task_phase_2_1_exception_degrades_to_empty_shape(
 
     with caplog.at_level("WARNING"):
         asyncio.run(
-            item_tasks.trigger_step2_analysis_background(
+            item_tasks.trigger_nutrition_analysis_background(
                 query_id=1,
                 image_path="/tmp/x.jpg",
                 dish_name="Chicken Rice",
@@ -531,9 +531,9 @@ def test_phase2_task_both_exceptions_still_runs_pro_call(
 ):
     record = make_record(
         result_gemini={
-            "step": 1,
-            "step1_data": {},
-            "step1_confirmed": True,
+            "phase": 1,
+            "identification_data": {},
+            "identification_confirmed": True,
             "reference_image": {"description": "chicken rice"},
         }
     )
@@ -555,7 +555,7 @@ def test_phase2_task_both_exceptions_still_runs_pro_call(
     _set_analyzer(monkeypatch, returns={"dish_name": "X", "calories_kcal": 100})
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/x.jpg",
             dish_name="X",
@@ -567,7 +567,7 @@ def test_phase2_task_both_exceptions_still_runs_pro_call(
     assert pre_pro["nutrition_db_matches"]["nutrition_matches"] == []
     assert pre_pro["personalized_matches"] == []
     final = writes[-1]["result_gemini"]
-    assert final["step2_data"]["calories_kcal"] == 100
+    assert final["nutrition_data"]["calories_kcal"] == 100
 
 
 def test_phase2_task_reads_reference_description_from_record(
@@ -576,9 +576,9 @@ def test_phase2_task_reads_reference_description_from_record(
     """lookup_personalization receives the reference_image.description from result_gemini."""
     record = make_record(
         result_gemini={
-            "step": 1,
-            "step1_data": {},
-            "step1_confirmed": True,
+            "phase": 1,
+            "identification_data": {},
+            "identification_confirmed": True,
             "reference_image": {"description": "beef noodle soup"},
         }
     )
@@ -598,7 +598,7 @@ def test_phase2_task_reads_reference_description_from_record(
     _set_analyzer(monkeypatch, returns={"dish_name": "Pho Bo", "calories_kcal": 400})
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=7,
             image_path="/tmp/x.jpg",
             dish_name="Pho Bo",
@@ -629,9 +629,9 @@ def _patch_persisted_record(
     fixture — passed in so re-reads after capture see the latest write.
     """
     base = {
-        "step": 1,
-        "step1_data": {},
-        "step1_confirmed": True,
+        "phase": 1,
+        "identification_data": {},
+        "identification_confirmed": True,
         "reference_image": {"description": "chicken rice"},
         "nutrition_db_matches": nutrition_db_matches,
         "personalized_matches": personalized_matches,
@@ -654,7 +654,7 @@ def _patch_prompt_capture(monkeypatch):
         captured.update(kwargs)
         return "STEP2 PROMPT"
 
-    monkeypatch.setattr(item_tasks, "get_step2_nutritional_analysis_prompt", _capture)
+    monkeypatch.setattr(item_tasks, "get_nutritional_analysis_prompt", _capture)
     return captured
 
 
@@ -669,7 +669,7 @@ def _patch_analyzer_capture(monkeypatch):
             "reasoning_sources": "stub",
         }
 
-    monkeypatch.setattr(item_tasks, "analyze_step2_nutritional_analysis_async", _capture)
+    monkeypatch.setattr(item_tasks, "analyze_nutritional_analysis_async", _capture)
     return captured
 
 
@@ -702,7 +702,7 @@ def test_stage7_plumbs_matches_into_prompt_builder(monkeypatch, captured_writes,
     monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/q.jpg",
             dish_name="Chicken Rice",
@@ -728,8 +728,8 @@ def test_stage7_resolves_image_bytes_when_similarity_above_035(
             "similarity_score": 0.50,
             "image_url": "/images/prior.jpg",
             "description": "c",
-            "prior_step2_data": None,
-            "corrected_step2_data": None,
+            "prior_nutrition_data": None,
+            "corrected_nutrition_data": None,
         }
     ]
     writes, capture = captured_writes
@@ -754,7 +754,7 @@ def test_stage7_resolves_image_bytes_when_similarity_above_035(
     monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/q.jpg",
             dish_name="Chicken Rice",
@@ -772,8 +772,8 @@ def test_stage7_no_image_bytes_when_similarity_below_035(monkeypatch, captured_w
             "similarity_score": 0.32,
             "image_url": "/images/prior.jpg",
             "description": "c",
-            "prior_step2_data": None,
-            "corrected_step2_data": None,
+            "prior_nutrition_data": None,
+            "corrected_nutrition_data": None,
         }
     ]
     writes, capture = captured_writes
@@ -798,7 +798,7 @@ def test_stage7_no_image_bytes_when_similarity_below_035(monkeypatch, captured_w
     monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/q.jpg",
             dish_name="Chicken Rice",
@@ -819,8 +819,8 @@ def test_stage7_no_image_bytes_when_file_missing_and_logs_warn(
             "similarity_score": 0.70,
             "image_url": "/images/gone.jpg",
             "description": "c",
-            "prior_step2_data": None,
-            "corrected_step2_data": None,
+            "prior_nutrition_data": None,
+            "corrected_nutrition_data": None,
         }
     ]
     writes, capture = captured_writes
@@ -846,7 +846,7 @@ def test_stage7_no_image_bytes_when_file_missing_and_logs_warn(
 
     with caplog.at_level("WARNING"):
         asyncio.run(
-            item_tasks.trigger_step2_analysis_background(
+            item_tasks.trigger_nutrition_analysis_background(
                 query_id=1,
                 image_path="/tmp/q.jpg",
                 dish_name="Chicken Rice",
@@ -879,7 +879,7 @@ def test_stage7_no_image_bytes_when_no_personalized_matches(
     monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/q.jpg",
             dish_name="Chicken Rice",
@@ -916,11 +916,11 @@ def test_stage7_persists_reasoning_fields_from_step2_result(
             "reasoning_micronutrients": "",
         }
 
-    monkeypatch.setattr(item_tasks, "analyze_step2_nutritional_analysis_async", _fake)
+    monkeypatch.setattr(item_tasks, "analyze_nutritional_analysis_async", _fake)
     monkeypatch.setattr(item_tasks, "IMAGE_DIR", tmp_path)
 
     asyncio.run(
-        item_tasks.trigger_step2_analysis_background(
+        item_tasks.trigger_nutrition_analysis_background(
             query_id=1,
             image_path="/tmp/q.jpg",
             dish_name="Chicken Rice",
@@ -929,6 +929,6 @@ def test_stage7_persists_reasoning_fields_from_step2_result(
     )
 
     final = writes[-1]["result_gemini"]
-    assert final["step2_data"]["reasoning_sources"].startswith("Nutrition DB")
-    assert final["step2_data"]["reasoning_calories"]
-    assert final["step2_data"]["reasoning_micronutrients"] == ""
+    assert final["nutrition_data"]["reasoning_sources"].startswith("Nutrition DB")
+    assert final["nutrition_data"]["reasoning_calories"]
+    assert final["nutrition_data"]["reasoning_micronutrients"] == ""

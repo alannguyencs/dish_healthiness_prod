@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
  *     for the current upload. Falls back to an explanatory message when
  *     null (Flash failure or legacy row without the field).
  *   referenceImage (object | null | undefined) — the Phase 1.1.1(b) hit:
- *     { query_id, image_url, description, similarity_score, prior_step1_data }
+ *     { query_id, image_url, description, similarity_score, prior_identification_data }
  *     or null on cold start / below-threshold.
  */
 const CHEVRON_DOWN = (

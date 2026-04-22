@@ -24,7 +24,7 @@ const REFERENCE = {
   image_url: "/images/prior.jpg",
   description: "grilled chicken rice with cucumber",
   similarity_score: 0.72,
-  prior_step1_data: null,
+  prior_identification_data: null,
 };
 
 const renderCard = (props) => render(<PersonalizedDataCard {...props} />);

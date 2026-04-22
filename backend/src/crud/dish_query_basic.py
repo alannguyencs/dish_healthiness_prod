@@ -213,7 +213,7 @@ def replace_slot_atomic(
         db.close()
 
 
-def confirm_step1_atomic(
+def confirm_identification_atomic(
     query_id: int,
     *,
     confirmed_dish_name: str,
@@ -223,16 +223,16 @@ def confirm_step1_atomic(
     Atomically mark Step 1 as confirmed for a query.
 
     Acquires a row-level lock (SELECT ... FOR UPDATE) so that two concurrent
-    requests cannot both pass the `step1_confirmed=False` check and each
+    requests cannot both pass the `identification_confirmed=False` check and each
     schedule a Step-2 background task.
 
     Returns:
-        "confirmed"   — this call set step1_confirmed=True (caller should
+        "confirmed"   — this call set identification_confirmed=True (caller should
                         schedule the background task).
-        "duplicate"   — step1_confirmed was already True (caller should not
+        "duplicate"   — identification_confirmed was already True (caller should not
                         re-schedule; respond 409).
         "not_found"   — no record exists with that id.
-        "no_step1"    — Step 1 has not produced a result yet (step != 1).
+        "no_step1"    — Step 1 has not produced a result yet (phase != 1).
     """
     db = SessionLocal()
     try:
@@ -247,12 +247,12 @@ def confirm_step1_atomic(
             return "not_found"
 
         result_gemini = dict(query.result_gemini or {})
-        if result_gemini.get("step") != 1:
+        if result_gemini.get("phase") != 1:
             return "no_step1"
-        if result_gemini.get("step1_confirmed"):
+        if result_gemini.get("identification_confirmed"):
             return "duplicate"
 
-        result_gemini["step1_confirmed"] = True
+        result_gemini["identification_confirmed"] = True
         result_gemini["confirmed_dish_name"] = confirmed_dish_name
         result_gemini["confirmed_components"] = confirmed_components
         query.result_gemini = result_gemini

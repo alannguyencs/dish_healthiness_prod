@@ -19,12 +19,17 @@ from typing import Union
 from google import genai  # pylint: disable=no-name-in-module
 from google.genai import types  # pylint: disable=import-error,no-name-in-module
 
-_CAPTION_INSTRUCTIONS = (
-    "Describe the dish in the image in one short sentence. Use simple, "
-    "concrete words — list the main visible foods, the cooking style if "
-    "obvious, and any distinctive ingredients. Do not include nutrition "
-    "information, prices, or speculation about what is not visible."
-)
+from src.configs import RESOURCE_DIR
+
+_CAPTION_PROMPT_PATH = RESOURCE_DIR / "prompts" / "fast_caption.md"
+
+
+def _load_caption_instructions() -> str:
+    if not _CAPTION_PROMPT_PATH.exists():
+        raise FileNotFoundError(
+            f"Fast caption prompt not found: {_CAPTION_PROMPT_PATH}"
+        )
+    return _CAPTION_PROMPT_PATH.read_text(encoding="utf-8").strip()
 
 
 async def generate_fast_caption_async(image_path: Union[str, Path]) -> str:
@@ -61,7 +66,7 @@ async def generate_fast_caption_async(image_path: Union[str, Path]) -> str:
         def _sync_gemini_call():
             return client.models.generate_content(
                 model="gemini-2.5-flash",
-                contents=[_CAPTION_INSTRUCTIONS, image_part],
+                contents=[_load_caption_instructions(), image_part],
                 config=types.GenerateContentConfig(
                     temperature=0,
                     thinking_config=types.ThinkingConfig(thinking_budget=0),

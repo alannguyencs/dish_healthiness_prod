@@ -6,8 +6,8 @@ import {
   ItemHeader,
   ItemImage,
   AnalysisLoading,
-  Step1ComponentEditor,
-  Step2Results,
+  IdentificationComponentEditor,
+  NutritionResults,
   PhaseErrorCard,
   ItemStepTabs,
   ReasoningPanel,
@@ -24,26 +24,26 @@ const ItemV2 = () => {
     item,
     loading,
     error,
-    pollingStep1,
-    pollingStep2,
-    confirmedStep1Data,
-    setConfirmedStep1Data,
+    pollingIdentification,
+    pollingNutrition,
+    confirmedIdentificationData,
+    setConfirmedIdentificationData,
     reload,
-    startPollingStep1,
-    startPollingStep2,
+    startPollingIdentification,
+    startPollingNutrition,
   } = useItemPolling(recordId);
 
   const [confirming, setConfirming] = useState(false);
-  const [retryingStep2, setRetryingStep2] = useState(false);
-  const [retryingStep1, setRetryingStep1] = useState(false);
+  const [retryingNutrition, setRetryingNutrition] = useState(false);
+  const [retryingIdentification, setRetryingIdentification] = useState(false);
   const [saving, setSaving] = useState(false);
   const [aiAssisting, setAiAssisting] = useState(false);
   const [viewStep, setViewStep] = useState(null);
 
-  const handleStep2Correction = async (payload) => {
+  const handleNutritionCorrection = async (payload) => {
     try {
       setSaving(true);
-      await apiService.saveStep2Correction(recordId, payload);
+      await apiService.saveNutritionCorrection(recordId, payload);
       await reload();
     } catch (err) {
       console.error("Failed to save correction:", err);
@@ -66,54 +66,54 @@ const ItemV2 = () => {
     }
   };
 
-  const handleStep1Confirmation = async (confirmationData) => {
+  const handleIdentificationConfirmation = async (confirmationData) => {
     try {
       setConfirming(true);
-      setConfirmedStep1Data(confirmationData);
-      await apiService.confirmStep1(recordId, confirmationData);
-      startPollingStep2();
+      setConfirmedIdentificationData(confirmationData);
+      await apiService.confirmIdentification(recordId, confirmationData);
+      startPollingNutrition();
       await reload();
     } catch (err) {
       // 409 = the server has already accepted a prior confirmation for this
       // record (e.g. a double-tapped Confirm). Phase 2 is already running, so
       // treat it as success: just resume polling and refetch state.
       if (err?.response?.status === 409) {
-        startPollingStep2();
+        startPollingNutrition();
         await reload();
       } else {
-        console.error("Failed to confirm Step 1:", err);
-        alert("Failed to confirm Step 1. Please try again.");
+        console.error("Failed to confirm identification:", err);
+        alert("Failed to confirm identification. Please try again.");
       }
     } finally {
       setConfirming(false);
     }
   };
 
-  const handleStep2Retry = async () => {
+  const handleNutritionRetry = async () => {
     try {
-      setRetryingStep2(true);
-      await apiService.retryStep2(recordId);
-      startPollingStep2();
+      setRetryingNutrition(true);
+      await apiService.retryNutrition(recordId);
+      startPollingNutrition();
       await reload();
     } catch (err) {
-      console.error("Failed to retry Step 2:", err);
+      console.error("Failed to retry nutrition analysis:", err);
       alert("Failed to retry. Please try again in a moment.");
     } finally {
-      setRetryingStep2(false);
+      setRetryingNutrition(false);
     }
   };
 
-  const handleStep1Retry = async () => {
+  const handleIdentificationRetry = async () => {
     try {
-      setRetryingStep1(true);
-      await apiService.retryStep1(recordId);
-      startPollingStep1();
+      setRetryingIdentification(true);
+      await apiService.retryIdentification(recordId);
+      startPollingIdentification();
       await reload();
     } catch (err) {
-      console.error("Failed to retry Step 1:", err);
+      console.error("Failed to retry identification:", err);
       alert("Failed to retry. Please try again in a moment.");
     } finally {
-      setRetryingStep1(false);
+      setRetryingIdentification(false);
     }
   };
 
@@ -149,17 +149,18 @@ const ItemV2 = () => {
   }
 
   const resultGemini = item?.result_gemini;
-  const step1Data = resultGemini?.step1_data;
-  const step1Error = resultGemini?.step1_error;
-  const step2Data = resultGemini?.step2_data;
-  const step2Corrected = resultGemini?.step2_corrected;
-  const step2Error = resultGemini?.step2_error;
+  const identificationData = resultGemini?.identification_data;
+  const identificationError = resultGemini?.identification_error;
+  const nutritionData = resultGemini?.nutrition_data;
+  const nutritionCorrected = resultGemini?.nutrition_corrected;
+  const nutritionError = resultGemini?.nutrition_error;
   const nutritionDbMatches = resultGemini?.nutrition_db_matches;
   const personalizedMatches = resultGemini?.personalized_matches;
   const flashCaption = resultGemini?.flash_caption;
   const referenceImage = resultGemini?.reference_image;
-  const currentStep = resultGemini?.step || 0;
-  const step1Confirmed = resultGemini?.step1_confirmed || false;
+  const currentStep = resultGemini?.phase || 0;
+  const identificationConfirmed =
+    resultGemini?.identification_confirmed || false;
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -184,77 +185,77 @@ const ItemV2 = () => {
 
           <div className="lg:w-2/3 space-y-6">
             <ItemStepTabs
-              step1Data={step1Data}
-              step2Data={step2Data}
+              identificationData={identificationData}
+              nutritionData={nutritionData}
               currentStep={currentStep}
-              step1Confirmed={step1Confirmed}
+              identificationConfirmed={identificationConfirmed}
               viewStep={viewStep}
               onSelectStep={setViewStep}
             />
 
-            {pollingStep1 && viewStep === null && (
+            {pollingIdentification && viewStep === null && (
               <AnalysisLoading message="Analyzing dish components..." />
             )}
 
-            {step1Error && !step1Data && viewStep === null && (
+            {identificationError && !identificationData && viewStep === null && (
               <PhaseErrorCard
                 headline="Component identification failed"
-                error={step1Error}
-                onRetry={handleStep1Retry}
-                isRetrying={retryingStep1}
+                error={identificationError}
+                onRetry={handleIdentificationRetry}
+                isRetrying={retryingIdentification}
               />
             )}
 
-            {((viewStep === 1 && step1Data) ||
+            {((viewStep === 1 && identificationData) ||
               (viewStep === null &&
                 currentStep === 1 &&
-                step1Data &&
-                !pollingStep1)) && (
+                identificationData &&
+                !pollingIdentification)) && (
               <>
                 <PersonalizedDataCard
                   flashCaption={flashCaption}
                   referenceImage={referenceImage}
                 />
-                <Step1ComponentEditor
-                  step1Data={step1Data}
-                  confirmedData={confirmedStep1Data}
-                  onConfirm={handleStep1Confirmation}
+                <IdentificationComponentEditor
+                  identificationData={identificationData}
+                  confirmedData={confirmedIdentificationData}
+                  onConfirm={handleIdentificationConfirmation}
                   isConfirming={confirming}
                 />
               </>
             )}
 
-            {step1Confirmed &&
-              pollingStep2 &&
-              !step2Data &&
-              !step2Error &&
+            {identificationConfirmed &&
+              pollingNutrition &&
+              !nutritionData &&
+              !nutritionError &&
               viewStep === null && (
                 <AnalysisLoading message="Calculating nutritional values..." />
               )}
 
-            {step2Error && !step2Data && viewStep === null && (
+            {nutritionError && !nutritionData && viewStep === null && (
               <PhaseErrorCard
                 headline="Nutritional analysis failed"
-                error={step2Error}
-                onRetry={handleStep2Retry}
-                isRetrying={retryingStep2}
+                error={nutritionError}
+                onRetry={handleNutritionRetry}
+                isRetrying={retryingNutrition}
               />
             )}
 
-            {((viewStep === 2 && step2Data) ||
-              (viewStep === null && currentStep === 2 && step2Data)) && (
+            {((viewStep === 2 && nutritionData) ||
+              (viewStep === null && currentStep === 2 && nutritionData)) && (
               <>
                 <ResearchOnlyGroup>
-                  <ReasoningPanel step2Data={step2Data} />
+                  <ReasoningPanel nutritionData={nutritionData} />
                   <Top5DbMatches
                     matches={nutritionDbMatches?.nutrition_matches}
                   />
                   <PersonalizationMatches matches={personalizedMatches} />
                 </ResearchOnlyGroup>
-                <Step2Results
-                  step2Data={step2Data}
-                  step2Corrected={step2Corrected}
-                  onEditSave={handleStep2Correction}
+                <NutritionResults
+                  nutritionData={nutritionData}
+                  nutritionCorrected={nutritionCorrected}
+                  onEditSave={handleNutritionCorrection}
                   saving={saving}
                   onAiAssistSubmit={handleAiAssistantCorrection}
                   aiAssisting={aiAssisting}

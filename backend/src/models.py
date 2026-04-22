@@ -130,7 +130,7 @@ class PersonalizedFoodDescription(Base):
         confirmed_dish_name (str): User-confirmed dish name (Stage 4)
         confirmed_portions (float): Sum of confirmed component servings (Stage 4)
         confirmed_tokens (list): Tokenized confirmed_dish_name (Stage 4)
-        corrected_step2_data (dict): User nutrient corrections (Stage 8)
+        corrected_nutrition_data (dict): User nutrient corrections (Stage 8)
         created_at (datetime): Row creation timestamp
         updated_at (datetime): Last-modified timestamp
     """
@@ -152,7 +152,7 @@ class PersonalizedFoodDescription(Base):
     confirmed_dish_name = Column(String, nullable=True, default=None)
     confirmed_portions = Column(Float, nullable=True, default=None)
     confirmed_tokens = Column(JSON, nullable=True, default=None)
-    corrected_step2_data = Column(JSON, nullable=True, default=None)
+    corrected_nutrition_data = Column(JSON, nullable=True, default=None)
     created_at = Column(DateTime, nullable=False)
     updated_at = Column(DateTime, nullable=False)
 

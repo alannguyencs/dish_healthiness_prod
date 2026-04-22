@@ -7,7 +7,7 @@
 
 ## Architecture
 
-The date view renders five fixed slots keyed by `dish_position` (1-5). A slot is filled by uploading an image (multipart form) or supplying an image URL. The backend resizes and re-encodes the image, persists a `DishImageQuery` row, and schedules the Step 1 analysis via FastAPI `BackgroundTasks` before returning.
+The date view renders five fixed slots keyed by `dish_position` (1-5). A slot is filled by uploading an image (multipart form) or supplying an image URL. The backend resizes and re-encodes the image, persists a `DishImageQuery` row, and schedules the Component Identification analysis via FastAPI `BackgroundTasks` before returning.
 
 ```
 +---------------------+      +-----------------------+      +-------------------+
@@ -30,7 +30,7 @@ The date view renders five fixed slots keyed by `dish_position` (1-5). A slot is
                                    │
                                    ▼
                              BackgroundTasks →
-                             analyze_image_background() → Step 1 pipeline
+                             analyze_image_background() → Component Identification pipeline
 ```
 
 ## Data Model
@@ -146,14 +146,14 @@ The URL-upload variant (`/upload-url`) is identical except it first downloads th
 ## Backend — Service Layer
 
 - `api/date.py#_process_and_save_image(content, file_path)` — PIL-based normalization.
-- `api/item_step1_tasks.py#analyze_image_background(query_id, file_path, retry_count=0)` — background entry point for Step 1. Imported by `date.py`'s upload endpoints. On failure, classifies the exception and persists `result_gemini.step1_error` via the shared `persist_phase_error` helper (see [Component Identification](./dish_analysis/component_identification.md)).
+- `api/item_identification_tasks.py#analyze_image_background(query_id, file_path, retry_count=0)` — background entry point for Component Identification. Imported by `date.py`'s upload endpoints. On failure, classifies the exception and persists `result_gemini.identification_error` via the shared `persist_phase_error` helper (see [Component Identification](./dish_analysis/component_identification.md)).
 - Static file mount in `main.py`: `app.mount("/images", StaticFiles(directory=IMAGE_DIR), name="images")` — the same path stored as `image_url`.
 
 ## Backend — CRUD Layer
 
 - `crud/dish_query_basic.create_dish_image_query(...)` — inserts the row.
 - `crud/dish_query_basic.get_dish_image_query_by_id(record_id)` — used by downstream endpoints.
-- `crud/dish_query_basic.update_dish_image_query_results(query_id, result_openai, result_gemini)` — used by the background Step 1 task.
+- `crud/dish_query_basic.update_dish_image_query_results(query_id, result_openai, result_gemini)` — used by the background Component Identification task.
 - `crud/dish_query_filters.get_dish_image_queries_by_user_and_date(user_id, query_date)` — ordered list for a day.
 
 ## Frontend — Pages & Routes
@@ -187,13 +187,13 @@ Live under `components/dateview/` and are re-exported via `components/dateview/i
 - Re-uploading the same slot is **not** deduplicated or rejected at the DB level — a second POST creates a second row with the same `dish_position`. The GET endpoint only shows one of them (the first returned by the ordered CRUD query), so the duplicate becomes orphaned. There is no delete endpoint exposed.
 - `IMAGE_DIR` is a local path (`backend/data/images/`). The app assumes a single-server deployment for image serving; no cloud storage integration.
 - Image filenames are generated with second-level UTC precision; two uploads in the same second would collide. Collisions are not currently guarded.
-- Background task failures in `analyze_image_background` are now classified and persisted to `result_gemini.step1_error`. The frontend stops polling and renders `<PhaseErrorCard>` with a retry button. See [Component Identification](./dish_analysis/component_identification.md).
+- Background task failures in `analyze_image_background` are now classified and persisted to `result_gemini.identification_error`. The frontend stops polling and renders `<PhaseErrorCard>` with a retry button. See [Component Identification](./dish_analysis/component_identification.md).
 - `SessionMiddleware` and CORS are configured in `main.py`; see [Authentication](./authentication.md) for details that affect upload behaviour (cookies + `withCredentials`).
 
 ## Component Checklist
 
 - [x] `GET /api/date/{Y}/{M}/{D}` — returns 5 slot descriptors
-- [x] `POST /api/date/{Y}/{M}/{D}/upload` — multipart upload + background Step 1 trigger
+- [x] `POST /api/date/{Y}/{M}/{D}/upload` — multipart upload + background Component Identification trigger
 - [x] `POST /api/date/{Y}/{M}/{D}/upload-url` — URL-sourced upload variant
 - [x] `_process_and_save_image()` — 384 px cap, RGBA → RGB, JPEG encode
 - [x] `create_dish_image_query()` CRUD insert

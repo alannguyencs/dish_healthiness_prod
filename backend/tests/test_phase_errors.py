@@ -1,7 +1,7 @@
 """
 Unit tests for the shared phase-error helpers in src/api/_phase_errors.py.
 
-Both Phase 1 (analyze_image_background) and Phase 2 (trigger_step2_analysis_background)
+Both Phase 1 (analyze_image_background) and Phase 2 (trigger_nutrition_analysis_background)
 delegate exception handling to these helpers.
 """
 
@@ -64,18 +64,18 @@ class TestPersistPhaseError:
         return writes
 
     def test_writes_step2_error_with_classified_type(self, monkeypatch, captured_writes):
-        record = make_record(result_gemini={"step": 1, "step1_confirmed": True})
+        record = make_record(result_gemini={"phase": 1, "identification_confirmed": True})
         writes = self._patch_crud(monkeypatch, record, captured_writes)
 
         _phase_errors.persist_phase_error(
             query_id=7,
             exc=ValueError("GEMINI_API_KEY not set"),
             retry_count=0,
-            error_key="step2_error",
+            error_key="nutrition_error",
         )
 
         written = writes[0]["result_gemini"]
-        err = written["step2_error"]
+        err = written["nutrition_error"]
         assert err["error_type"] == "config_error"
         assert err["retry_count"] == 0
         assert err["message"] == _phase_errors.ERROR_USER_MESSAGE["config_error"]
@@ -91,13 +91,13 @@ class TestPersistPhaseError:
             query_id=7,
             exc=FileNotFoundError("/tmp/foo.jpg"),
             retry_count=2,
-            error_key="step1_error",
+            error_key="identification_error",
         )
 
         written = writes[0]["result_gemini"]
-        assert written["step"] == 0  # sentinel for "nothing succeeded yet"
-        assert written["step1_data"] is None
-        err = written["step1_error"]
+        assert written["phase"] == 0  # sentinel for "nothing succeeded yet"
+        assert written["identification_data"] is None
+        err = written["identification_error"]
         assert err["error_type"] == "image_missing"
         assert err["retry_count"] == 2
 
@@ -107,6 +107,6 @@ class TestPersistPhaseError:
         monkeypatch.setattr(_phase_errors, "update_dish_image_query_results", capture)
 
         _phase_errors.persist_phase_error(
-            query_id=7, exc=RuntimeError("x"), retry_count=0, error_key="step2_error"
+            query_id=7, exc=RuntimeError("x"), retry_count=0, error_key="nutrition_error"
         )
         assert writes == []

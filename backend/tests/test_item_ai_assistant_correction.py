@@ -34,9 +34,9 @@ REVISED_PAYLOAD = {
 
 
 PHASE2_DONE = {
-    "step": 2,
-    "step1_data": {"dish_predictions": [{"name": "Chicken Rice"}]},
-    "step2_data": {
+    "phase": 2,
+    "identification_data": {"dish_predictions": [{"name": "Chicken Rice"}]},
+    "nutrition_data": {
         "dish_name": "Chicken Rice",
         "calories_kcal": 600,
         "healthiness_score": 50,
@@ -56,7 +56,7 @@ def patch_revise_ok(monkeypatch):
     async def _fake_revise(record_id, user_hint):
         return dict(REVISED_PAYLOAD)
 
-    monkeypatch.setattr(item_correction, "revise_step2_with_hint", _fake_revise)
+    monkeypatch.setattr(item_correction, "revise_nutrition_with_hint", _fake_revise)
 
 
 @pytest.fixture()
@@ -64,7 +64,7 @@ def patch_revise_raises(monkeypatch):
     async def _fake_revise(record_id, user_hint):
         raise RuntimeError("gemini down")
 
-    monkeypatch.setattr(item_correction, "revise_step2_with_hint", _fake_revise)
+    monkeypatch.setattr(item_correction, "revise_nutrition_with_hint", _fake_revise)
 
 
 def _patch_update_personalization(monkeypatch, *, returns=None, raises=None):
@@ -77,7 +77,7 @@ def _patch_update_personalization(monkeypatch, *, returns=None, raises=None):
         return returns
 
     monkeypatch.setattr(
-        item_correction.crud_personalized_food, "update_corrected_step2_data", _update
+        item_correction.crud_personalized_food, "update_corrected_nutrition_data", _update
     )
     return calls
 
@@ -112,7 +112,7 @@ def test_returns_404_when_record_missing(client, monkeypatch, patch_auth):
 
 
 def test_returns_400_when_step2_data_missing(client, monkeypatch, patch_auth):
-    record = make_record(result_gemini={"step": 1, "step1_data": {}})
+    record = make_record(result_gemini={"phase": 1, "identification_data": {}})
     monkeypatch.setattr(item_correction, "get_dish_image_query_by_id", lambda _id: record)
     res = client.post("/api/item/1/ai-assistant-correction", json=VALID_BODY)
     assert res.status_code == 400
@@ -171,14 +171,14 @@ def test_happy_path_writes_step2_corrected_with_ai_prompt(
     assert res.status_code == 200
     assert len(writes) == 1
     written = writes[0]["result_gemini"]
-    corrected = written["step2_corrected"]
+    corrected = written["nutrition_corrected"]
     # Revised macros landed from Gemini
     assert corrected["calories_kcal"] == 420
     assert corrected["dish_name"] == "Chicken Rice"
     # ai_assistant_prompt stamped with the submitted hint (stripped)
     assert corrected["ai_assistant_prompt"] == VALID_BODY["prompt"]
     # Original step2_data preserved for audit
-    assert written["step2_data"]["calories_kcal"] == 600
+    assert written["nutrition_data"]["calories_kcal"] == 600
 
 
 def test_happy_path_mirrors_personalization_row(
@@ -216,7 +216,7 @@ def test_happy_path_preserves_other_result_gemini_keys(
     final = written[-1]["result_gemini"]
     assert "nutrition_db_matches" in final
     assert "personalized_matches" in final
-    assert "step1_data" in final
+    assert "identification_data" in final
 
 
 def test_response_body_carries_step2_corrected(
@@ -234,7 +234,7 @@ def test_response_body_carries_step2_corrected(
     body = res.json()
     assert body["success"] is True
     assert body["record_id"] == 1
-    assert body["step2_corrected"]["ai_assistant_prompt"] == VALID_BODY["prompt"]
+    assert body["nutrition_corrected"]["ai_assistant_prompt"] == VALID_BODY["prompt"]
 
 
 # ---------------------------------------------------------------------------

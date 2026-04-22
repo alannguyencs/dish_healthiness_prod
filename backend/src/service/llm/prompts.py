@@ -9,7 +9,7 @@ import re
 from typing import Any, Dict, List, Optional
 
 from src.configs import RESOURCE_DIR
-from src.service.llm._step2_blocks import (
+from src.service.llm._nutrition_blocks import (
     render_nutrition_db_block,
     render_personalized_block,
 )
@@ -38,13 +38,30 @@ _PERSONALIZED_STRIP_RE = re.compile(
 # ============================================================
 
 
+_BLOCKS_DIR = RESOURCE_DIR / "prompts" / "blocks"
+
+
+def _load_block_template(filename: str) -> str:
+    """Load a prompt-block template from `backend/resources/prompts/blocks/`."""
+    path = _BLOCKS_DIR / filename
+    if not path.exists():
+        raise FileNotFoundError(f"Prompt block template not found: {path}")
+    # rstrip trailing newlines only — preserve all internal whitespace.
+    return path.read_text(encoding="utf-8").rstrip("\n")
+
+
 def _render_reference_block(
-    prior_step1_data: Dict[str, Any],
+    prior_identification_data: Dict[str, Any],
     confirmed_dish_name: Optional[str] = None,
     confirmed_portions: Optional[float] = None,
 ) -> str:
     """
-    Render the 'Reference results (HINT ONLY)' block from prior step1_data.
+    Render the 'Reference results (HINT ONLY)' block from prior identification_data.
+
+    Static prose lives in `backend/resources/prompts/blocks/reference_block.md`
+    (and `reference_block_user_edits.md` for the optional user-edits paragraph);
+    this function appends the dynamic data rows (prior dish name, portions,
+    components list) at runtime.
 
     When the prior was confirmed by the user (Phase 1.2), the user-corrected
     `confirmed_dish_name` and `confirmed_portions` override the AI's original
@@ -55,29 +72,10 @@ def _render_reference_block(
     referenced dish actually has.
     """
     has_user_edits = bool(confirmed_dish_name) or confirmed_portions is not None
-    lines = [
-        "## Reference results (HINT ONLY — may or may not match)",
-        "",
-        (
-            "The user has uploaded a similar dish before. The **image attached after "
-            "the query image is the prior dish**, and the analysis below is what we "
-            "produced for it last time. Use this ONLY as a hint — the two dishes may "
-            "differ in cuisine, preparation, or portion. If the query image disagrees, "
-            "trust the query image."
-        ),
-    ]
+    lines: List[str] = [_load_block_template("reference_block.md")]
     if has_user_edits:
-        lines += [
-            "",
-            (
-                "**The user manually corrected the prior dish's name and/or servings "
-                "(fields marked 'user-verified' below).** Prefer those values over the "
-                "original AI proposal when the query image shows a visually similar "
-                "dish — the user knows their own meals better than the first-pass "
-                "model did."
-            ),
-        ]
-    dish_predictions = prior_step1_data.get("dish_predictions") or []
+        lines += ["", _load_block_template("reference_block_user_edits.md")]
+    dish_predictions = prior_identification_data.get("dish_predictions") or []
     ai_dish_name = dish_predictions[0].get("name") if dish_predictions else None
     if confirmed_dish_name:
         lines += ["", f"**Prior dish name (user-verified):** {confirmed_dish_name}"]
@@ -90,7 +88,7 @@ def _render_reference_block(
             "",
             f"**Prior total servings (user-verified):** {confirmed_portions}",
         ]
-    components = prior_step1_data.get("components") or []
+    components = prior_identification_data.get("components") or []
     if components:
         lines += ["", "**Prior components (name · serving sizes · predicted servings):**"]
         for comp in components:
@@ -101,7 +99,7 @@ def _render_reference_block(
     return "\n".join(lines)
 
 
-def get_step1_component_identification_prompt(
+def get_component_identification_prompt(
     reference: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
@@ -114,7 +112,7 @@ def get_step1_component_identification_prompt(
 
     Args:
         reference: Optional persisted `result_gemini.reference_image` dict.
-            When provided and its `prior_step1_data` is non-empty, the
+            When provided and its `prior_identification_data` is non-empty, the
             `__REFERENCE_BLOCK__` placeholder in the prompt is substituted
             with a rendered hint block. Otherwise the placeholder line is
             stripped entirely so the prompt carries no reference section.
@@ -125,7 +123,7 @@ def get_step1_component_identification_prompt(
     Raises:
         FileNotFoundError: If step1 prompt file is not found
     """
-    prompt_path = RESOURCE_DIR / "step1_component_identification.md"
+    prompt_path = RESOURCE_DIR / "prompts" / "component_identification.md"
     if not prompt_path.exists():
         raise FileNotFoundError(f"Step 1 component identification prompt not found: {prompt_path}")
 
@@ -133,7 +131,7 @@ def get_step1_component_identification_prompt(
         prompt = f.read()
 
     ref = reference or {}
-    prior = ref.get("prior_step1_data")
+    prior = ref.get("prior_identification_data")
     confirmed_dish_name = ref.get("prior_confirmed_dish_name")
     confirmed_portions = ref.get("prior_confirmed_portions")
     has_renderable_prior = bool(prior) and (
@@ -159,7 +157,7 @@ def _substitute_or_strip(
     return placeholder_re.sub("", prompt)
 
 
-def get_step2_nutritional_analysis_prompt(
+def get_nutritional_analysis_prompt(
     dish_name: str,
     components: List[Dict[str, Any]],
     nutrition_db_matches: Optional[Dict[str, Any]] = None,
@@ -193,7 +191,7 @@ def get_step2_nutritional_analysis_prompt(
     Raises:
         FileNotFoundError: If step2 prompt file is not found
     """
-    prompt_path = RESOURCE_DIR / "step2_nutritional_analysis.md"
+    prompt_path = RESOURCE_DIR / "prompts" / "nutritional_analysis.md"
     if not prompt_path.exists():
         raise FileNotFoundError(f"Step 2 nutritional analysis prompt not found: {prompt_path}")
 

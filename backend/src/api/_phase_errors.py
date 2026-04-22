@@ -2,10 +2,10 @@
 Shared error classification and persistence for the two-phase Gemini pipeline.
 
 Used by:
-  - src/api/item_step1_tasks.py     (Phase 1 — Component Identification)
+  - src/api/item_identification_tasks.py     (Phase 1 — Component Identification)
   - src/api/item_tasks.py           (Phase 2 — Nutritional Analysis)
 
-Both phases write a parallel error block (`step1_error` / `step2_error`) into
+Both phases write a parallel error block (`identification_error` / `nutrition_error`) into
 `result_gemini` when the background task catches an exception, and clear it on
 the next successful run. The user-facing `Step2ErrorCard` -> `PhaseErrorCard`
 component reads these blocks to render the retry UI.
@@ -19,7 +19,7 @@ from src.crud.crud_food_image_query import (
 )
 
 
-# Error classification buckets surfaced to the frontend via {step1,step2}_error.
+# Error classification buckets surfaced to the frontend via {identification,nutrition}_error.
 ERROR_USER_MESSAGE = {
     "config_error": (
         "An internal configuration issue is preventing analysis. Please try again later."
@@ -32,7 +32,7 @@ ERROR_USER_MESSAGE = {
 
 
 def classify_phase_error(exc: Exception) -> str:
-    """Bucket an exception into one of the error_type values used in {step}_error."""
+    """Bucket an exception into one of the error_type values used in {identification,nutrition}_error."""
     msg = str(exc).lower()
     type_name = type(exc).__name__.lower()
     if "gemini_api_key" in msg or "api key" in msg:
@@ -50,17 +50,17 @@ def classify_phase_error(exc: Exception) -> str:
 
 def persist_phase_error(query_id: int, exc: Exception, retry_count: int, error_key: str) -> None:
     """
-    Write `error_key` (e.g. 'step1_error' / 'step2_error') into result_gemini.
+    Write `error_key` (e.g. 'identification_error' / 'nutrition_error') into result_gemini.
 
     If `result_gemini` is None (the common case for a Phase 1 failure with no
-    prior state), initialize it as a minimal blob with `step = 0` so the
-    frontend can branch consistently on `step in (0, 1, 2)`.
+    prior state), initialize it as a minimal blob with `phase = 0` so the
+    frontend can branch consistently on `phase in (0, 1, 2)`.
     """
     record = get_dish_image_query_by_id(query_id)
     if not record:
         return
 
-    base = (record.result_gemini or {"step": 0, "step1_data": None}).copy()
+    base = (record.result_gemini or {"phase": 0, "identification_data": None}).copy()
     error_type = classify_phase_error(exc)
     base[error_key] = {
         "error_type": error_type,

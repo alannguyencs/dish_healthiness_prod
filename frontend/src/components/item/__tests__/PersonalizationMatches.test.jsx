@@ -15,8 +15,8 @@ const match = ({
   image_url,
   description,
   similarity_score,
-  prior_step2_data: prior,
-  corrected_step2_data: corrected,
+  prior_nutrition_data: prior,
+  corrected_nutrition_data: corrected,
 });
 
 const PRIOR = {
@@ -58,7 +58,7 @@ describe("PersonalizationMatches", () => {
     );
   });
 
-  test("shows corrected macros with User-verified badge when corrected_step2_data set", () => {
+  test("shows corrected macros with User-verified badge when corrected_nutrition_data set", () => {
     render(
       <PersonalizationMatches
         matches={[match({ query_id: 7, prior: PRIOR, corrected: CORRECTED })]}

@@ -75,7 +75,7 @@ def test_insert_description_row_persists_expected_columns(sqlite_session):
     assert row.confirmed_dish_name is None
     assert row.confirmed_portions is None
     assert row.confirmed_tokens is None
-    assert row.corrected_step2_data is None
+    assert row.corrected_nutrition_data is None
     assert row.created_at is not None
     assert row.updated_at is not None
     assert row.created_at == row.updated_at
@@ -120,7 +120,7 @@ def test_update_confirmed_fields_returns_none_for_missing_query_id(sqlite_sessio
     assert result is None
 
 
-def test_update_corrected_step2_data_persists_payload(sqlite_session):
+def test_update_corrected_nutrition_data_persists_payload(sqlite_session):
     crud_personalized_food.insert_description_row(
         user_id=1, query_id=11, description="sushi roll", tokens=["sushi", "roll"]
     )
@@ -130,13 +130,13 @@ def test_update_corrected_step2_data_persists_payload(sqlite_session):
         "fat_g": 12,
         "micronutrients": ["Iron", "Folate"],
     }
-    updated = crud_personalized_food.update_corrected_step2_data(query_id=11, payload=payload)
+    updated = crud_personalized_food.update_corrected_nutrition_data(query_id=11, payload=payload)
     assert updated is not None
-    assert updated.corrected_step2_data == payload
+    assert updated.corrected_nutrition_data == payload
 
 
-def test_update_corrected_step2_data_returns_none_for_missing_query_id(sqlite_session):
-    assert crud_personalized_food.update_corrected_step2_data(9999, {"a": 1}) is None
+def test_update_corrected_nutrition_data_returns_none_for_missing_query_id(sqlite_session):
+    assert crud_personalized_food.update_corrected_nutrition_data(9999, {"a": 1}) is None
 
 
 def test_get_row_by_query_id_returns_row(sqlite_session):

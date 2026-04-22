@@ -272,10 +272,10 @@ The 0.85/0.15 split, +0.20/+0.15 bonuses, 0.8/0.2 mix, and [0.50, 0.95] scale ar
 - [x] Unit tests CRUD — `backend/tests/test_crud_nutrition.py`
 - [x] Unit tests service — `backend/tests/test_nutrition_db.py`
 - [x] Unit tests seed — `backend/tests/test_seed_load_nutrition_db.py`
-- [x] Stage 5 (Phase 2.1): `extract_and_lookup_nutrition` wired into `trigger_step2_analysis_background` (see [nutritional_analysis.md § Phase 2.1](./nutritional_analysis.md#phase-21--nutrition-db-lookup-stage-5))
+- [x] Stage 5 (Phase 2.1): `extract_and_lookup_nutrition` wired into `trigger_nutrition_analysis_background` (see [nutritional_analysis.md § Phase 2.1](./nutritional_analysis.md#phase-21--nutrition-db-lookup-stage-5))
 - [x] Stage 5: `NutritionCollectionService.collect_from_nutrition_db(text, min_confidence, deduplicate)` method
 - [x] Stage 5: `_nutrition_aggregation.py` helpers (`deduplicate_matches`, `aggregate_nutrition`, `calculate_optimal_nutrition`, `extract_single_match_nutrition`, `generate_recommendations`)
-- [x] Stage 7 (Phase 2.3): Step 2 prompt reads `result_gemini.nutrition_db_matches` via `__NUTRITION_DB_BLOCK__` placeholder; gated on `confidence_score >= THRESHOLD_DB_INCLUDE (80)`. See [nutritional_analysis.md § Phase 2.3](./nutritional_analysis.md#phase-23--reference-assisted-prompt-stage-7).
+- [x] Stage 7 (Phase 2.3): Nutritional Analysis prompt reads `result_gemini.nutrition_db_matches` via `__NUTRITION_DB_BLOCK__` placeholder; gated on `confidence_score >= THRESHOLD_DB_INCLUDE (80)`. See [nutritional_analysis.md § Phase 2.3](./nutritional_analysis.md#phase-23--reference-assisted-prompt-stage-7).
 - [x] Stage 9: NDCG@10 ≥ 0.75 regression gate against the 846-query eval set — `backend/tests/test_nutrition_retrieval_benchmark.py`, dataset at `backend/tests/data/retrieval_eval_dataset.csv`.
 
 ---

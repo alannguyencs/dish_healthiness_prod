@@ -92,7 +92,7 @@ create_dish_image_query(user_id, image_url, target_date, dish_position, created_
   ▼
 BackgroundTasks.add_task(analyze_image_background, query.id, file_path)
   │                                                     │
-  │                                                     └──> Step 1 Pipeline (below)
+  │                                                     └──> Component Identification Pipeline (below)
   ▼
 JSON response {query.id, image_url} ──> React navigate(`/item/{id}`)
 ```
@@ -105,11 +105,11 @@ JSON response {query.id, image_url} ──> React navigate(`/item/{id}`)
 Background task: analyze_image_background(query_id, file_path)
   │
   ▼
-get_step1_component_identification_prompt()
-  ──> read backend/resources/step1_component_identification.md
+get_component_identification_prompt()
+  ──> read backend/resources/prompts/component_identification.md
   │
   ▼
-analyze_step1_component_identification_async(
+analyze_component_identification_async(
     image_path, prompt,
     model="gemini-2.5-pro", thinking_budget=-1)
   │
@@ -117,7 +117,7 @@ analyze_step1_component_identification_async(
 google.genai Client.models.generate_content(
     contents=[prompt, image_part],
     config={response_mime_type: application/json,
-            response_schema: Step1ComponentIdentification,
+            response_schema: ComponentIdentification,
             temperature: 0, thinking_budget: -1})
   │
   ▼
@@ -128,20 +128,20 @@ Enrich with input_token / output_token / price_usd / analysis_time
   │
   ▼
 update_dish_image_query_results(
-    result_gemini={step:1, step1_data, step2_data:null,
-                   step1_confirmed:false, iterations:[{...}],
+    result_gemini={phase:1, identification_data, nutrition_data:null,
+                   identification_confirmed:false, iterations:[{...}],
                    current_iteration:1})
   │
   ▼
-Frontend polls GET /api/item/{id} every 3s until step==1 && !step1_confirmed
+Frontend polls GET /api/item/{id} every 3s until phase==1 && !identification_confirmed
 ```
 
 ---
 
-## User Customization + Step 2 Trigger Pipeline — [details](./dish_analysis/user_customization.md)
+## User Customization + Nutritional Analysis Trigger Pipeline — [details](./dish_analysis/user_customization.md)
 
 ```
-ItemV2 renders Step1ComponentEditor with step1_data
+ItemV2 renders IdentificationComponentEditor with identification_data
   │
   ▼
 User edits dish name, toggles components, picks serving sizes,
@@ -151,30 +151,30 @@ User edits dish name, toggles components, picks serving sizes,
 Click "Confirm and Analyze Nutrition"
   │
   ▼
-apiService.confirmStep1(record_id, {selected_dish_name, components[]})
+apiService.confirmIdentification(record_id, {selected_dish_name, components[]})
   │
   ▼
-POST /api/item/{record_id}/confirm-step1
+POST /api/item/{record_id}/confirm-identification
   │
   ▼
-Validate auth + record ownership + step1 complete + image exists
+Validate auth + record ownership + identification complete + image exists
   │
   ▼
 Optimistic DB write:
-  result_gemini.step1_confirmed = true
+  result_gemini.identification_confirmed = true
   result_gemini.confirmed_dish_name = <name>
   result_gemini.confirmed_components = <array>
   │
   ▼
-BackgroundTasks.add_task(trigger_step2_analysis_background,
+BackgroundTasks.add_task(trigger_nutrition_analysis_background,
                          record_id, image_path, dish_name, components)
   │                                                    │
-  │                                                    └──> Step 2 Pipeline (below)
+  │                                                    └──> Nutritional Analysis Pipeline (below)
   ▼
-JSON response {success, step2_in_progress:true}
+JSON response {success, nutrition_in_progress:true}
   │
   ▼
-Frontend begins polling for step2_data
+Frontend begins polling for nutrition_data
 ```
 
 ---
@@ -182,16 +182,16 @@ Frontend begins polling for step2_data
 ## Dish Analysis — Phase 2 Pipeline — [details](./dish_analysis/nutritional_analysis.md)
 
 ```
-Background task: trigger_step2_analysis_background(
+Background task: trigger_nutrition_analysis_background(
     query_id, image_path, dish_name, components)
   │
   ▼
-get_step2_nutritional_analysis_prompt(dish_name, components)
-  ──> read backend/resources/step2_nutritional_analysis.md
-  ──> append "USER-CONFIRMED DATA FROM STEP 1" block
+get_nutritional_analysis_prompt(dish_name, components)
+  ──> read backend/resources/prompts/nutritional_analysis.md
+  ──> append "USER-CONFIRMED DATA FROM COMPONENT IDENTIFICATION" block
   │
   ▼
-analyze_step2_nutritional_analysis_async(
+analyze_nutritional_analysis_async(
     image_path, prompt,
     model="gemini-2.5-pro", thinking_budget=-1)
   │
@@ -199,7 +199,7 @@ analyze_step2_nutritional_analysis_async(
 google.genai Client.models.generate_content(
     contents=[prompt, image_part],
     config={response_mime_type: application/json,
-            response_schema: Step2NutritionalAnalysis,
+            response_schema: NutritionalAnalysis,
             temperature: 0, thinking_budget: -1})
   │
   ▼
@@ -212,13 +212,13 @@ Enrich with tokens / price_usd / analysis_time
   │
   ▼
 update_dish_image_query_results(
-    result_gemini.step = 2
-    result_gemini.step2_data = <payload>
-    iterations[cur].step2_data = <payload>)
+    result_gemini.phase = 2
+    result_gemini.nutrition_data = <payload>
+    iterations[cur].nutrition_data = <payload>)
   │
   ▼
-Frontend polling (every 3s) sees step==2 && step2_data
-  ──> render Step2Results component
+Frontend polling (every 3s) sees phase==2 && nutrition_data
+  ──> render NutritionResults component
 ```
 
 ---

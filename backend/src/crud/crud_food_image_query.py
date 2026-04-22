@@ -16,7 +16,7 @@ from src.crud.dish_query_basic import (
     get_dish_image_query_by_id,
     get_dish_image_queries_by_user,
     update_dish_image_query_results,
-    confirm_step1_atomic,
+    confirm_identification_atomic,
     replace_slot_atomic,
     delete_dish_image_query_by_id,
 )
@@ -42,7 +42,7 @@ __all__ = [
     "get_dish_image_query_by_id",
     "get_dish_image_queries_by_user",
     "update_dish_image_query_results",
-    "confirm_step1_atomic",
+    "confirm_identification_atomic",
     "replace_slot_atomic",
     "delete_dish_image_query_by_id",
     # Filters and queries

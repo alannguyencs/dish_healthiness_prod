@@ -7,7 +7,7 @@ by a user. Stage 0 ships the four calls that later stages bind to:
 - `insert_description_row` — Stage 2 (Phase 1.1.1) writes the caption row.
 - `update_confirmed_fields` — Stage 4 (Phase 1.2) enriches after Step 1
   confirmation.
-- `update_corrected_step2_data` — Stage 8 (Phase 2.4) stores user
+- `update_corrected_nutrition_data` — Stage 8 (Phase 2.4) stores user
   nutrient corrections for future retrieval.
 - `get_all_rows_for_user` — Stage 2/6 read the user's corpus; the index
   service calls this to build BM25 on the fly.
@@ -114,7 +114,7 @@ def update_confirmed_fields(
         db.close()
 
 
-def update_corrected_step2_data(
+def update_corrected_nutrition_data(
     query_id: int,
     payload: Dict[str, Any],
 ) -> Optional[PersonalizedFoodDescription]:
@@ -138,7 +138,7 @@ def update_corrected_step2_data(
         )
         if row is None:
             return None
-        row.corrected_step2_data = payload
+        row.corrected_nutrition_data = payload
         row.updated_at = datetime.now(timezone.utc)
         db.commit()
         db.refresh(row)
