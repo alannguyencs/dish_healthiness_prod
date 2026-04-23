@@ -146,9 +146,9 @@ The following ASCII diagram is the canonical end-to-end trace. **Phase 1** handl
   ║   │  source: backend/resources/database/        │                      ║      ║  • Join each hit back to its DishImageQuery row to pull prior        ║
   ║   └────────────────────────────────────────────┘                       ║      ║    nutrition_data (nutrient values + user manual corrections)        ║
   ║                                                                       ║      ║  • Empty result is a valid outcome (cold-start, no history)          ║
-  ║  Multi-stage retrieval:                                               ║      ║  • Writes result_gemini.personalized_matches = [                      ║
-  ║    Stage 1: per-component + dish_name search  @ min_confidence = 70   ║      ║      { query_id, image_url, description, similarity_score,           ║
-  ║    Stage 2 (fallback if best<0.75): joined terms @ min_confidence=60  ║      ║        prior_nutrition_data }, ... ]                                  ║
+  ║  Combined weighted retrieval:                                         ║      ║  • Writes result_gemini.personalized_matches = [                      ║
+  ║    dish_name + all component tokens in one query @ min_confidence=60  ║      ║      { query_id, image_url, description, similarity_score,           ║
+  ║    dish_name tokens weighted 0.85; component tokens weighted 0.15    ║      ║        prior_nutrition_data }, ... ]                                  ║
   ║  Per-candidate confidence scoring  →  top-K with confidence_score     ║      ╚══╤═══════════════════════════════════════════════════════════════════╝
   ║  Writes result_gemini.nutrition_db_matches                            ║         │
   ╚══╤═══════════════════════════════════════════════════════════════════╝         │

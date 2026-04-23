@@ -16,3 +16,4 @@
 - [x] docs/plan/260419_stage9_retrieval_regression_gate.md
 - [x] docs/plan/260419_personalized_data_card.md
 - [x] docs/plan/260419_ai_assistant_edit.md
+- [ ] docs/plan/260423_nutrition_lookup_combined_search.md
